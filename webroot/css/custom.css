@@ -1,0 +1,58 @@
+/* webroot/css/custom.css */
+
+body {
+    font-family: sans-serif;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Ensures footer sticks to bottom */
+    margin: 0;
+}
+
+.container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+.site-header {
+    background-color: #337ab7; /* A blueish color */
+    color: white;
+    padding: 1em 0;
+}
+
+.site-header h1 a {
+    color: white;
+    text-decoration: none;
+    font-size: 1.5em;
+}
+
+.main-nav {
+    margin-top: 10px;
+}
+
+.main-nav a {
+    color: #f0f0f0;
+    text-decoration: none;
+    margin-right: 15px;
+    padding: 5px 10px;
+    border-radius: 4px;
+}
+
+.main-nav a:hover,
+.main-nav a.active { /* You might need JS or more specific CakePHP logic for 'active' state */
+    background-color: #286090;
+    color: white;
+}
+
+.main {
+    flex-grow: 1; /* Pushes footer down */
+    padding: 2em 0;
+}
+
+.site-footer {
+    background-color: #f8f8f8;
+    color: #555;
+    padding: 1em 0;
+    text-align: center;
+    border-top: 1px solid #ddd;
+}

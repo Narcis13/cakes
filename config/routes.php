@@ -1,81 +1,122 @@
 <?php
 /**
- * Routes configuration.
- *
- * In this file, you set up routes to your controllers and their actions.
- * Routes are very important mechanism that allows you to freely connect
- * different URLs to chosen controllers and their actions (functions).
- *
- * It's loaded within the context of `Application::routes()` method which
- * receives a `RouteBuilder` instance `$routes` as method argument.
- *
- * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
- *
- * Licensed under The MIT License
- * For full copyright and license information, please see the LICENSE.txt
- * Redistributions of files must retain the above copyright notice.
- *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
- * @link          https://cakephp.org CakePHP(tm) Project
- * @license       https://opensource.org/licenses/mit-license.php MIT License
+ * CakePHP Routes Configuration
+ * File: config/routes.php
  */
 
 use Cake\Routing\Route\DashedRoute;
 use Cake\Routing\RouteBuilder;
 
-/*
- * This file is loaded in the context of the `Application` class.
- * So you can use `$this` to reference the application class instance
- * if required.
- */
-return function (RouteBuilder $routes): void {
+return static function (RouteBuilder $routes) {
     /*
      * The default class to use for all routes
-     *
-     * The following route classes are supplied with CakePHP and are appropriate
-     * to set as the default:
-     *
-     * - Route
-     * - InflectedRoute
-     * - DashedRoute
-     *
-     * If no call is made to `Router::defaultRouteClass()`, the class used is
-     * `Route` (`Cake\Routing\Route\Route`)
-     *
-     * Note that `Route` does not do any inflections on URLs which will result in
-     * inconsistently cased URLs when used with `{plugin}`, `{controller}` and
-     * `{action}` markers.
      */
     $routes->setRouteClass(DashedRoute::class);
 
-    $routes->scope('/', function (RouteBuilder $builder): void {
+    $routes->scope('/', function (RouteBuilder $builder) {
         /*
-         * Here, we are connecting '/' (base path) to a controller called 'Pages',
-         * its action called 'display', and we pass a param to select the view file
-         * to use (in this case, templates/Pages/home.php)...
+         * Hospital Website Routes
          */
-        $builder->connect('/', ['controller' => 'Pages', 'action' => 'display', 'home']);
+        
+        // Home page - renders Pages/index.php
+        $builder->connect('/', ['controller' => 'Pages', 'action' => 'display', 'index']);
+        
+        // Contact page - renders Pages/contact.php  
+        $builder->connect('/contact', ['controller' => 'Pages', 'action' => 'display', 'contact']);
+        
+        // Handle contact form submission
+        $builder->connect('/contact', ['controller' => 'Pages', 'action' => 'contact'])
+                ->setMethods(['POST']);
+        
+        // Additional hospital pages
+        $builder->connect('/about', ['controller' => 'Pages', 'action' => 'display', 'about']);
+        $builder->connect('/services', ['controller' => 'Pages', 'action' => 'display', 'services']);
+        $builder->connect('/doctors', ['controller' => 'Doctors', 'action' => 'index']);
+        $builder->connect('/appointments', ['controller' => 'Appointments', 'action' => 'index']);
+        $builder->connect('/appointments/book', ['controller' => 'Appointments', 'action' => 'book']);
+        
+        // Patient portal routes
+        $builder->connect('/portal', ['controller' => 'Patients', 'action' => 'portal']);
+        $builder->connect('/portal/login', ['controller' => 'Patients', 'action' => 'login']);
+        $builder->connect('/portal/register', ['controller' => 'Patients', 'action' => 'register']);
+        
+        // Medical services routes
+        $builder->connect('/services/emergency', ['controller' => 'Services', 'action' => 'emergency']);
+        $builder->connect('/services/cardiology', ['controller' => 'Services', 'action' => 'cardiology']);
+        $builder->connect('/services/pediatrics', ['controller' => 'Services', 'action' => 'pediatrics']);
+        $builder->connect('/services/radiology', ['controller' => 'Services', 'action' => 'radiology']);
+        
+        // Doctor profile routes
+        $builder->connect('/doctors/{id}', ['controller' => 'Doctors', 'action' => 'view'])
+                ->setPass(['id'])
+                ->setPatterns(['id' => '\d+']);
+        
+        // Appointment routes
+        $builder->connect('/appointments/new', ['controller' => 'Appointments', 'action' => 'add']);
+        $builder->connect('/appointments/{id}', ['controller' => 'Appointments', 'action' => 'view'])
+                ->setPass(['id'])
+                ->setPatterns(['id' => '\d+']);
+        
+        // News and updates
+        $builder->connect('/news', ['controller' => 'News', 'action' => 'index']);
+        $builder->connect('/news/{slug}', ['controller' => 'News', 'action' => 'view'])
+                ->setPass(['slug']);
+        
+        // Patient information routes
+        $builder->connect('/insurance', ['controller' => 'Pages', 'action' => 'display', 'insurance']);
+        $builder->connect('/billing', ['controller' => 'Pages', 'action' => 'display', 'billing']);
+        $builder->connect('/records', ['controller' => 'Pages', 'action' => 'display', 'records']);
+        $builder->connect('/privacy-policy', ['controller' => 'Pages', 'action' => 'display', 'privacy']);
+        $builder->connect('/terms-of-service', ['controller' => 'Pages', 'action' => 'display', 'terms']);
+        
+        // Emergency and urgent care
+        $builder->connect('/emergency', ['controller' => 'Pages', 'action' => 'display', 'emergency']);
+        $builder->connect('/urgent-care', ['controller' => 'Pages', 'action' => 'display', 'urgent_care']);
+        
+        // Careers and employment
+        $builder->connect('/careers', ['controller' => 'Careers', 'action' => 'index']);
+        $builder->connect('/careers/{id}', ['controller' => 'Careers', 'action' => 'view'])
+                ->setPass(['id'])
+                ->setPatterns(['id' => '\d+']);
+        
+        // Health resources
+        $builder->connect('/health-library', ['controller' => 'HealthLibrary', 'action' => 'index']);
+        $builder->connect('/health-library/{category}', ['controller' => 'HealthLibrary', 'action' => 'category'])
+                ->setPass(['category']);
+        
+        // API routes for AJAX requests
+        $builder->prefix('Api', function (RouteBuilder $routes) {
+            // Appointment availability
+            $routes->connect('/appointments/availability', 
+                ['controller' => 'Appointments', 'action' => 'availability']);
+            
+            // Doctor search
+            $routes->connect('/doctors/search', 
+                ['controller' => 'Doctors', 'action' => 'search']);
+            
+            // Contact form submission
+            $routes->connect('/contact/submit', 
+                ['controller' => 'Contact', 'action' => 'submit'])
+                ->setMethods(['POST']);
+        });
 
         /*
-         * ...and connect the rest of 'Pages' controller's URLs.
+         * Admin routes (for hospital staff)
          */
-        $builder->connect('/pages/*', 'Pages::display');
+        $builder->prefix('Admin', function (RouteBuilder $routes) {
+            $routes->connect('/', ['controller' => 'Dashboard', 'action' => 'index']);
+            $routes->connect('/login', ['controller' => 'Users', 'action' => 'login']);
+            $routes->connect('/logout', ['controller' => 'Users', 'action' => 'logout']);
+            
+            // Resource routes for admin
+            $routes->fallbacks(DashedRoute::class);
+        });
 
         /*
          * Connect catchall routes for all controllers.
-         *
-         * The `fallbacks` method is a shortcut for
-         *
-         * ```
-         * $builder->connect('/{controller}', ['action' => 'index']);
-         * $builder->connect('/{controller}/{action}/*', []);
-         * ```
-         *
-         * It is NOT recommended to use fallback routes after your initial prototyping phase!
-         * See https://book.cakephp.org/5/en/development/routing.html#fallbacks-method for more information
          */
-        $builder->fallbacks();
+        $builder->connect('/{controller}', ['action' => 'index']);
+        $builder->connect('/{controller}/{action}/*', []);
     });
 
     /*
@@ -83,12 +124,12 @@ return function (RouteBuilder $routes): void {
      * open new scope and define routes there.
      *
      * ```
-     * $routes->scope('/api', function (RouteBuilder $builder): void {
+     * $routes->scope('/api', function (RouteBuilder $builder) {
      *     // No $builder->applyMiddleware() here.
-     *
+     *     
      *     // Parse specified extensions from URLs
      *     // $builder->setExtensions(['json', 'xml']);
-     *
+     *     
      *     // Connect API actions here.
      * });
      * ```
