@@ -17,6 +17,7 @@
 
     <!-- Bootstrap CSS -->
     <?= $this->Html->css('https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css') ?>
+    <?= $this->Html->css('components/navbar') ?>
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
@@ -134,73 +135,10 @@
     <?= $this->fetch('script') ?>
 </head>
 <body>
-    <!-- Emergency Banner -->
-    <div class="emergency-banner">
-        <div class="container">
-            <i class="fas fa-ambulance me-2"></i>
-            Emergency? Call 911 | 24/7 Emergency Services Available
-            <i class="fas fa-phone-alt ms-2"></i>
-        </div>
-    </div>
+    <?= $this->element('contactbanner') ?>
 
     <!-- Header -->
-    <nav class="navbar navbar-expand-lg navbar-hospital">
-        <div class="container">
-            <?= $this->Html->link(
-                '<i class="fas fa-hospital me-2"></i>City General Hospital',
-                '/',
-                ['class' => 'navbar-brand text-white', 'escape' => false]
-            ) ?>
-            
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <?= $this->Html->link(
-                            '<i class="fas fa-home me-1"></i>Home',
-                            '/',
-                            ['class' => 'nav-link px-3', 'escape' => false]
-                        ) ?>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle px-3" href="#" id="servicesDropdown" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-stethoscope me-1"></i>Services
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#"><i class="fas fa-heart me-2"></i>Cardiology</a></li>
-                            <li><a class="dropdown-item" href="#"><i class="fas fa-brain me-2"></i>Neurology</a></li>
-                            <li><a class="dropdown-item" href="#"><i class="fas fa-baby me-2"></i>Pediatrics</a></li>
-                            <li><a class="dropdown-item" href="#"><i class="fas fa-x-ray me-2"></i>Radiology</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item">
-                        <?= $this->Html->link(
-                            '<i class="fas fa-user-md me-1"></i>Doctors',
-                            '/doctors',
-                            ['class' => 'nav-link px-3', 'escape' => false]
-                        ) ?>
-                    </li>
-                    <li class="nav-item">
-                        <?= $this->Html->link(
-                            '<i class="fas fa-calendar-alt me-1"></i>Appointments',
-                            '/appointments',
-                            ['class' => 'nav-link px-3', 'escape' => false]
-                        ) ?>
-                    </li>
-                    <li class="nav-item">
-                        <?= $this->Html->link(
-                            '<i class="fas fa-envelope me-1"></i>Contact',
-                            '/contact',
-                            ['class' => 'nav-link px-3', 'escape' => false]
-                        ) ?>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+    <?= $this->cell('Navbar', ['/current-page']) ?>
 
     <!-- Flash Messages -->
     <?= $this->Flash->render() ?>
