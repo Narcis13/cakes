@@ -25,6 +25,11 @@ class CreateUsers extends BaseMigration
             'limit' => 255,
             'null' => false,
         ]);
+        $table->addColumn('role', 'string', [
+            'default' => 'admin',
+            'limit' => 50,
+            'null' => false,
+        ]);
         $table->addColumn('created', 'datetime', [
             'default' => null,
             'null' => false,

@@ -6,46 +6,70 @@ namespace App\Controller;
 use App\Controller\AppController;
 use Cake\Event\EventInterface;
 
+/**
+ * Users Controller
+ *
+ * Handles user authentication for the public site
+ * Admin users should use the Admin prefix login
+ */
 class UsersController extends AppController
 {
     public function beforeFilter(EventInterface $event)
     {
         parent::beforeFilter($event);
-        // for all controllers in our application, make index and view actions
-        // require no authentication. Also allow unauthenticated access to
-        // an action of any controller that is resolved via a route starting
-        // with `/api`.
-        $this->Authentication->addUnauthenticatedActions(['login']);
+        // Allow all actions since this is mainly for redirecting to admin
+        $this->Authentication->addUnauthenticatedActions(['login', 'logout']);
     }
 
+    /**
+     * Login method - redirects to admin login
+     *
+     * @return \Cake\Http\Response|null|void
+     */
     public function login()
     {
-        $this->request->allowMethod(['get', 'post']);
+        // Check if user is already authenticated
         $result = $this->Authentication->getResult();
-        // regardless of POST or GET, redirect if user is logged in
         if ($result && $result->isValid()) {
-            // redirect to /articles after login success
-            $redirect = $this->request->getQuery('redirect', [
-                'controller' => 'Dashboard',
-                'action' => 'index',
-                'prefix' => 'Admin'
-            ]);
-
-            return $this->redirect($redirect);
+            $user = $this->Authentication->getIdentity();
+            if ($user && in_array($user->get('role'), ['admin', 'staff'])) {
+                return $this->redirect([
+                    'controller' => 'Dashboard',
+                    'action' => 'index',
+                    'prefix' => 'Admin'
+                ]);
+            }
         }
-        // display error if user submitted and authentication failed
-        if ($this->request->is('post') && !$result->isValid()) {
-            $this->Flash->error(__('Invalid username or password'));
-        }
+        
+        // Redirect public users to admin login
+        return $this->redirect([
+            'controller' => 'Users',
+            'action' => 'login',
+            'prefix' => 'Admin'
+        ]);
     }
 
+    /**
+     * Logout method
+     *
+     * @return \Cake\Http\Response|null|void
+     */
     public function logout()
     {
         $result = $this->Authentication->getResult();
-        // regardless of POST or GET, redirect if user is logged in
         if ($result && $result->isValid()) {
             $this->Authentication->logout();
-            return $this->redirect(['controller' => 'Users', 'action' => 'login', 'prefix' => false]);
+            return $this->redirect([
+                'controller' => 'Pages',
+                'action' => 'display',
+                'index'
+            ]);
         }
+        
+        return $this->redirect([
+            'controller' => 'Pages',
+            'action' => 'display',
+            'index'
+        ]);
     }
 }

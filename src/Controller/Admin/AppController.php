@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Controller\AppController as BaseController;
+use Cake\Event\EventInterface;
 
 /**
  * Admin App Controller
@@ -23,39 +24,37 @@ class AppController extends BaseController
     {
         parent::initialize();
         $this->viewBuilder()->setLayout('admin');
-
-        // Load authentication and authorization components here for admin area
-        // For example:
-        // $this->loadComponent('Auth', [
-        //     'authorize' => 'Controller', // or other authorization type
-        //     'loginAction' => [
-        //         'prefix' => 'Users', // or false if login is global
-        //         'controller' => 'Users',
-        //         'action' => 'login',
-        //     ],
-        //     'loginRedirect' => [
-        //         'prefix' => 'Admin',
-        //         'controller' => 'Dashboard',
-        //         'action' => 'index',
-        //     ],
-        //     'logoutRedirect' => [
-        //         'prefix' => 'Users', // or false
-        //         'controller' => 'Users',
-        //         'action' => 'login',
-        //     ],
-        //     'unauthorizedRedirect' => $this->referer(),
-        //     'storage' => 'Session',
-        // ]);
-        //
-        // // Allow display action for all controllers if you are using the PagesController for content.
-        // // $this->Auth->allow(['display']);
     }
 
-    // Optional: Add an isAuthorized method if using 'Controller' authorize type
-    // public function isAuthorized($user)
-    // {
-    //     // By default, deny access.
-    //     // You can add logic here to check roles, e.g., if ($user['role'] === 'admin') return true;
-    //     return false;
-    // }
+    /**
+     * Before filter callback.
+     * 
+     * @param \Cake\Event\EventInterface $event The beforeFilter event.
+     * @return \Cake\Http\Response|null|void
+     */
+    public function beforeFilter(EventInterface $event)
+    {
+        parent::beforeFilter($event);
+        
+        // Require authentication for all admin actions except login
+        $this->Authentication->addUnauthenticatedActions(['login']);
+        
+        // Check if user is authenticated
+        $result = $this->Authentication->getResult();
+        if (!$result->isValid()) {
+            // Redirect to login if not authenticated
+            if ($this->request->getParam('action') !== 'login') {
+                $this->Flash->error(__('You must be logged in to access the admin area.'));
+                return $this->redirect(['controller' => 'Users', 'action' => 'login', 'prefix' => 'Admin']);
+            }
+        } else {
+            // Check if user has admin role
+            $user = $this->Authentication->getIdentity();
+            if ($user && !in_array($user->get('role'), ['admin', 'staff'])) {
+                $this->Flash->error(__('You do not have permission to access the admin area.'));
+                $this->Authentication->logout();
+                return $this->redirect(['controller' => 'Users', 'action' => 'login', 'prefix' => false]);
+            }
+        }
+    }
 }

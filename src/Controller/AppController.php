@@ -42,12 +42,29 @@ class AppController extends Controller
         parent::initialize();
 
         $this->loadComponent('Flash');
-        $this->loadComponent('Authentication.Authentication');
+        $this->loadComponent('Authentication.Authentication', [
+            'logoutRedirect' => ['controller' => 'Users', 'action' => 'login']
+        ]);
 
         /*
          * Enable the following component for recommended CakePHP form protection settings.
          * see https://book.cakephp.org/5/en/controllers/components/form-protection.html
          */
         //$this->loadComponent('FormProtection');
+    }
+
+    /**
+     * Before filter callback.
+     * 
+     * @param \Cake\Event\EventInterface $event The beforeFilter event.
+     * @return \Cake\Http\Response|null|void
+     */
+    public function beforeFilter(\Cake\Event\EventInterface $event)
+    {
+        parent::beforeFilter($event);
+        
+        // Allow public access to all actions by default
+        // Admin controllers will override this to require authentication
+        $this->Authentication->allowUnauthenticated(['index', 'view', 'display', 'login', 'logout']);
     }
 }
