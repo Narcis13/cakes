@@ -21,10 +21,14 @@ class UsersController extends AppController
      */
     public function beforeFilter(EventInterface $event)
     {
-        parent::beforeFilter($event);
+        // Skip parent beforeFilter for login action
+        if ($this->request->getParam('action') === 'login') {
+            // Call grandparent (AppController) initialize but skip Admin AppController beforeFilter
+            \App\Controller\AppController::beforeFilter($event);
+            return;
+        }
         
-        // Allow unauthenticated access to login action
-        $this->Authentication->addUnauthenticatedActions(['login']);
+        parent::beforeFilter($event);
     }
 
     /**
@@ -36,6 +40,16 @@ class UsersController extends AppController
     {
         $this->request->allowMethod(['get', 'post']);
         $result = $this->Authentication->getResult();
+        
+        // Debug logging
+        if ($this->request->is('post')) {
+            $data = $this->request->getData();
+            $this->log('Login attempt for: ' . ($data['email'] ?? 'no email'), 'debug');
+            $this->log('Authentication result: ' . ($result ? $result->getStatus() : 'no result'), 'debug');
+            if ($result) {
+                $this->log('Result errors: ' . json_encode($result->getErrors()), 'debug');
+            }
+        }
         
         // Redirect if already logged in
         if ($result && $result->isValid()) {

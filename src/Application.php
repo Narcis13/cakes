@@ -129,7 +129,7 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
         // Define where users should be redirected to when they are not authenticated
         $service->setConfig([
             'unauthenticatedRedirect' => Router::url([
-                'prefix' => false,
+                'prefix' => 'Admin',
                 'controller' => 'Users',
                 'action' => 'login',
             ]),
@@ -146,14 +146,21 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
         $service->loadAuthenticator('Authentication.Form', [
             'fields' => $fields,
             'loginUrl' => Router::url([
-                'prefix' => false,
+                'prefix' => 'Admin',
                 'controller' => 'Users',
                 'action' => 'login',
             ]),
         ]);
 
         // Load identifiers
-        $service->loadIdentifier('Authentication.Password', compact('fields'));
+        $service->loadIdentifier('Authentication.Password', [
+            'fields' => $fields,
+            'resolver' => [
+                'className' => 'Authentication.Orm',
+                'userModel' => 'Users',
+                'finder' => 'all'
+            ]
+        ]);
 
         return $service;
     }

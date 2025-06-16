@@ -36,13 +36,10 @@ class AppController extends BaseController
     {
         parent::beforeFilter($event);
         
-        // Require authentication for all admin actions except login
-        $this->Authentication->addUnauthenticatedActions(['login']);
-        
         // Check if user is authenticated
         $result = $this->Authentication->getResult();
         if (!$result->isValid()) {
-            // Redirect to login if not authenticated
+            // Redirect to login if not authenticated and not already on login page
             if ($this->request->getParam('action') !== 'login') {
                 $this->Flash->error(__('You must be logged in to access the admin area.'));
                 return $this->redirect(['controller' => 'Users', 'action' => 'login', 'prefix' => 'Admin']);
