@@ -47,13 +47,17 @@ class SettingsController extends AppController
         if ($this->request->is('post')) {
             $setting = $this->Settings->patchEntity($setting, $this->request->getData());
             if ($this->Settings->save($setting)) {
-                $this->Flash->success(__('The setting has been saved.'));
+                $this->Flash->success(__('The setting "{0}" has been saved successfully.', $setting->key_name));
 
                 return $this->redirect(['action' => 'index']);
             }
-            $this->Flash->error(__('The setting could not be saved. Please, try again.'));
+            $this->Flash->error(__('The setting could not be saved. Please check the form and try again.'));
         }
-        $this->set(compact('setting'));
+        
+        $this->set([
+            'setting' => $setting,
+            'title' => 'Add New Setting'
+        ]);
     }
 
     /**

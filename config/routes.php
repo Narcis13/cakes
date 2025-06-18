@@ -105,10 +105,6 @@ return static function (RouteBuilder $routes) {
          */
         $builder->prefix('Admin', function (RouteBuilder $routes) {
             $routes->connect('/', ['controller' => 'Dashboard', 'action' => 'index']);
-            $routes->connect('/login', ['controller' => 'Users', 'action' => 'login']);
-            $routes->connect('/logout', ['controller' => 'Users', 'action' => 'logout']);
-            
-            // Resource routes for admin
             $routes->fallbacks(DashedRoute::class);
         });
 

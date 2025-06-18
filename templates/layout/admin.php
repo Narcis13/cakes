@@ -169,6 +169,13 @@ $cakeDescription = 'Medilab Admin';
                         </li>
                         <li class="nav-item">
                             <?= $this->Html->link(
+                                '<i class="fas fa-bars"></i> Navbar',
+                                ['prefix' => 'Admin', 'controller' => 'NavbarItems', 'action' => 'index'],
+                                ['class' => 'nav-link' . ($this->request->getParam('controller') === 'NavbarItems' ? ' active' : ''), 'escape' => false]
+                            ) ?>
+                        </li>
+                        <li class="nav-item">
+                            <?= $this->Html->link(
                                 '<i class="fas fa-images"></i> Media',
                                 ['prefix' => 'Admin', 'controller' => 'Media', 'action' => 'index'],
                                 ['class' => 'nav-link' . ($this->request->getParam('controller') === 'Media' ? ' active' : ''), 'escape' => false]

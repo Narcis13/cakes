@@ -24,7 +24,7 @@ class TopBarCell extends Cell
         // Example: Fetch settings from database in the future
         $settingsTable = \Cake\ORM\TableRegistry::getTableLocator()->get('Settings');
         $contactEmail = $settingsTable->find()->where(['key_name' => 'contact_email'])->firstOrFail()->value;
-        // $contactPhone = $settingsTable->find()->where(['key_name' => 'contact_phone'])->firstOrFail()->value;
+        $contactPhone = $settingsTable->find()->where(['key_name' => 'contact_phone'])->firstOrFail()->value;
         // $socialLinks = [
         //    'youtube' => $settingsTable->find()->where(['key_name' => 'social_youtube_url'])->firstOrFail()->value,
         //    'facebook' => $settingsTable->find()->where(['key_name' => 'social_facebook_url'])->firstOrFail()->value,
@@ -34,7 +34,7 @@ class TopBarCell extends Cell
 
         // For now, using static data as in the original template
       //  $contactEmail = 'contact13@example.com';
-        $contactPhone = '+1 5589 55488 55';
+       // $contactPhone = '+1 5589 55488 55';
         $socialLinks = [
             'youtube' => '#', // Original had twitter class but bi-youtube icon
             'facebook' => '#',
