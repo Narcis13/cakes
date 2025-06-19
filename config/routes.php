@@ -18,8 +18,8 @@ return static function (RouteBuilder $routes) {
          * Hospital Website Routes
          */
         
-        // Home page - renders Pages/index.php
-        $builder->connect('/', ['controller' => 'Pages', 'action' => 'display', 'index']);
+        // Home page - renders Pages/home.php
+        $builder->connect('/', ['controller' => 'Pages', 'action' => 'display', 'home']);
         
         // Contact page - renders Pages/contact.php  
         $builder->connect('/contact', ['controller' => 'Pages', 'action' => 'display', 'contact']);

@@ -38,6 +38,37 @@
 
     <!-- Template Main CSS File -->
     <?= $this->Html->css('style.css') ?>
+    
+    <!-- Layout Fix for Header Overlap -->
+    <style>
+        /* Fix for header overlap issue */
+        #main {
+            padding-top: 110px; /* TopBar (40px) + Header (approx 70px) */
+        }
+        
+        /* For pages with Hero section - full height hero should start from top */
+        #main #hero {
+            margin-top: -110px; /* Pull hero back up to start from header */
+            padding-top: 200px; /* Add enough padding for header + hero content spacing */
+        }
+        
+        /* For pages without Hero section - ensure proper spacing */
+        #main > section:first-child:not(#hero) {
+            margin-top: 20px; /* Extra space for non-hero first sections */
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            #main {
+                padding-top: 90px;
+            }
+            
+            #main #hero {
+                margin-top: -90px;
+                padding-top: 150px;
+            }
+        }
+    </style>
 
     <?= $this->fetch('meta') ?>
     <?= $this->fetch('css') ?>
@@ -53,48 +84,15 @@
   <!-- ======= Header ======= -->
   <?= $this->cell('Header') ?>
 
-  <!-- ======= Hero Section ======= -->
-  <?= $this->cell('Hero') ?>
+
 
     <!-- Flash Messages -->
     <?= $this->Flash->render() ?>
 
     <!-- Main Content -->
     <main id="main">
-
-    <!-- ======= Why Us Section ======= -->
-    <?= $this->cell('WhyUs') ?>
-
-<!-- ======= About Section ======= -->
-<?= $this->cell('About') ?>
-
-<!-- ======= Counts Section ======= -->
-<?= $this->cell('Counts') ?>
-
-<!-- ======= Services Section ======= -->
-<?= $this->cell('Services') ?>
-
-<!-- ======= Appointment Section ======= -->
-<?= $this->cell('Appointment') ?>
-
-<!-- ======= Departments Section ======= -->
-<?= $this->cell('Departments') ?>
-
-<!-- ======= Doctors Section ======= -->
-<?= $this->cell('Doctors') ?>
-
-<!-- ======= Frequently Asked Questions Section ======= -->
-<?= $this->cell('Faq') ?>
-
-<!-- ======= Testimonials Section ======= -->
-<?= $this->cell('Testimonials') ?>
-
-<!-- ======= Gallery Section ======= -->
-<?= $this->cell('Gallery') ?>
-
-<!-- ======= Contact Section ======= -->
-<?= $this->cell('Contact') ?>
-</main><!-- End #main -->
+        <?= $this->fetch('content') ?>
+    </main><!-- End #main -->
 
     <!-- ======= Footer ======= -->
     <?= $this->cell('Footer') ?>
