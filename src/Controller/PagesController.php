@@ -277,4 +277,47 @@ class PagesController extends AppController
         
         return null;
     }
+    
+    /**
+     * Display a dynamic page by slug
+     *
+     * @param string $slug Page slug.
+     * @return \Cake\Http\Response|null
+     * @throws \Cake\Http\Exception\NotFoundException When the page could not be found.
+     */
+    public function page(string $slug): ?Response
+    {
+        $PagesTable = $this->fetchTable('Pages');
+        
+        try {
+            $page = $PagesTable->find()
+                ->where([
+                    'Pages.slug' => $slug,
+                    'Pages.is_published' => true
+                ])
+                ->contain(['PageComponents' => function ($q) {
+                    return $q->where(['PageComponents.is_active' => true])
+                             ->order(['PageComponents.sort_order' => 'ASC']);
+                }])
+                ->firstOrFail();
+        } catch (\Cake\Datasource\Exception\RecordNotFoundException $e) {
+            throw new NotFoundException('Page not found');
+        }
+        
+        $this->set(compact('page'));
+        $this->set([
+            'title' => $page->title,
+            'description' => $page->meta_description ?: substr(strip_tags($page->content), 0, 160),
+            'keywords' => 'hospital, healthcare, medical'
+        ]);
+        
+        // Use custom template if specified
+        if ($page->template) {
+            $this->render($page->template);
+        } else {
+            $this->render('page');
+        }
+        
+        return null;
+    }
 }

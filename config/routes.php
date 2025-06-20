@@ -108,6 +108,11 @@ return static function (RouteBuilder $routes) {
             $routes->fallbacks(DashedRoute::class);
         });
 
+        // Dynamic pages route - must be before catchall routes
+        $builder->connect('/{slug}', ['controller' => 'Pages', 'action' => 'page'])
+                ->setPass(['slug'])
+                ->setPatterns(['slug' => '[a-z0-9\-]+']);
+
         /*
          * Connect catchall routes for all controllers.
          */

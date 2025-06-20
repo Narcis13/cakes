@@ -44,6 +44,11 @@ class PagesTable extends Table
         $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
+        
+        $this->hasMany('PageComponents', [
+            'foreignKey' => 'page_id',
+            'sort' => ['PageComponents.sort_order' => 'ASC']
+        ]);
     }
 
     /**
