@@ -181,6 +181,13 @@ $cakeDescription = 'Medilab Admin';
                                 ['class' => 'nav-link' . ($this->request->getParam('controller') === 'Media' ? ' active' : ''), 'escape' => false]
                             ) ?>
                         </li>
+                        <li class="nav-item">
+                            <?= $this->Html->link(
+                                '<i class="fas fa-file-alt"></i> File Manager',
+                                ['prefix' => 'Admin', 'controller' => 'Files', 'action' => 'index'],
+                                ['class' => 'nav-link' . ($this->request->getParam('controller') === 'Files' ? ' active' : ''), 'escape' => false]
+                            ) ?>
+                        </li>
                         
                         <li class="nav-item">
                             <span class="nav-link text-muted small text-uppercase">System</span>
