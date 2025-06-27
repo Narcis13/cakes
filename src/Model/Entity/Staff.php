@@ -25,6 +25,7 @@ use Cake\ORM\Entity;
  * @property \Cake\I18n\DateTime $modified
  *
  * @property \App\Model\Entity\Department $department
+ * @property string $name Virtual field for full name
  */
 class Staff extends Entity
 {
@@ -54,4 +55,14 @@ class Staff extends Entity
         'modified' => true,
         'department' => true,
     ];
+
+    /**
+     * Virtual field for full name
+     *
+     * @return string
+     */
+    protected function _getName(): string
+    {
+        return $this->first_name . ' ' . $this->last_name;
+    }
 }

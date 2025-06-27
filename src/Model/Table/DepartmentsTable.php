@@ -97,6 +97,15 @@ class DepartmentsTable extends Table
             ->allowEmptyString('floor_location');
 
         $validator
+            ->scalar('services_html')
+            ->allowEmptyString('services_html');
+
+        $validator
+            ->scalar('picture')
+            ->maxLength('picture', 255)
+            ->allowEmptyString('picture');
+
+        $validator
             ->boolean('is_active')
             ->notEmptyString('is_active');
 

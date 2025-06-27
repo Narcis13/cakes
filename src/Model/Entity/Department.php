@@ -15,6 +15,8 @@ use Cake\ORM\Entity;
  * @property string|null $phone
  * @property string|null $email
  * @property string|null $floor_location
+ * @property string|null $services_html
+ * @property string|null $picture
  * @property bool $is_active
  * @property \Cake\I18n\DateTime $created
  * @property \Cake\I18n\DateTime $modified
@@ -40,6 +42,8 @@ class Department extends Entity
         'phone' => true,
         'email' => true,
         'floor_location' => true,
+        'services_html' => true,
+        'picture' => true,
         'is_active' => true,
         'created' => true,
         'modified' => true,
