@@ -21,7 +21,7 @@ class HeroCell extends Cell
         $subtitle = 'We are team of talented designers making websites with Bootstrap';
         $buttonText = 'Get Started';
         $buttonLink = '#about';
-        
+
         $this->set(compact('title', 'subtitle', 'buttonText', 'buttonLink'));
     }
 }

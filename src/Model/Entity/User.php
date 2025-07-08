@@ -46,7 +46,7 @@ class User extends Entity
 
     /**
      * Password hasher
-     * 
+     *
      * @param string $password
      * @return string
      */
@@ -55,6 +55,7 @@ class User extends Entity
         if (strlen($password) > 0) {
             return (new DefaultPasswordHasher())->hash($password);
         }
+
         return null;
     }
 }

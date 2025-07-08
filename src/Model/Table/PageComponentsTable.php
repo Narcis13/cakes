@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace App\Model\Table;
 
-use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
@@ -12,7 +11,6 @@ use Cake\Validation\Validator;
  * PageComponents Model
  *
  * @property \App\Model\Table\PagesTable&\Cake\ORM\Association\BelongsTo $Pages
- *
  * @method \App\Model\Entity\PageComponent newEmptyEntity()
  * @method \App\Model\Entity\PageComponent newEntity(array $data, array $options = [])
  * @method array<\App\Model\Entity\PageComponent> newEntities(array $data, array $options = [])
@@ -26,7 +24,6 @@ use Cake\Validation\Validator;
  * @method iterable<\App\Model\Entity\PageComponent>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\PageComponent> saveManyOrFail(iterable $entities, array $options = [])
  * @method iterable<\App\Model\Entity\PageComponent>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\PageComponent>|false deleteMany(iterable $entities, array $options = [])
  * @method iterable<\App\Model\Entity\PageComponent>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\PageComponent> deleteManyOrFail(iterable $entities, array $options = [])
- *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
 class PageComponentsTable extends Table
@@ -72,7 +69,7 @@ class PageComponentsTable extends Table
             ->notEmptyString('type')
             ->add('type', 'inList', [
                 'rule' => ['inList', ['html', 'image', 'link']],
-                'message' => 'Type must be html, image, or link'
+                'message' => 'Type must be html, image, or link',
             ]);
 
         $validator
@@ -105,7 +102,7 @@ class PageComponentsTable extends Table
             ->allowEmptyString('image_type')
             ->add('image_type', 'inList', [
                 'rule' => ['inList', ['url', 'upload']],
-                'message' => 'Image type must be url or upload'
+                'message' => 'Image type must be url or upload',
             ]);
 
         $validator

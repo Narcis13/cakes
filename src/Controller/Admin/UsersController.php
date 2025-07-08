@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Controller\Admin\AppController;
 use Cake\Event\EventInterface;
 
 /**
@@ -25,9 +24,10 @@ class UsersController extends AppController
         if ($this->request->getParam('action') === 'login') {
             // Call grandparent (AppController) initialize but skip Admin AppController beforeFilter
             \App\Controller\AppController::beforeFilter($event);
+
             return;
         }
-        
+
         parent::beforeFilter($event);
     }
 
@@ -40,7 +40,7 @@ class UsersController extends AppController
     {
         $this->request->allowMethod(['get', 'post']);
         $result = $this->Authentication->getResult();
-        
+
         // Debug logging
         if ($this->request->is('post')) {
             $data = $this->request->getData();
@@ -50,17 +50,18 @@ class UsersController extends AppController
                 $this->log('Result errors: ' . json_encode($result->getErrors()), 'debug');
             }
         }
-        
+
         // Redirect if already logged in
         if ($result && $result->isValid()) {
             $redirect = $this->request->getQuery('redirect', [
                 'controller' => 'Dashboard',
                 'action' => 'index',
-                'prefix' => 'Admin'
+                'prefix' => 'Admin',
             ]);
+
             return $this->redirect($redirect);
         }
-        
+
         // Display error if user submitted and authentication failed
         if ($this->request->is('post') && !$result->isValid()) {
             $this->Flash->error(__('Invalid email or password'));
@@ -79,6 +80,7 @@ class UsersController extends AppController
             $this->Authentication->logout();
             $this->Flash->success(__('You have been logged out.'));
         }
+
         return $this->redirect(['controller' => 'Users', 'action' => 'login', 'prefix' => 'Admin']);
     }
 
@@ -102,7 +104,7 @@ class UsersController extends AppController
      * @return \Cake\Http\Response|null|void Renders view
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function view($id = null)
+    public function view(?string $id = null)
     {
         $user = $this->Users->get($id);
         $this->set(compact('user'));
@@ -135,7 +137,7 @@ class UsersController extends AppController
      * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function edit($id = null)
+    public function edit(?string $id = null)
     {
         $user = $this->Users->get($id);
         if ($this->request->is(['patch', 'post', 'put'])) {
@@ -157,7 +159,7 @@ class UsersController extends AppController
      * @return \Cake\Http\Response|null|void Redirects to index.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function delete($id = null)
+    public function delete(?string $id = null)
     {
         $this->request->allowMethod(['post', 'delete']);
         $user = $this->Users->get($id);

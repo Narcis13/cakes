@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace App\Test\TestCase\Controller\Admin;
 
-use App\Controller\Admin\Admin/SiteSettingsController;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 
@@ -12,7 +11,7 @@ use Cake\TestSuite\TestCase;
  *
  * @uses \App\Controller\Admin\Admin/SiteSettingsController
  */
-class Admin/SiteSettingsControllerTest extends TestCase
+class Admin / SiteSettingsControllerTest extends TestCase
 {
     use IntegrationTestTrait;
 }

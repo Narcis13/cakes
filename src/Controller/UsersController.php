@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Controller\AppController;
 use Cake\Event\EventInterface;
 
 /**
@@ -36,16 +35,16 @@ class UsersController extends AppController
                 return $this->redirect([
                     'controller' => 'Dashboard',
                     'action' => 'index',
-                    'prefix' => 'Admin'
+                    'prefix' => 'Admin',
                 ]);
             }
         }
-        
+
         // Redirect public users to admin login
         return $this->redirect([
             'controller' => 'Users',
             'action' => 'login',
-            'prefix' => 'Admin'
+            'prefix' => 'Admin',
         ]);
     }
 
@@ -59,17 +58,18 @@ class UsersController extends AppController
         $result = $this->Authentication->getResult();
         if ($result && $result->isValid()) {
             $this->Authentication->logout();
+
             return $this->redirect([
                 'controller' => 'Pages',
                 'action' => 'display',
-                'index'
+                'index',
             ]);
         }
-        
+
         return $this->redirect([
             'controller' => 'Pages',
             'action' => 'display',
-            'index'
+            'index',
         ]);
     }
 }

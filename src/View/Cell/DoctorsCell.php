@@ -19,7 +19,7 @@ class DoctorsCell extends Cell
     {
         $sectionTitle = 'Doctors';
         $sectionDescription = 'Magnam dolores commodi suscipit. Necessitatibus eius consequatur ex aliquid fuga eum quidem. Sit sint consectetur velit. Quisquam quos quisquam cupiditate. Et nemo qui impedit suscipit alias ea. Quia fugiat sit in iste officiis commodi quidem hic quas.';
-        
+
         $doctors = [
             [
                 'name' => 'Walter White',
@@ -30,8 +30,8 @@ class DoctorsCell extends Cell
                     'twitter' => '',
                     'facebook' => '',
                     'instagram' => '',
-                    'linkedin' => ''
-                ]
+                    'linkedin' => '',
+                ],
             ],
             [
                 'name' => 'Sarah Jhonson',
@@ -42,8 +42,8 @@ class DoctorsCell extends Cell
                     'twitter' => '',
                     'facebook' => '',
                     'instagram' => '',
-                    'linkedin' => ''
-                ]
+                    'linkedin' => '',
+                ],
             ],
             [
                 'name' => 'William Anderson',
@@ -54,8 +54,8 @@ class DoctorsCell extends Cell
                     'twitter' => '',
                     'facebook' => '',
                     'instagram' => '',
-                    'linkedin' => ''
-                ]
+                    'linkedin' => '',
+                ],
             ],
             [
                 'name' => 'Amanda Jepson',
@@ -66,11 +66,11 @@ class DoctorsCell extends Cell
                     'twitter' => '',
                     'facebook' => '',
                     'instagram' => '',
-                    'linkedin' => ''
-                ]
-            ]
+                    'linkedin' => '',
+                ],
+            ],
         ];
-        
+
         $this->set(compact('sectionTitle', 'sectionDescription', 'doctors'));
     }
 }

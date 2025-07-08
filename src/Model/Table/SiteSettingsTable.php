@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace App\Model\Table;
 
-use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
@@ -24,7 +23,6 @@ use Cake\Validation\Validator;
  * @method iterable<\App\Model\Entity\SiteSetting>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\SiteSetting> saveManyOrFail(iterable $entities, array $options = [])
  * @method iterable<\App\Model\Entity\SiteSetting>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\SiteSetting>|false deleteMany(iterable $entities, array $options = [])
  * @method iterable<\App\Model\Entity\SiteSetting>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\SiteSetting> deleteManyOrFail(iterable $entities, array $options = [])
- *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
 class SiteSettingsTable extends Table
@@ -96,9 +94,10 @@ class SiteSettingsTable extends Table
      * @param mixed $default Default value if not found
      * @return mixed
      */
-    public function getValue(string $key, $default = null)
+    public function getValue(string $key, mixed $default = null): mixed
     {
         $setting = $this->find()->where(['key_name' => $key])->first();
+
         return $setting ? $setting->value : $default;
     }
 
@@ -113,12 +112,12 @@ class SiteSettingsTable extends Table
     public function setValue(string $key, string $value, ?string $description = null): bool
     {
         $setting = $this->find()->where(['key_name' => $key])->first();
-        
+
         if (!$setting) {
             $setting = $this->newEntity([
                 'key_name' => $key,
                 'value' => $value,
-                'description' => $description
+                'description' => $description,
             ]);
         } else {
             $setting = $this->patchEntity($setting, ['value' => $value]);
@@ -127,6 +126,6 @@ class SiteSettingsTable extends Table
             }
         }
 
-        return (bool) $this->save($setting);
+        return (bool)$this->save($setting);
     }
 }

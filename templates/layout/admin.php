@@ -197,6 +197,31 @@ $cakeDescription = 'Medilab Admin';
                         </li>
                         
                         <li class="nav-item">
+                            <span class="nav-link text-muted small text-uppercase">Automation</span>
+                        </li>
+                        <li class="nav-item">
+                            <?= $this->Html->link(
+                                '<i class="fas fa-project-diagram"></i> Workflows',
+                                ['prefix' => 'Admin', 'controller' => 'Workflows', 'action' => 'index'],
+                                ['class' => 'nav-link' . ($this->request->getParam('controller') === 'Workflows' ? ' active' : ''), 'escape' => false]
+                            ) ?>
+                        </li>
+                        <li class="nav-item">
+                            <?= $this->Html->link(
+                                '<i class="fas fa-play-circle"></i> Executions',
+                                ['prefix' => 'Admin', 'controller' => 'WorkflowExecutions', 'action' => 'index'],
+                                ['class' => 'nav-link' . ($this->request->getParam('controller') === 'WorkflowExecutions' ? ' active' : ''), 'escape' => false]
+                            ) ?>
+                        </li>
+                        <li class="nav-item">
+                            <?= $this->Html->link(
+                                '<i class="fas fa-tasks"></i> Human Tasks',
+                                ['prefix' => 'Admin', 'controller' => 'WorkflowHumanTasks', 'action' => 'index'],
+                                ['class' => 'nav-link' . ($this->request->getParam('controller') === 'WorkflowHumanTasks' ? ' active' : ''), 'escape' => false]
+                            ) ?>
+                        </li>
+                        
+                        <li class="nav-item">
                             <span class="nav-link text-muted small text-uppercase">System</span>
                         </li>
                         <li class="nav-item">

@@ -4,7 +4,8 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Controller\AppController;
-use Cake\Http\Exception\NotFoundException;
+use Exception;
+use Laminas\Diactoros\UploadedFile;
 
 /**
  * Departments Controller
@@ -46,10 +47,10 @@ class DepartmentsController extends AppController
      * @return \Cake\Http\Response|null|void Renders view
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function view($id = null)
+    public function view(?string $id = null)
     {
         $department = $this->Departments->get($id, [
-            'contain' => ['HeadDoctors', 'Services', 'Staff']
+            'contain' => ['HeadDoctors', 'Services', 'Staff'],
         ]);
 
         $this->set(compact('department'));
@@ -63,10 +64,10 @@ class DepartmentsController extends AppController
     public function add()
     {
         $department = $this->Departments->newEmptyEntity();
-        
+
         if ($this->request->is('post')) {
             $data = $this->request->getData();
-            
+
             // Handle file upload for picture
             if (!empty($data['picture_file']) && $data['picture_file']->getSize() > 0) {
                 $uploadedFile = $data['picture_file'];
@@ -76,11 +77,12 @@ class DepartmentsController extends AppController
                 }
             }
             unset($data['picture_file']);
-            
+
             $department = $this->Departments->patchEntity($department, $data);
-            
+
             if ($this->Departments->save($department)) {
                 $this->Flash->success(__('The department has been saved.'));
+
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('The department could not be saved. Please, try again.'));
@@ -91,7 +93,7 @@ class DepartmentsController extends AppController
             'keyField' => 'id',
             'valueField' => function ($staff) {
                 return $staff->first_name . ' ' . $staff->last_name . ' (' . ($staff->title ?: $staff->specialization ?: 'Doctor') . ')';
-            }
+            },
         ])->where(['is_active' => true])->toArray();
 
         $this->set(compact('department', 'staff'));
@@ -104,15 +106,15 @@ class DepartmentsController extends AppController
      * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function edit($id = null)
+    public function edit(?string $id = null)
     {
         $department = $this->Departments->get($id, [
-            'contain' => []
+            'contain' => [],
         ]);
-        
+
         if ($this->request->is(['patch', 'post', 'put'])) {
             $data = $this->request->getData();
-            
+
             // Handle file upload for picture
             if (!empty($data['picture_file']) && $data['picture_file']->getSize() > 0) {
                 $uploadedFile = $data['picture_file'];
@@ -126,11 +128,12 @@ class DepartmentsController extends AppController
                 }
             }
             unset($data['picture_file']);
-            
+
             $department = $this->Departments->patchEntity($department, $data);
-            
+
             if ($this->Departments->save($department)) {
                 $this->Flash->success(__('The department has been saved.'));
+
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('The department could not be saved. Please, try again.'));
@@ -141,7 +144,7 @@ class DepartmentsController extends AppController
             'keyField' => 'id',
             'valueField' => function ($staff) {
                 return $staff->first_name . ' ' . $staff->last_name . ' (' . ($staff->title ?: $staff->specialization ?: 'Doctor') . ')';
-            }
+            },
         ])->where(['is_active' => true])->toArray();
 
         $this->set(compact('department', 'staff'));
@@ -154,11 +157,11 @@ class DepartmentsController extends AppController
      * @return \Cake\Http\Response|null Redirects to index.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function delete($id = null)
+    public function delete(?string $id = null)
     {
         $this->request->allowMethod(['post', 'delete']);
         $department = $this->Departments->get($id);
-        
+
         if ($this->Departments->delete($department)) {
             // Delete associated picture file
             if ($department->picture) {
@@ -178,7 +181,7 @@ class DepartmentsController extends AppController
      * @param \Laminas\Diactoros\UploadedFile $file Uploaded file data
      * @return string|false Filename on success, false on failure
      */
-    private function _uploadPicture($file)
+    private function _uploadPicture(UploadedFile $file)
     {
         if (!$file || $file->getSize() === 0) {
             return false;
@@ -187,12 +190,14 @@ class DepartmentsController extends AppController
         $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
         if (!in_array($file->getClientMediaType(), $allowedTypes)) {
             $this->Flash->error(__('Invalid file type. Please upload a valid image file.'));
+
             return false;
         }
 
         $maxSize = 5 * 1024 * 1024; // 5MB
         if ($file->getSize() > $maxSize) {
             $this->Flash->error(__('File too large. Maximum size is 5MB.'));
+
             return false;
         }
 
@@ -207,9 +212,11 @@ class DepartmentsController extends AppController
 
         try {
             $file->moveTo($filepath);
+
             return $filename;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->Flash->error(__('Failed to upload file: {0}', $e->getMessage()));
+
             return false;
         }
     }
@@ -220,12 +227,13 @@ class DepartmentsController extends AppController
      * @param string $filename
      * @return bool
      */
-    private function _deletePicture($filename)
+    private function _deletePicture(string $filename)
     {
         $filepath = WWW_ROOT . 'img' . DS . 'departments' . DS . $filename;
         if (file_exists($filepath)) {
             return unlink($filepath);
         }
+
         return false;
     }
 }

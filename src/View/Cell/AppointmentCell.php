@@ -19,19 +19,19 @@ class AppointmentCell extends Cell
     {
         $sectionTitle = 'Make an Appointment';
         $sectionDescription = 'Magnam dolores commodi suscipit. Necessitatibus eius consequatur ex aliquid fuga eum quidem. Sit sint consectetur velit. Quisquam quos quisquam cupiditate. Et nemo qui impedit suscipit alias ea. Quia fugiat sit in iste officiis commodi quidem hic quas.';
-        
+
         $departments = [
             'Department 1',
             'Department 2',
-            'Department 3'
+            'Department 3',
         ];
-        
+
         $doctors = [
             'Doctor 1',
             'Doctor 2',
-            'Doctor 3'
+            'Doctor 3',
         ];
-        
+
         $this->set(compact('sectionTitle', 'sectionDescription', 'departments', 'doctors'));
     }
 }

@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use Cake\Controller\Controller;
+use Cake\Event\EventInterface;
 
 /**
  * Application Controller
@@ -43,7 +44,7 @@ class AppController extends Controller
 
         $this->loadComponent('Flash');
         $this->loadComponent('Authentication.Authentication', [
-            'logoutRedirect' => ['controller' => 'Users', 'action' => 'login']
+            'logoutRedirect' => ['controller' => 'Users', 'action' => 'login'],
         ]);
 
         /*
@@ -55,14 +56,14 @@ class AppController extends Controller
 
     /**
      * Before filter callback.
-     * 
+     *
      * @param \Cake\Event\EventInterface $event The beforeFilter event.
      * @return \Cake\Http\Response|null|void
      */
-    public function beforeFilter(\Cake\Event\EventInterface $event)
+    public function beforeFilter(EventInterface $event)
     {
         parent::beforeFilter($event);
-        
+
         // Allow public access to all actions by default
         // Admin controllers will override this to require authentication
         $this->Authentication->allowUnauthenticated(['index', 'view', 'display', 'login', 'logout']);

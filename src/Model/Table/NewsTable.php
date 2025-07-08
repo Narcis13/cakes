@@ -3,18 +3,16 @@ declare(strict_types=1);
 
 namespace App\Model\Table;
 
-use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
-use Cake\Validation\Validator;
 use Cake\Utility\Text;
+use Cake\Validation\Validator;
 
 /**
  * News Model
  *
  * @property \App\Model\Table\StaffTable&\Cake\ORM\Association\BelongsTo $Authors
  * @property \App\Model\Table\NewsCategoriesTable&\Cake\ORM\Association\BelongsTo $Categories
- *
  * @method \App\Model\Entity\News newEmptyEntity()
  * @method \App\Model\Entity\News newEntity(array $data, array $options = [])
  * @method array<\App\Model\Entity\News> newEntities(array $data, array $options = [])
@@ -28,7 +26,6 @@ use Cake\Utility\Text;
  * @method iterable<\App\Model\Entity\News>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\News> saveManyOrFail(iterable $entities, array $options = [])
  * @method iterable<\App\Model\Entity\News>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\News>|false deleteMany(iterable $entities, array $options = [])
  * @method iterable<\App\Model\Entity\News>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\News> deleteManyOrFail(iterable $entities, array $options = [])
- *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
 class NewsTable extends Table
@@ -58,8 +55,10 @@ class NewsTable extends Table
         if ($entity->isNew() && empty($entity->slug)) {
             $entity->slug = Text::slug(strtolower($entity->title));
         }
+
         return true;
     }
+
     /**
      * Default validation rules.
      *

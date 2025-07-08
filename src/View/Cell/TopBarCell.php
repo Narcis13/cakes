@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\View\Cell;
 
+use Cake\ORM\TableRegistry;
 use Cake\View\Cell;
 // Uncomment and use TableRegistry if you plan to fetch data from DB
 // use Cake\ORM\TableRegistry;
@@ -22,7 +23,7 @@ class TopBarCell extends Cell
     public function display(): void
     {
         // Example: Fetch settings from database in the future
-        $settingsTable = \Cake\ORM\TableRegistry::getTableLocator()->get('Settings');
+        $settingsTable = TableRegistry::getTableLocator()->get('Settings');
         $contactEmail = $settingsTable->find()->where(['key_name' => 'contact_email'])->firstOrFail()->value;
         $contactPhone = $settingsTable->find()->where(['key_name' => 'contact_phone'])->firstOrFail()->value;
         // $socialLinks = [

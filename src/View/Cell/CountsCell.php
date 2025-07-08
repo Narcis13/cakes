@@ -21,25 +21,25 @@ class CountsCell extends Cell
             [
                 'icon' => 'fas fa-user-md',
                 'number' => 85,
-                'label' => 'Doctors'
+                'label' => 'Doctors',
             ],
             [
                 'icon' => 'far fa-hospital',
                 'number' => 18,
-                'label' => 'Departments'
+                'label' => 'Departments',
             ],
             [
                 'icon' => 'fas fa-flask',
                 'number' => 12,
-                'label' => 'Research Labs'
+                'label' => 'Research Labs',
             ],
             [
                 'icon' => 'fas fa-award',
                 'number' => 150,
-                'label' => 'Awards'
-            ]
+                'label' => 'Awards',
+            ],
         ];
-        
+
         $this->set(compact('counts'));
     }
 }

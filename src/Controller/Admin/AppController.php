@@ -28,20 +28,21 @@ class AppController extends BaseController
 
     /**
      * Before filter callback.
-     * 
+     *
      * @param \Cake\Event\EventInterface $event The beforeFilter event.
      * @return \Cake\Http\Response|null|void
      */
     public function beforeFilter(EventInterface $event)
     {
         parent::beforeFilter($event);
-        
+
         // Check if user is authenticated
         $result = $this->Authentication->getResult();
         if (!$result->isValid()) {
             // Redirect to login if not authenticated and not already on login page
             if ($this->request->getParam('action') !== 'login') {
                 $this->Flash->error(__('You must be logged in to access the admin area.'));
+
                 return $this->redirect(['controller' => 'Users', 'action' => 'login', 'prefix' => 'Admin']);
             }
         } else {
@@ -50,6 +51,7 @@ class AppController extends BaseController
             if ($user && !in_array($user->get('role'), ['admin', 'staff'])) {
                 $this->Flash->error(__('You do not have permission to access the admin area.'));
                 $this->Authentication->logout();
+
                 return $this->redirect(['controller' => 'Users', 'action' => 'login', 'prefix' => false]);
             }
         }

@@ -21,7 +21,7 @@ class NewsController extends AppController
             ->where(['News.is_published' => true])
             ->contain(['Staff', 'NewsCategories'])
             ->order(['News.publish_date' => 'DESC']);
-            
+
         $news = $this->paginate($query);
 
         $this->set(compact('news'));
@@ -34,19 +34,19 @@ class NewsController extends AppController
      * @return \Cake\Http\Response|null|void Renders view
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function view($slug = null)
+    public function view(?string $slug = null)
     {
         $news = $this->News->find()
             ->where(['News.slug' => $slug, 'News.is_published' => true])
             ->contain(['Staff', 'NewsCategories'])
             ->firstOrFail();
-            
+
         // Increment view count
         $this->News->updateQuery()
             ->set(['views_count' => $news->views_count + 1])
             ->where(['id' => $news->id])
             ->execute();
-            
+
         $this->set(compact('news'));
     }
 
@@ -79,7 +79,7 @@ class NewsController extends AppController
      * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function edit($id = null)
+    public function edit(?string $id = null)
     {
         $news = $this->News->get($id, contain: []);
         if ($this->request->is(['patch', 'post', 'put'])) {
@@ -103,7 +103,7 @@ class NewsController extends AppController
      * @return \Cake\Http\Response|null Redirects to index.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function delete($id = null)
+    public function delete(?string $id = null)
     {
         $this->request->allowMethod(['post', 'delete']);
         $news = $this->News->get($id);

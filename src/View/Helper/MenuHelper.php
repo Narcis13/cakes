@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace App\View\Helper;
 
 use Cake\View\Helper;
@@ -20,7 +22,7 @@ class MenuHelper extends Helper
                 $out .= $this->Html->link(
                     '<span>' . $menuItem->title . '</span> <i class="bi bi-chevron-down"></i>',
                     $menuItem->url ?? '#',
-                    $linkOptions
+                    $linkOptions,
                 );
                 $out .= $this->renderSubMenu($menuItem->children);
             } else {
@@ -29,6 +31,7 @@ class MenuHelper extends Helper
             }
             $out .= '</li>';
         }
+
         return $out;
     }
 
@@ -42,7 +45,7 @@ class MenuHelper extends Helper
                 $out .= $this->Html->link(
                     '<span>' . $child->title . '</span> <i class="bi bi-chevron-right"></i>',
                     $child->url ?? '#',
-                    ['escape' => false]
+                    ['escape' => false],
                 );
                 $out .= $this->renderSubMenu($child->children);
             } else {
@@ -52,6 +55,7 @@ class MenuHelper extends Helper
             $out .= '</li>';
         }
         $out .= '</ul>';
+
         return $out;
     }
 }
