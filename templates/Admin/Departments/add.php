@@ -86,7 +86,7 @@
                             ],
                             'templates' => [
                                 'checkboxWrapper' => '<div class="form-check">{{label}}</div>',
-                                'nestingLabel' => '{{hidden}}<input type="checkbox" name="{{name}}" value="{{value}}"{{attrs}}><label{{attrs}}>{{text}}</label>',
+                                'nestingLabel' => '{{hidden}}<label{{attrs}}>{{input}}{{text}}</label>',
                             ],
                             'checked' => true
                         ]) ?>

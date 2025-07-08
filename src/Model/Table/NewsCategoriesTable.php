@@ -11,6 +11,8 @@ use Cake\Validation\Validator;
 /**
  * NewsCategories Model
  *
+ * @property \App\Model\Table\NewsTable&\Cake\ORM\Association\HasMany $News
+ *
  * @method \App\Model\Entity\NewsCategory newEmptyEntity()
  * @method \App\Model\Entity\NewsCategory newEntity(array $data, array $options = [])
  * @method array<\App\Model\Entity\NewsCategory> newEntities(array $data, array $options = [])
@@ -44,6 +46,10 @@ class NewsCategoriesTable extends Table
         $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
+
+        $this->hasMany('News', [
+            'foreignKey' => 'category_id',
+        ]);
     }
 
     /**

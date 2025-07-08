@@ -58,6 +58,7 @@ class NewsTable extends Table
         if ($entity->isNew() && empty($entity->slug)) {
             $entity->slug = Text::slug(strtolower($entity->title));
         }
+        return true;
     }
     /**
      * Default validation rules.
@@ -76,8 +77,7 @@ class NewsTable extends Table
         $validator
             ->scalar('slug')
             ->maxLength('slug', 200)
-            ->requirePresence('slug', 'create')
-            ->notEmptyString('slug')
+            ->allowEmptyString('slug')
             ->add('slug', 'unique', ['rule' => 'validateUnique', 'provider' => 'table']);
 
         $validator
@@ -127,8 +127,8 @@ class NewsTable extends Table
     public function buildRules(RulesChecker $rules): RulesChecker
     {
         $rules->add($rules->isUnique(['slug']), ['errorField' => 'slug']);
-        $rules->add($rules->existsIn(['author_id'], 'Authors'), ['errorField' => 'author_id']);
-        $rules->add($rules->existsIn(['category_id'], 'Categories'), ['errorField' => 'category_id']);
+        $rules->add($rules->existsIn(['author_id'], 'Staff'), ['errorField' => 'author_id']);
+        $rules->add($rules->existsIn(['category_id'], 'NewsCategories'), ['errorField' => 'category_id']);
 
         return $rules;
     }
