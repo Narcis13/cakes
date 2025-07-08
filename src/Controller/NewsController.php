@@ -18,7 +18,10 @@ class NewsController extends AppController
     public function index()
     {
         $query = $this->News->find()
-            ->contain(['Staff', 'NewsCategories']);
+            ->where(['News.is_published' => true])
+            ->contain(['Staff', 'NewsCategories'])
+            ->order(['News.publish_date' => 'DESC']);
+            
         $news = $this->paginate($query);
 
         $this->set(compact('news'));
@@ -27,13 +30,23 @@ class NewsController extends AppController
     /**
      * View method
      *
-     * @param string|null $id News id.
+     * @param string|null $slug News slug.
      * @return \Cake\Http\Response|null|void Renders view
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function view($id = null)
+    public function view($slug = null)
     {
-        $news = $this->News->get($id, contain: ['Staff', 'NewsCategories']);
+        $news = $this->News->find()
+            ->where(['News.slug' => $slug, 'News.is_published' => true])
+            ->contain(['Staff', 'NewsCategories'])
+            ->firstOrFail();
+            
+        // Increment view count
+        $this->News->updateQuery()
+            ->set(['views_count' => $news->views_count + 1])
+            ->where(['id' => $news->id])
+            ->execute();
+            
         $this->set(compact('news'));
     }
 
