@@ -3,9 +3,12 @@ declare(strict_types=1);
 
 namespace App\Model\Table;
 
+use Cake\I18n\Date;
+use Cake\I18n\Time;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use Cake\Utility\Security;
 
 /**
  * Appointments Model
@@ -75,34 +78,41 @@ class AppointmentsTable extends Table
             ->notEmptyString('patient_phone');
 
         $validator
-            ->scalar('patient_email')
+            ->email('patient_email')
             ->maxLength('patient_email', 100)
-            ->allowEmptyString('patient_email');
+            ->requirePresence('patient_email', 'create')
+            ->notEmptyString('patient_email');
 
         $validator
             ->integer('service_id')
-            ->allowEmptyString('service_id');
+            ->requirePresence('service_id', 'create')
+            ->notEmptyString('service_id');
 
         $validator
             ->integer('doctor_id')
-            ->allowEmptyString('doctor_id');
+            ->requirePresence('doctor_id', 'create')
+            ->notEmptyString('doctor_id');
 
         $validator
-            ->dateTime('appointment_date')
+            ->date('appointment_date')
             ->requirePresence('appointment_date', 'create')
-            ->notEmptyDateTime('appointment_date')
-            ->add('appointment_date', 'notWeekend', [
-                'rule' => [$this, 'isNotWeekend'],
-                'message' => 'Appointments cannot be scheduled on weekends.'
-            ])
-            ->add('appointment_date', 'notHoliday', [
-                'rule' => [$this, 'isNotHoliday'],
-                'message' => 'Appointments cannot be scheduled on hospital holidays.'
-            ])
+            ->notEmptyDate('appointment_date')
             ->add('appointment_date', 'futureDate', [
-                'rule' => [$this, 'isFutureDate'],
-                'message' => 'Appointments must be scheduled for a future date.'
+                'rule' => function ($value) {
+                    return $value >= Date::now();
+                },
+                'message' => __('Appointment date must be today or in the future')
             ]);
+
+        $validator
+            ->time('appointment_time')
+            ->requirePresence('appointment_time', 'create')
+            ->notEmptyTime('appointment_time');
+
+        $validator
+            ->time('end_time')
+            ->requirePresence('end_time', 'create')
+            ->notEmptyTime('end_time');
 
         $validator
             ->scalar('status')
@@ -112,6 +122,31 @@ class AppointmentsTable extends Table
         $validator
             ->scalar('notes')
             ->allowEmptyString('notes');
+
+        $validator
+            ->scalar('patient_phone')
+            ->add('patient_phone', 'validPhone', [
+                'rule' => ['custom', '/^[\\d\\s\\-\\+\\(\\)]+$/'],
+                'message' => __('Please enter a valid phone number')
+            ]);
+
+        $validator
+            ->scalar('confirmation_token')
+            ->maxLength('confirmation_token', 64)
+            ->allowEmptyString('confirmation_token');
+
+        $validator
+            ->dateTime('confirmed_at')
+            ->allowEmptyDateTime('confirmed_at');
+
+        $validator
+            ->dateTime('cancelled_at')
+            ->allowEmptyDateTime('cancelled_at');
+
+        $validator
+            ->scalar('cancellation_reason')
+            ->maxLength('cancellation_reason', 255)
+            ->allowEmptyString('cancellation_reason');
 
         return $validator;
     }
@@ -208,5 +243,85 @@ class AppointmentsTable extends Table
             ->count();
             
         return $unavailable === 0;
+    }
+
+    /**
+     * Generate a confirmation token for an appointment
+     *
+     * @return string
+     */
+    public function generateConfirmationToken(): string
+    {
+        return Security::randomString(64);
+    }
+
+    /**
+     * Find appointments by confirmation token
+     *
+     * @param string $token Confirmation token
+     * @return \App\Model\Entity\Appointment|null
+     */
+    public function findByToken(string $token): ?object
+    {
+        return $this->find()
+            ->where(['confirmation_token' => $token])
+            ->first();
+    }
+
+    /**
+     * Get appointments for a doctor on a specific date
+     *
+     * @param int $doctorId Doctor ID
+     * @param \Cake\I18n\Date $date Date
+     * @return \Cake\ORM\Query
+     */
+    public function findByDoctorAndDate(int $doctorId, Date $date)
+    {
+        return $this->find()
+            ->where([
+                'doctor_id' => $doctorId,
+                'appointment_date' => $date->format('Y-m-d'),
+                'status NOT IN' => ['cancelled', 'no-show']
+            ])
+            ->orderBy(['appointment_time' => 'ASC']);
+    }
+
+    /**
+     * Check if a time slot is available for a doctor
+     *
+     * @param int $doctorId Doctor ID
+     * @param \Cake\I18n\Date $date Date
+     * @param \Cake\I18n\Time $startTime Start time
+     * @param \Cake\I18n\Time $endTime End time
+     * @return bool
+     */
+    public function isTimeSlotAvailable(int $doctorId, Date $date, Time $startTime, Time $endTime): bool
+    {
+        $conflicts = $this->find()
+            ->where([
+                'doctor_id' => $doctorId,
+                'appointment_date' => $date->format('Y-m-d'),
+                'status NOT IN' => ['cancelled', 'no-show'],
+                'OR' => [
+                    // New appointment starts during existing appointment
+                    [
+                        'appointment_time <=' => $startTime->format('H:i:s'),
+                        'end_time >' => $startTime->format('H:i:s')
+                    ],
+                    // New appointment ends during existing appointment
+                    [
+                        'appointment_time <' => $endTime->format('H:i:s'),
+                        'end_time >=' => $endTime->format('H:i:s')
+                    ],
+                    // New appointment completely overlaps existing appointment
+                    [
+                        'appointment_time >=' => $startTime->format('H:i:s'),
+                        'end_time <=' => $endTime->format('H:i:s')
+                    ]
+                ]
+            ])
+            ->count();
+
+        return $conflicts === 0;
     }
 }
