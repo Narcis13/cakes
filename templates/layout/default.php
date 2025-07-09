@@ -73,6 +73,7 @@
     <?= $this->fetch('meta') ?>
     <?= $this->fetch('css') ?>
     <?= $this->fetch('script') ?>
+    <?= $this->Html->meta('csrf-token', $this->request->getAttribute('csrfToken')) ?>
 </head>
 
 <body>

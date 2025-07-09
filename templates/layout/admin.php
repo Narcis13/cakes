@@ -158,7 +158,21 @@ $cakeDescription = 'Medilab Admin';
                         </li>
                         <li class="nav-item">
                             <?= $this->Html->link(
-                                '<i class="fas fa-calendar-check"></i> Appointments',
+                                '<i class="fas fa-calendar"></i> Program Medici',
+                                ['prefix' => 'Admin', 'controller' => 'DoctorSchedules', 'action' => 'index'],
+                                ['class' => 'nav-link' . ($this->request->getParam('controller') === 'DoctorSchedules' ? ' active' : ''), 'escape' => false]
+                            ) ?>
+                        </li>
+                        <li class="nav-item">
+                            <?= $this->Html->link(
+                                '<i class="fas fa-calendar-plus"></i> Excepții Program',
+                                ['prefix' => 'Admin', 'controller' => 'ScheduleExceptions', 'action' => 'index'],
+                                ['class' => 'nav-link' . ($this->request->getParam('controller') === 'ScheduleExceptions' ? ' active' : ''), 'escape' => false]
+                            ) ?>
+                        </li>
+                        <li class="nav-item">
+                            <?= $this->Html->link(
+                                '<i class="fas fa-calendar-check"></i> Programări',
                                 ['prefix' => 'Admin', 'controller' => 'Appointments', 'action' => 'index'],
                                 ['class' => 'nav-link' . ($this->request->getParam('controller') === 'Appointments' ? ' active' : ''), 'escape' => false]
                             ) ?>
