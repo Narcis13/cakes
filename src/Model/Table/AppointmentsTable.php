@@ -90,7 +90,19 @@ class AppointmentsTable extends Table
         $validator
             ->dateTime('appointment_date')
             ->requirePresence('appointment_date', 'create')
-            ->notEmptyDateTime('appointment_date');
+            ->notEmptyDateTime('appointment_date')
+            ->add('appointment_date', 'notWeekend', [
+                'rule' => [$this, 'isNotWeekend'],
+                'message' => 'Appointments cannot be scheduled on weekends.'
+            ])
+            ->add('appointment_date', 'notHoliday', [
+                'rule' => [$this, 'isNotHoliday'],
+                'message' => 'Appointments cannot be scheduled on hospital holidays.'
+            ])
+            ->add('appointment_date', 'futureDate', [
+                'rule' => [$this, 'isFutureDate'],
+                'message' => 'Appointments must be scheduled for a future date.'
+            ]);
 
         $validator
             ->scalar('status')
@@ -117,5 +129,84 @@ class AppointmentsTable extends Table
         $rules->add($rules->existsIn(['doctor_id'], 'Doctors'), ['errorField' => 'doctor_id']);
 
         return $rules;
+    }
+    
+    /**
+     * Custom validation: Check if date is not a weekend
+     *
+     * @param mixed $value The date value
+     * @param array $context The validation context
+     * @return bool
+     */
+    public function isNotWeekend($value, array $context): bool
+    {
+        if (empty($value)) {
+            return true;
+        }
+        
+        $date = new \DateTime($value);
+        $dayOfWeek = (int)$date->format('N'); // 1 = Monday, 7 = Sunday
+        return $dayOfWeek < 6; // Returns true if Monday-Friday
+    }
+    
+    /**
+     * Custom validation: Check if date is not a hospital holiday
+     *
+     * @param mixed $value The date value
+     * @param array $context The validation context
+     * @return bool
+     */
+    public function isNotHoliday($value, array $context): bool
+    {
+        if (empty($value)) {
+            return true;
+        }
+        
+        $date = new \DateTime($value);
+        $dateString = $date->format('Y-m-d');
+        
+        // Check if date is a holiday using HospitalHolidaysTable
+        $HospitalHolidays = $this->getTableLocator()->get('HospitalHolidays');
+        return !$HospitalHolidays->isHoliday($dateString);
+    }
+    
+    /**
+     * Custom validation: Check if date is in the future
+     *
+     * @param mixed $value The date value
+     * @param array $context The validation context
+     * @return bool
+     */
+    public function isFutureDate($value, array $context): bool
+    {
+        if (empty($value)) {
+            return true;
+        }
+        
+        $date = new \DateTime($value);
+        $today = new \DateTime('today');
+        return $date > $today;
+    }
+    
+    /**
+     * Check if a doctor is available on a specific date
+     *
+     * @param int $doctorId The doctor ID
+     * @param string $date The date in Y-m-d format
+     * @return bool
+     */
+    public function isDoctorAvailable(int $doctorId, string $date): bool
+    {
+        // Check staff unavailabilities
+        $StaffUnavailabilities = $this->getTableLocator()->get('StaffUnavailabilities');
+        $unavailable = $StaffUnavailabilities->find()
+            ->where([
+                'staff_id' => $doctorId,
+                'date_from <=' => $date,
+                'date_to >=' => $date
+            ])
+            ->count();
+            
+        return $unavailable === 0;
     }
 }

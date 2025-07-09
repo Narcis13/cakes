@@ -137,6 +137,20 @@ $cakeDescription = 'Medilab Admin';
                         </li>
                         <li class="nav-item">
                             <?= $this->Html->link(
+                                '<i class="fas fa-calendar-times"></i> Staff Unavailabilities',
+                                ['prefix' => 'Admin', 'controller' => 'StaffUnavailabilities', 'action' => 'index'],
+                                ['class' => 'nav-link' . ($this->request->getParam('controller') === 'StaffUnavailabilities' ? ' active' : ''), 'escape' => false]
+                            ) ?>
+                        </li>
+                        <li class="nav-item">
+                            <?= $this->Html->link(
+                                '<i class="fas fa-calendar-alt"></i> Hospital Holidays',
+                                ['prefix' => 'Admin', 'controller' => 'HospitalHolidays', 'action' => 'index'],
+                                ['class' => 'nav-link' . ($this->request->getParam('controller') === 'HospitalHolidays' ? ' active' : ''), 'escape' => false]
+                            ) ?>
+                        </li>
+                        <li class="nav-item">
+                            <?= $this->Html->link(
                                 '<i class="fas fa-stethoscope"></i> Services',
                                 ['prefix' => 'Admin', 'controller' => 'Services', 'action' => 'index'],
                                 ['class' => 'nav-link' . ($this->request->getParam('controller') === 'Services' ? ' active' : ''), 'escape' => false]

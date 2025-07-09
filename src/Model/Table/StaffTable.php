@@ -39,7 +39,7 @@ class StaffTable extends Table
         parent::initialize($config);
 
         $this->setTable('staff');
-        $this->setDisplayField('title');
+        $this->setDisplayField('name');
         $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
@@ -49,6 +49,10 @@ class StaffTable extends Table
         ]);
         $this->hasMany('News', ['foreignKey' => 'author_id']);
         $this->hasMany('Appointments', ['foreignKey' => 'doctor_id']);
+        $this->hasMany('StaffUnavailabilities', [
+            'foreignKey' => 'staff_id',
+            'dependent' => true,
+        ]);
     }
 
     /**
