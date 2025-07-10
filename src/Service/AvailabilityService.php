@@ -90,20 +90,26 @@ class AvailabilityService
         $doctors = $this->staffTable->find()
             ->where([
                 'specialization' => $specialty,
-                'is_active' => true
+                'is_active' => true,
+                'staff_type' => 'doctor' // Only get doctors, not other staff
             ])
-            ->contain(['Services' => function ($q) {
-                return $q->where(['Services.is_active' => true]);
-            }])
             ->toArray();
         
         $availableDoctors = [];
         
         foreach ($doctors as $doctor) {
-            // Skip doctors with no services
-            if (empty($doctor->services)) {
+            // Get services for this doctor's department or all active services
+            $services = $this->servicesTable->find()
+                ->where(['is_active' => true])
+                ->toArray();
+            
+            // Skip if no services available
+            if (empty($services)) {
                 continue;
             }
+            
+            // Assign services to doctor for later use
+            $doctor->services = $services;
             
             // Apply all availability rules
             // 1. Check hospital holidays
@@ -112,7 +118,9 @@ class AvailabilityService
             }
             
             // 2. Check if doctor works on this day
+            // Convert CakePHP dayOfWeek (0-6, 0=Sunday) to database format (1-7, 1=Monday)
             $dayOfWeek = $date->dayOfWeek;
+            $dbDayOfWeek = $dayOfWeek == 0 ? 7 : $dayOfWeek;
             
             // 3. Check weekends
             $allowWeekends = Configure::read('Appointments.allow_weekend_appointments', false);
@@ -197,7 +205,9 @@ class AvailabilityService
         $bufferMinutes = $this->getBufferTime($doctorId, $serviceId);
         
         // Get doctor's schedule for the day
+        // Convert CakePHP dayOfWeek (0-6, 0=Sunday) to database format (1-7, 1=Monday)
         $dayOfWeek = $date->dayOfWeek;
+        $dbDayOfWeek = $dayOfWeek == 0 ? 7 : $dayOfWeek;
         
         // Check for schedule exceptions first
         $workingHours = null;
@@ -216,7 +226,7 @@ class AvailabilityService
         
         // If no exception, get regular working hours
         if (!$workingHours) {
-            $workingHours = $this->getWorkingHours($doctorId, $dayOfWeek);
+            $workingHours = $this->getWorkingHours($doctorId, $dbDayOfWeek);
         }
         
         if (!$workingHours) {
@@ -484,8 +494,10 @@ class AvailabilityService
      */
     private function isDoctorWorkingOnDay(int $doctorId, Date $date, Time $time): bool
     {
+        // Convert CakePHP dayOfWeek (0-6, 0=Sunday) to database format (1-7, 1=Monday)
         $dayOfWeek = $date->dayOfWeek;
-        $workingHours = $this->getWorkingHours($doctorId, $dayOfWeek);
+        $dbDayOfWeek = $dayOfWeek == 0 ? 7 : $dayOfWeek;
+        $workingHours = $this->getWorkingHours($doctorId, $dbDayOfWeek);
         
         if (!$workingHours) {
             return false;
@@ -629,7 +641,9 @@ class AvailabilityService
      */
     private function fitsWithinWorkingHours(int $doctorId, Date $date, Time $startTime, Time $endTime): bool
     {
+        // Convert CakePHP dayOfWeek (0-6, 0=Sunday) to database format (1-7, 1=Monday)
         $dayOfWeek = $date->dayOfWeek;
+        $dbDayOfWeek = $dayOfWeek == 0 ? 7 : $dayOfWeek;
         
         // Check for schedule exception first
         if ($this->hasScheduleException($doctorId, $date)) {
@@ -640,7 +654,7 @@ class AvailabilityService
         }
         
         // Check regular working hours
-        $workingHours = $this->getWorkingHours($doctorId, $dayOfWeek);
+        $workingHours = $this->getWorkingHours($doctorId, $dbDayOfWeek);
         if (!$workingHours) {
             return false;
         }

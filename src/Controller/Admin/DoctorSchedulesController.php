@@ -48,7 +48,8 @@ class DoctorSchedulesController extends AppController
         }
 
         $query->orderBy([
-            'Staff.name' => 'ASC',
+            'Staff.first_name' => 'ASC',
+            'Staff.last_name' => 'ASC',
             'DoctorSchedules.day_of_week' => 'ASC',
             'DoctorSchedules.start_time' => 'ASC'
         ]);
@@ -57,7 +58,7 @@ class DoctorSchedulesController extends AppController
 
         // Get lists for filters
         $staff = $this->DoctorSchedules->Staff->find('list', [
-            'order' => ['name' => 'ASC']
+            'order' => ['first_name' => 'ASC', 'last_name' => 'ASC']
         ])->toArray();
         
         $services = $this->DoctorSchedules->Services->find('list', [
@@ -114,7 +115,7 @@ class DoctorSchedulesController extends AppController
         }
         
         $staff = $this->DoctorSchedules->Staff->find('list', [
-            'order' => ['name' => 'ASC']
+            'order' => ['first_name' => 'ASC', 'last_name' => 'ASC']
         ]);
         
         $services = $this->DoctorSchedules->Services->find('list', [
@@ -209,7 +210,7 @@ class DoctorSchedulesController extends AppController
         }
 
         $staff = $this->DoctorSchedules->Staff->find('list', [
-            'order' => ['name' => 'ASC']
+            'order' => ['first_name' => 'ASC', 'last_name' => 'ASC']
         ]);
         
         $services = $this->DoctorSchedules->Services->find('list', [
@@ -319,7 +320,7 @@ class DoctorSchedulesController extends AppController
         }
 
         $staff = $this->DoctorSchedules->Staff->find('list', [
-            'order' => ['name' => 'ASC']
+            'order' => ['first_name' => 'ASC', 'last_name' => 'ASC']
         ]);
 
         $this->set(compact('staff'));
@@ -350,7 +351,7 @@ class DoctorSchedulesController extends AppController
         }
         
         $staff = $this->DoctorSchedules->Staff->find('list', [
-            'order' => ['name' => 'ASC']
+            'order' => ['first_name' => 'ASC', 'last_name' => 'ASC']
         ]);
         
         $services = $this->DoctorSchedules->Services->find('list', [
@@ -400,7 +401,7 @@ class DoctorSchedulesController extends AppController
     {
         // Get all active schedules grouped by day and doctor
         $schedules = $this->DoctorSchedules->find()
-            ->where(['is_active' => true])
+            ->where(['DoctorSchedules.is_active' => true])
             ->contain(['Staff', 'Services'])
             ->orderBy([
                 'DoctorSchedules.day_of_week' => 'ASC',
@@ -521,9 +522,9 @@ class DoctorSchedulesController extends AppController
 
         $newTime = clone $time;
         if ($minutes > 0) {
-            return $newTime->addMinutes($minutes);
+            return $newTime->addMinute($minutes);
         } else {
-            return $newTime->subMinutes(abs($minutes));
+            return $newTime->subMinute(abs($minutes));
         }
     }
 }

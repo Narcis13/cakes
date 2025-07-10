@@ -38,8 +38,8 @@ class AppointmentsController extends AppController
     {
         parent::initialize();
         
-        $this->loadModel('Staff');
-        $this->loadModel('Services');
+        $this->Staff = $this->fetchTable('Staff');
+        $this->Services = $this->fetchTable('Services');
         
         // Initialize AvailabilityService
         $this->availabilityService = new AvailabilityService();
@@ -150,9 +150,12 @@ class AppointmentsController extends AppController
             $this->viewBuilder()->setOption('serialize', ['success', 'doctors']);
 
         } catch (\Exception $e) {
+            \Cake\Log\Log::error('Appointment availability error: ' . $e->getMessage());
+            \Cake\Log\Log::error('Stack trace: ' . $e->getTraceAsString());
+            
             $this->set([
                 'success' => false,
-                'message' => 'A apărut o eroare. Vă rugăm să încercați din nou.'
+                'message' => 'A apărut o eroare: ' . $e->getMessage()
             ]);
             $this->viewBuilder()->setOption('serialize', ['success', 'message']);
         }

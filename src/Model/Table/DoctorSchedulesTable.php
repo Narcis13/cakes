@@ -82,7 +82,11 @@ class DoctorSchedulesTable extends Table
             ->notEmptyTime('start_time')
             ->add('start_time', 'reasonableTime', [
                 'rule' => function ($value) {
-                    $hour = (int)date('H', strtotime($value));
+                    if ($value instanceof \Cake\I18n\Time) {
+                        $hour = (int)$value->format('H');
+                    } else {
+                        $hour = (int)date('H', strtotime($value));
+                    }
                     // Working hours should be between 5 AM and 10 PM
                     return $hour >= 5 && $hour <= 22;
                 },
@@ -99,7 +103,16 @@ class DoctorSchedulesTable extends Table
                         return true;
                     }
 
-                    return strtotime($value) > strtotime($context['data']['start_time']);
+                    if ($value instanceof \Cake\I18n\Time && $context['data']['start_time'] instanceof \Cake\I18n\Time) {
+                        return $value->format('U') > $context['data']['start_time']->format('U');
+                    }
+                    
+                    $endTime = $value instanceof \Cake\I18n\Time ? $value->format('U') : strtotime($value);
+                    $startTime = $context['data']['start_time'] instanceof \Cake\I18n\Time 
+                        ? $context['data']['start_time']->format('U') 
+                        : strtotime($context['data']['start_time']);
+
+                    return $endTime > $startTime;
                 },
                 'message' => __('End time must be after start time'),
             ])
@@ -108,8 +121,13 @@ class DoctorSchedulesTable extends Table
                     if (!isset($context['data']['start_time'])) {
                         return true;
                     }
-                    $startTime = strtotime($context['data']['start_time']);
-                    $endTime = strtotime($value);
+                    
+                    $startTime = $context['data']['start_time'] instanceof \Cake\I18n\Time 
+                        ? $context['data']['start_time']->format('U') 
+                        : strtotime($context['data']['start_time']);
+                    $endTime = $value instanceof \Cake\I18n\Time 
+                        ? $value->format('U') 
+                        : strtotime($value);
                     $duration = ($endTime - $startTime) / 3600; // Convert to hours
 
                     // Check if working hours are between 15 minutes and 12 hours
@@ -213,9 +231,9 @@ class DoctorSchedulesTable extends Table
             $serviceDuration = $entity->slot_duration ?? $service->duration_minutes ?? 30;
 
             // Calculate time slot duration in minutes
-            $startTime = strtotime($entity->start_time);
-            $endTime = strtotime($entity->end_time);
-            $slotDuration = ($endTime - $startTime) / 60;
+            $startTimestamp = $entity->start_time->format('U');
+            $endTimestamp = $entity->end_time->format('U');
+            $slotDuration = ($endTimestamp - $startTimestamp) / 60;
 
             // Check if at least one appointment can fit
             // Consider buffer time in validation if needed

@@ -46,14 +46,15 @@ class ScheduleExceptionsController extends AppController
 
         $query->orderBy([
             'ScheduleExceptions.exception_date' => 'DESC',
-            'Staff.name' => 'ASC'
+            'Staff.first_name' => 'ASC',
+            'Staff.last_name' => 'ASC'
         ]);
 
         $scheduleExceptions = $this->paginate($query);
 
         // Get staff list for filter
         $staff = $this->ScheduleExceptions->Staff->find('list', [
-            'order' => ['name' => 'ASC']
+            'order' => ['first_name' => 'ASC', 'last_name' => 'ASC']
         ])->toArray();
 
         $this->set(compact('scheduleExceptions', 'staff'));
@@ -95,7 +96,7 @@ class ScheduleExceptionsController extends AppController
         }
         
         $staff = $this->ScheduleExceptions->Staff->find('list', [
-            'order' => ['name' => 'ASC']
+            'order' => ['first_name' => 'ASC', 'last_name' => 'ASC']
         ])->toArray();
         
         $this->set(compact('scheduleException', 'staff'));
@@ -125,7 +126,7 @@ class ScheduleExceptionsController extends AppController
         }
         
         $staff = $this->ScheduleExceptions->Staff->find('list', [
-            'order' => ['name' => 'ASC']
+            'order' => ['first_name' => 'ASC', 'last_name' => 'ASC']
         ])->toArray();
         
         $this->set(compact('scheduleException', 'staff'));
@@ -222,7 +223,7 @@ class ScheduleExceptionsController extends AppController
         }
         
         $staff = $this->ScheduleExceptions->Staff->find('list', [
-            'order' => ['name' => 'ASC']
+            'order' => ['first_name' => 'ASC', 'last_name' => 'ASC']
         ])->toArray();
         
         $this->set(compact('staff'));

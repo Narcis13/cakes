@@ -290,6 +290,9 @@
     display: flex;
     justify-content: space-between;
     position: relative;
+    align-items: flex-start;
+    max-width: 800px;
+    margin: 0 auto;
 }
 
 .progress-bar::before {
@@ -307,6 +310,9 @@
     text-align: center;
     position: relative;
     flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .step-number {
@@ -539,6 +545,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Step 1: Specialty Selection
     document.querySelectorAll('.specialty-card').forEach(card => {
         card.addEventListener('click', function() {
+            console.log('Specialty card clicked:', this.dataset.specialty);
             document.querySelectorAll('.specialty-card').forEach(c => c.classList.remove('selected'));
             this.classList.add('selected');
             
@@ -546,6 +553,7 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('selected-specialty').value = specialty;
             bookingData.specialty = specialty;
             
+            console.log('Booking data updated:', bookingData);
             enableNextButton(1);
         });
     });
@@ -837,7 +845,15 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     function getCsrfToken() {
+        // Look for CSRF token in meta tag first
         const token = document.querySelector('meta[name="csrf-token"]');
-        return token ? token.getAttribute('content') : '';
+        if (token) {
+            return token.getAttribute('content');
+        }
+        
+        // If not found, get it from the form
+        const csrfField = document.querySelector('input[name="_csrfToken"]');
+        return csrfField ? csrfField.value : '';
     }
 });
+</script>

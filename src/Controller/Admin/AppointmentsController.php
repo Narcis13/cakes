@@ -22,7 +22,7 @@ class AppointmentsController extends AppController
     public function index()
     {
         $query = $this->Appointments->find()
-            ->contain(['Staff', 'Services']);
+            ->contain(['Doctors', 'Services']);
 
         // Filter by date
         $date = $this->request->getQuery('date');
@@ -67,8 +67,8 @@ class AppointmentsController extends AppController
         $appointments = $this->paginate($query);
 
         // Get lists for filters
-        $doctors = $this->Appointments->Staff->find('list', [
-            'order' => ['name' => 'ASC']
+        $doctors = $this->Appointments->Doctors->find('list', [
+            'order' => ['first_name' => 'ASC', 'last_name' => 'ASC']
         ])->toArray();
 
         $statuses = [
@@ -127,8 +127,8 @@ class AppointmentsController extends AppController
             $this->Flash->error(__('Programarea nu a putut fi actualizată. Vă rugăm să încercați din nou.'));
         }
 
-        $staff = $this->Appointments->Staff->find('list', [
-            'order' => ['name' => 'ASC']
+        $staff = $this->Appointments->Doctors->find('list', [
+            'order' => ['first_name' => 'ASC', 'last_name' => 'ASC']
         ])->toArray();
         
         $services = $this->Appointments->Services->find('list', [
@@ -224,7 +224,7 @@ class AppointmentsController extends AppController
     public function export()
     {
         $query = $this->Appointments->find()
-            ->contain(['Staff', 'Services']);
+            ->contain(['Doctors', 'Services']);
 
         // Apply filters from query string
         $dateFrom = $this->request->getQuery('date_from');
@@ -253,7 +253,7 @@ class AppointmentsController extends AppController
                 $appointment->patient_name,
                 $appointment->patient_phone,
                 $appointment->patient_email,
-                $appointment->staff->name,
+                $appointment->doctor->name,
                 $appointment->service->name,
                 $appointment->status,
                 $appointment->notes
