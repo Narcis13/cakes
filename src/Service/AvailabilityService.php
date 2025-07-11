@@ -5,6 +5,7 @@ namespace App\Service;
 
 use Cake\I18n\Date;
 use Cake\I18n\Time;
+use Cake\I18n\FrozenTime;
 use Cake\ORM\TableRegistry;
 use Cake\Core\Configure;
 
@@ -253,7 +254,13 @@ class AvailabilityService
         
         while ($currentTime < $endTime) {
             $slotEnd = $this->calculateEndTime($currentTime, $duration);
-            $slotEndWithBuffer = $bufferMinutes > 0 ? $slotEnd->addMinutes($bufferMinutes) : $slotEnd;
+            if ($bufferMinutes > 0) {
+                $frozenTime = FrozenTime::parse($slotEnd->format('H:i:s'));
+                $newFrozenTime = $frozenTime->addMinutes($bufferMinutes);
+                $slotEndWithBuffer = Time::parse($newFrozenTime->format('H:i:s'));
+            } else {
+                $slotEndWithBuffer = $slotEnd;
+            }
             
             // Check if slot end time (with buffer) is within working hours
             if ($slotEndWithBuffer <= $endTime) {
@@ -269,7 +276,9 @@ class AvailabilityService
             }
             
             // Move to next interval
-            $currentTime = $currentTime->addMinutes($interval);
+            $frozenCurrent = FrozenTime::parse($currentTime->format('H:i:s'));
+            $newFrozenCurrent = $frozenCurrent->addMinutes($interval);
+            $currentTime = Time::parse($newFrozenCurrent->format('H:i:s'));
         }
         
         return $slots;
@@ -298,7 +307,9 @@ class AvailabilityService
         
         // Check minimum advance booking time (default 1 hour)
         $minAdvanceHours = Configure::read('Appointments.min_advance_hours', 1);
-        $minBookingTime = Time::now()->addHours($minAdvanceHours);
+        $nowFrozen = FrozenTime::now();
+        $minBookingFrozen = $nowFrozen->addHours($minAdvanceHours);
+        $minBookingTime = Time::parse($minBookingFrozen->format('H:i:s'));
         
         if ($date->equals(Date::now()) && $time < $minBookingTime) {
             return false;
@@ -357,7 +368,9 @@ class AvailabilityService
         // 7. Apply buffer time if configured
         $bufferMinutes = $this->getBufferTime($doctorId, $serviceId);
         if ($bufferMinutes > 0) {
-            $endTime = $endTime->addMinutes($bufferMinutes);
+            $frozenTime = FrozenTime::parse($endTime->format('H:i:s'));
+            $newFrozenTime = $frozenTime->addMinutes($bufferMinutes);
+            $endTime = Time::parse($newFrozenTime->format('H:i:s'));
         }
         
         // Check if the appointment fits within working hours
@@ -378,8 +391,12 @@ class AvailabilityService
      */
     public function calculateEndTime(Time $startTime, int $durationMinutes): Time
     {
-        $endTime = clone $startTime;
-        return $endTime->addMinutes($durationMinutes);
+        // Convert to FrozenTime for calculation
+        $frozenTime = FrozenTime::parse($startTime->format('H:i:s'));
+        $newFrozenTime = $frozenTime->addMinutes($durationMinutes);
+        
+        // Convert back to Time
+        return Time::parse($newFrozenTime->format('H:i:s'));
     }
     
     /**
@@ -597,8 +614,7 @@ class AvailabilityService
         }
         
         return $this->hospitalHolidaysTable->exists([
-            'holiday_date' => $date,
-            'is_active' => true
+            'date' => $date
         ]);
     }
     
@@ -684,12 +700,22 @@ class AvailabilityService
         $current = clone $startTime;
         $totalDuration = $slotDuration + $bufferMinutes;
         
-        while ($current->addMinutes($slotDuration) <= $endTime) {
+        while (true) {
+            $frozenCurrent = FrozenTime::parse($current->format('H:i:s'));
+            $slotEndFrozen = $frozenCurrent->addMinutes($slotDuration);
+            $slotEnd = Time::parse($slotEndFrozen->format('H:i:s'));
+            
+            if ($slotEnd > $endTime) {
+                break;
+            }
+            
             $slots[] = [
                 'start' => clone $current,
-                'end' => $current->addMinutes($slotDuration)
+                'end' => $slotEnd
             ];
-            $current = $current->addMinutes($totalDuration);
+            
+            $nextFrozen = $frozenCurrent->addMinutes($totalDuration);
+            $current = Time::parse($nextFrozen->format('H:i:s'));
         }
         
         return $slots;

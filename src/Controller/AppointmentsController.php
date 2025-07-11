@@ -18,7 +18,6 @@ use Cake\Utility\Security;
  * @property \App\Model\Table\AppointmentsTable $Appointments
  * @property \App\Model\Table\StaffTable $Staff
  * @property \App\Model\Table\ServicesTable $Services
- * @property \App\Service\AvailabilityService $availabilityService
  */
 class AppointmentsController extends AppController
 {
@@ -28,6 +27,16 @@ class AppointmentsController extends AppController
      * @var \App\Service\AvailabilityService
      */
     private $availabilityService;
+    
+    /**
+     * @var \App\Model\Table\StaffTable
+     */
+    private $Staff;
+    
+    /**
+     * @var \App\Model\Table\ServicesTable
+     */
+    private $Services;
 
     /**
      * Initialize method
@@ -53,6 +62,11 @@ class AppointmentsController extends AppController
             'confirm',
             'success'
         ]);
+        
+        // Load AJAX routes
+        $this->Authentication->allowUnauthenticated([
+            'getDoctorsBySpecialty'
+        ]);
     }
 
     /**
@@ -62,13 +76,14 @@ class AppointmentsController extends AppController
      */
     public function index()
     {
-        // Get all active specializations
+        // Get all active specializations from doctors
         $specializations = $this->Staff->find()
             ->select(['specialization'])
             ->where([
                 'is_active' => true,
                 'specialization IS NOT' => null,
-                'specialization !=' => ''
+                'specialization !=' => '',
+                'staff_type' => 'doctor'
             ])
             ->distinct(['specialization'])
             ->orderAsc('specialization')
@@ -107,6 +122,8 @@ class AppointmentsController extends AppController
         $specialty = $data['specialty'] ?? null;
         $date = $data['date'] ?? null;
 
+        \Cake\Log\Log::debug('CheckAvailability called with specialty: ' . $specialty . ', date: ' . $date);
+
         if (!$specialty || !$date) {
             $this->set([
                 'success' => false,
@@ -140,8 +157,10 @@ class AppointmentsController extends AppController
                 return;
             }
 
-            // Use AvailabilityService to get available doctors
+            // Use AvailabilityService to get available doctors by specialization
             $availableDoctors = $this->availabilityService->getAvailableDoctors($specialty, $appointmentDate);
+
+            \Cake\Log\Log::debug('Found ' . count($availableDoctors) . ' available doctors');
 
             $this->set([
                 'success' => true,
