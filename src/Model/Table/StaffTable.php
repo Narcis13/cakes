@@ -53,6 +53,14 @@ class StaffTable extends Table
             'foreignKey' => 'staff_id',
             'dependent' => true,
         ]);
+        
+        // Many-to-many relationship with Services through DoctorSchedules
+        $this->belongsToMany('Services', [
+            'through' => 'DoctorSchedules',
+            'foreignKey' => 'staff_id',
+            'targetForeignKey' => 'service_id',
+            'conditions' => ['DoctorSchedules.is_active' => true]
+        ]);
     }
 
     /**

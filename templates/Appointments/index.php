@@ -908,17 +908,7 @@ document.addEventListener('DOMContentLoaded', function() {
         loadingDiv.style.display = 'block';
         doctorsList.innerHTML = '';
         
-        // Get next working day (skip weekends)
-        const nextWorkingDay = new Date();
-        nextWorkingDay.setDate(nextWorkingDay.getDate() + 1);
-        
-        // Skip to Monday if it's weekend
-        while (nextWorkingDay.getDay() === 0 || nextWorkingDay.getDay() === 6) {
-            nextWorkingDay.setDate(nextWorkingDay.getDate() + 1);
-        }
-        
-        const dateStr = nextWorkingDay.toISOString().split('T')[0];
-        console.log('Checking availability for date:', dateStr);
+        console.log('Loading doctors for specialty:', specialty);
         
         fetch('/appointments/check-availability', {
             method: 'POST',
@@ -927,8 +917,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 'X-CSRF-Token': getCsrfToken()
             },
             body: JSON.stringify({
-                specialty: specialty,
-                date: dateStr
+                specialty: specialty
             })
         })
         .then(response => {
@@ -1268,11 +1257,73 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Form submission
     form.addEventListener('submit', function(e) {
+        e.preventDefault(); // Always prevent default first
+        
         if (!document.getElementById('terms-agree').checked) {
-            e.preventDefault();
             alert('Vă rugăm să acceptați termenii și condițiile.');
             return;
         }
+        
+        // Log form data for debugging
+        const formData = {
+            specialty: document.getElementById('selected-specialty').value,
+            doctor_id: document.getElementById('selected-doctor').value,
+            service_id: document.getElementById('selected-service').value,
+            appointment_date: document.getElementById('appointment-date').value,
+            appointment_time: document.getElementById('selected-time').value,
+            patient_name: document.getElementById('patient-name').value,
+            patient_email: document.getElementById('patient-email').value,
+            patient_phone: document.getElementById('patient-phone').value,
+            patient_cnp: document.getElementById('patient-cnp').value,
+            notes: document.getElementById('notes').value
+        };
+        
+        console.log('Submitting form with data:', formData);
+        
+        // Submit form using fetch to see the response
+        const form = e.target;
+        const formDataObj = new FormData(form);
+        
+        fetch(form.action, {
+            method: 'POST',
+            body: formDataObj,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => {
+            console.log('Response status:', response.status);
+            console.log('Response headers:', response.headers);
+            return response.text();
+        })
+        .then(html => {
+            console.log('Response HTML preview:', html.substring(0, 500));
+            // Check if response contains error or redirect
+            if (html.includes('Flash__error') || html.includes('eroare')) {
+                // Extract error message
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const errorDiv = doc.querySelector('.alert-danger, .message.error');
+                if (errorDiv) {
+                    alert('Eroare: ' + errorDiv.textContent.trim());
+                } else {
+                    alert('A apărut o eroare. Verificați consola pentru detalii.');
+                }
+                console.error('Full response:', html);
+            } else if (html.includes('success') || html.includes('/appointments/success')) {
+                // Success - manually redirect
+                console.log('Success! Redirecting...');
+                window.location.href = '/appointments/success';
+            } else {
+                // Unknown response
+                console.error('Unknown response:', html);
+                alert('Răspuns neașteptat de la server. Verificați consola.');
+            }
+        })
+        .catch(error => {
+            console.error('Fetch error:', error);
+            alert('Eroare de rețea: ' + error.message);
+        });
     });
 
     function getCsrfToken() {

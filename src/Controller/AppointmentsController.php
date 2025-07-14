@@ -120,45 +120,89 @@ class AppointmentsController extends AppController
 
         $data = $this->request->getData();
         $specialty = $data['specialty'] ?? null;
-        $date = $data['date'] ?? null;
 
-        \Cake\Log\Log::debug('CheckAvailability called with specialty: ' . $specialty . ', date: ' . $date);
+        \Cake\Log\Log::debug('CheckAvailability called with specialty: ' . $specialty);
 
-        if (!$specialty || !$date) {
+        if (!$specialty) {
             $this->set([
                 'success' => false,
-                'message' => 'Vă rugăm să selectați specializarea și data.'
+                'message' => 'Vă rugăm să selectați specializarea.'
             ]);
             $this->viewBuilder()->setOption('serialize', ['success', 'message']);
             return;
         }
 
         try {
-            $appointmentDate = new Date($date);
-            
-            // Check if date is in the past
-            if ($appointmentDate < Date::now()) {
-                $this->set([
-                    'success' => false,
-                    'message' => 'Nu puteți programa pentru o dată din trecut.'
-                ]);
-                $this->viewBuilder()->setOption('serialize', ['success', 'message']);
-                return;
-            }
+            // Get all doctors with this specialty, regardless of availability
+            $doctors = $this->Staff->find()
+                ->where([
+                    'specialization' => $specialty,
+                    'is_active' => true,
+                    'staff_type' => 'doctor'
+                ])
+                ->toArray();
 
-            // Check if date is too far in the future (90 days)
-            $maxDate = Date::now()->addDays(90);
-            if ($appointmentDate > $maxDate) {
-                $this->set([
-                    'success' => false,
-                    'message' => 'Programările pot fi făcute doar pentru următoarele 90 de zile.'
-                ]);
-                $this->viewBuilder()->setOption('serialize', ['success', 'message']);
-                return;
+            $availableDoctors = [];
+            foreach ($doctors as $doctor) {
+                // Get services for this doctor from doctor_schedules
+                $doctorSchedules = $this->fetchTable('DoctorSchedules')->find()
+                    ->where([
+                        'staff_id' => $doctor->id,
+                        'is_active' => true
+                    ])
+                    ->select(['service_id'])
+                    ->distinct(['service_id'])
+                    ->toArray();
+                
+                $serviceIds = array_map(function($schedule) {
+                    return $schedule->service_id;
+                }, $doctorSchedules);
+                
+                $services = [];
+                if (!empty($serviceIds)) {
+                    // Get services that this doctor provides
+                    $doctorServices = $this->Services->find()
+                        ->where([
+                            'id IN' => $serviceIds,
+                            'is_active' => true
+                        ])
+                        ->toArray();
+                    
+                    foreach ($doctorServices as $service) {
+                        $services[] = [
+                            'id' => $service->id,
+                            'name' => $service->name,
+                            'duration_minutes' => $service->duration_minutes,
+                            'price' => $service->price
+                        ];
+                    }
+                } else {
+                    // If no services linked through schedules, get all active services
+                    $allServices = $this->Services->find()
+                        ->where(['is_active' => true])
+                        ->toArray();
+                    foreach ($allServices as $service) {
+                        $services[] = [
+                            'id' => $service->id,
+                            'name' => $service->name,
+                            'duration_minutes' => $service->duration_minutes,
+                            'price' => $service->price
+                        ];
+                    }
+                }
+                
+                if (!empty($services)) {
+                    $availableDoctors[] = [
+                        'id' => $doctor->id,
+                        'name' => $doctor->first_name . ' ' . $doctor->last_name,
+                        'specialization' => $doctor->specialization,
+                        'photo' => $doctor->photo,
+                        'email' => $doctor->email,
+                        'phone' => $doctor->phone,
+                        'services' => $services
+                    ];
+                }
             }
-
-            // Use AvailabilityService to get available doctors by specialization
-            $availableDoctors = $this->availabilityService->getAvailableDoctors($specialty, $appointmentDate);
 
             \Cake\Log\Log::debug('Found ' . count($availableDoctors) . ' available doctors');
 
@@ -242,9 +286,13 @@ class AppointmentsController extends AppController
         if ($this->request->is('post')) {
             $data = $this->request->getData();
             
+            // Debug log the received data
+            \Cake\Log\Log::debug('Book appointment data received: ' . json_encode($data));
+            
             // Validate required fields
             if (empty($data['doctor_id']) || empty($data['service_id']) || 
                 empty($data['appointment_date']) || empty($data['appointment_time'])) {
+                \Cake\Log\Log::error('Missing required fields. Data: ' . json_encode($data));
                 $this->Flash->error('Vă rugăm să completați toate câmpurile obligatorii.');
                 return $this->redirect(['action' => 'index']);
             }
@@ -284,11 +332,14 @@ class AppointmentsController extends AppController
                     $this->getMailer('Appointment')->send('confirmationEmail', [$appointment]);
                     $this->Flash->success('Programarea a fost creată cu succes. Vă rugăm să verificați emailul pentru confirmare.');
                 } catch (\Exception $e) {
+                    \Cake\Log\Log::error('Email error: ' . $e->getMessage());
                     $this->Flash->warning('Programarea a fost creată, dar emailul de confirmare nu a putut fi trimis.');
                 }
 
                 return $this->redirect(['action' => 'success', $appointment->id]);
             } else {
+                // Log validation errors
+                \Cake\Log\Log::error('Appointment save failed. Errors: ' . json_encode($appointment->getErrors()));
                 $this->Flash->error('Programarea nu a putut fi salvată. Vă rugăm să încercați din nou.');
             }
         }
