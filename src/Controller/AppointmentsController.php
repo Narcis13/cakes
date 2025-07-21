@@ -8,8 +8,8 @@ use Cake\Core\Configure;
 use Cake\Http\Exception\NotFoundException;
 use Cake\I18n\Date;
 use Cake\I18n\Time;
-use Cake\Mailer\Mailer;
-use Cake\Mailer\MailerAwareTrait;
+// use Cake\Mailer\Mailer;
+// use Cake\Mailer\MailerAwareTrait;
 use Cake\Utility\Security;
 
 /**
@@ -21,7 +21,7 @@ use Cake\Utility\Security;
  */
 class AppointmentsController extends AppController
 {
-    use MailerAwareTrait;
+    // use MailerAwareTrait;
     
     /**
      * @var \App\Service\AvailabilityService
@@ -299,7 +299,12 @@ class AppointmentsController extends AppController
             
             try {
                 $appointmentDate = new Date($data['appointment_date']);
-                $appointmentTime = new Time($data['appointment_time']);
+                // Ensure time format is HH:MM:SS
+                $timeStr = $data['appointment_time'];
+                if (strlen($timeStr) == 5) { // If format is HH:MM
+                    $timeStr .= ':00'; // Add seconds
+                }
+                $appointmentTime = new Time($timeStr);
                 
                 // Check if slot is still available using AvailabilityService
                 if (!$this->availabilityService->isSlotAvailable(
@@ -327,7 +332,8 @@ class AppointmentsController extends AppController
             }
 
             if ($this->Appointments->save($appointment)) {
-                // Send confirmation email
+                // Send confirmation email - disabled temporarily
+                /*
                 try {
                     $this->getMailer('Appointment')->send('confirmationEmail', [$appointment]);
                     $this->Flash->success('Programarea a fost creată cu succes. Vă rugăm să verificați emailul pentru confirmare.');
@@ -335,12 +341,39 @@ class AppointmentsController extends AppController
                     \Cake\Log\Log::error('Email error: ' . $e->getMessage());
                     $this->Flash->warning('Programarea a fost creată, dar emailul de confirmare nu a putut fi trimis.');
                 }
-
+                */
+                
+                $this->Flash->success('Programarea a fost creată cu succes!');
+                
+                // Check if it's an AJAX request
+                if ($this->request->is('ajax')) {
+                    $this->viewBuilder()->setClassName('Json');
+                    $this->set([
+                        'success' => true,
+                        'message' => 'Programarea a fost creată cu succes!',
+                        'redirect' => $this->Url->build(['action' => 'success', $appointment->id])
+                    ]);
+                    $this->viewBuilder()->setOption('serialize', ['success', 'message', 'redirect']);
+                    return;
+                }
+                
                 return $this->redirect(['action' => 'success', $appointment->id]);
             } else {
                 // Log validation errors
                 \Cake\Log\Log::error('Appointment save failed. Errors: ' . json_encode($appointment->getErrors()));
                 $this->Flash->error('Programarea nu a putut fi salvată. Vă rugăm să încercați din nou.');
+                
+                // For AJAX requests, return JSON error response
+                if ($this->request->is('ajax')) {
+                    $this->viewBuilder()->setClassName('Json');
+                    $this->set([
+                        'success' => false,
+                        'message' => 'Programarea nu a putut fi salvată. Vă rugăm să încercați din nou.',
+                        'errors' => $appointment->getErrors()
+                    ]);
+                    $this->viewBuilder()->setOption('serialize', ['success', 'message', 'errors']);
+                    return;
+                }
             }
         }
 
@@ -388,12 +421,14 @@ class AppointmentsController extends AppController
         $appointment->confirmed_at = Time::now();
 
         if ($this->Appointments->save($appointment)) {
-            // Send confirmation email
+            // Send confirmation email - disabled temporarily
+            /*
             try {
                 $this->getMailer('Appointment')->send('confirmedEmail', [$appointment]);
             } catch (\Exception $e) {
                 // Log error but don't show to user
             }
+            */
 
             $this->Flash->success('Programarea a fost confirmată cu succes!');
             return $this->redirect(['action' => 'success', $appointment->id]);

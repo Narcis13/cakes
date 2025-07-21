@@ -48,6 +48,7 @@ class Appointment extends Entity
         'patient_name' => true,
         'patient_phone' => true,
         'patient_email' => true,
+        'patient_cnp' => true,
         'service_id' => true,
         'doctor_id' => true,
         'appointment_date' => true,

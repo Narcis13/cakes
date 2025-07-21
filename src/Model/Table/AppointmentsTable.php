@@ -99,7 +99,10 @@ class AppointmentsTable extends Table
             ->notEmptyDate('appointment_date')
             ->add('appointment_date', 'futureDate', [
                 'rule' => function ($value) {
-                    return $value >= Date::now();
+                    // Allow today and future dates
+                    $today = Date::now()->format('Y-m-d');
+                    $appointmentDate = is_string($value) ? $value : $value->format('Y-m-d');
+                    return $appointmentDate >= $today;
                 },
                 'message' => __('Appointment date must be today or in the future')
             ]);

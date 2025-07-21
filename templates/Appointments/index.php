@@ -1294,30 +1294,70 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => {
             console.log('Response status:', response.status);
             console.log('Response headers:', response.headers);
-            return response.text();
-        })
-        .then(html => {
-            console.log('Response HTML preview:', html.substring(0, 500));
-            // Check if response contains error or redirect
-            if (html.includes('Flash__error') || html.includes('eroare')) {
-                // Extract error message
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(html, 'text/html');
-                const errorDiv = doc.querySelector('.alert-danger, .message.error');
-                if (errorDiv) {
-                    alert('Eroare: ' + errorDiv.textContent.trim());
-                } else {
-                    alert('A apărut o eroare. Verificați consola pentru detalii.');
-                }
-                console.error('Full response:', html);
-            } else if (html.includes('success') || html.includes('/appointments/success')) {
-                // Success - manually redirect
-                console.log('Success! Redirecting...');
-                window.location.href = '/appointments/success';
+            
+            // Check if response is JSON
+            const contentType = response.headers.get('content-type');
+            if (contentType && contentType.includes('application/json')) {
+                return response.json();
             } else {
-                // Unknown response
-                console.error('Unknown response:', html);
-                alert('Răspuns neașteptat de la server. Verificați consola.');
+                return response.text().then(text => ({html: text}));
+            }
+        })
+        .then(data => {
+            if (data.html) {
+                // HTML response
+                console.log('Response HTML preview:', data.html.substring(0, 500));
+                if (data.html.includes('Flash__error') || data.html.includes('eroare')) {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(data.html, 'text/html');
+                    const errorDiv = doc.querySelector('.alert-danger, .message.error');
+                    if (errorDiv) {
+                        alert('Eroare: ' + errorDiv.textContent.trim());
+                    } else {
+                        alert('A apărut o eroare. Verificați consola pentru detalii.');
+                    }
+                    console.error('Full response:', data.html);
+                } else {
+                    // Form was submitted normally, redirect to home
+                    window.location.href = '/appointments';
+                }
+            } else {
+                // JSON response
+                console.log('JSON response:', data);
+                if (data.success) {
+                    // Build the success URL
+                    if (data.redirect) {
+                        let redirectUrl;
+                        if (typeof data.redirect === 'object' && data.redirect.action) {
+                            // Handle CakePHP array format redirect
+                            const appointmentId = data.redirect[0] || data.redirect.id;
+                            redirectUrl = `/appointments/${data.redirect.action}/${appointmentId}`;
+                        } else if (typeof data.redirect === 'string') {
+                            redirectUrl = data.redirect;
+                        } else {
+                            console.log('Redirect data:', data.redirect);
+                            redirectUrl = '/appointments';
+                        }
+                        window.location.href = redirectUrl;
+                    } else {
+                        window.location.href = '/appointments';
+                    }
+                } else {
+                    // Show errors
+                    let errorMessage = data.message || 'A apărut o eroare.';
+                    if (data.errors) {
+                        console.error('Validation errors:', data.errors);
+                        // Extract first error message
+                        for (let field in data.errors) {
+                            for (let rule in data.errors[field]) {
+                                errorMessage = data.errors[field][rule];
+                                break;
+                            }
+                            break;
+                        }
+                    }
+                    alert(errorMessage);
+                }
             }
         })
         .catch(error => {
