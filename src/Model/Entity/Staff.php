@@ -57,6 +57,13 @@ class Staff extends Entity
     ];
 
     /**
+     * Virtual fields
+     *
+     * @var array<string>
+     */
+    protected array $_virtual = ['name'];
+
+    /**
      * Virtual field for full name
      *
      * @return string

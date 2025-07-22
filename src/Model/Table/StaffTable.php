@@ -47,6 +47,10 @@ class StaffTable extends Table
         $this->belongsTo('Departments', [
             'foreignKey' => 'department_id',
         ]);
+        $this->belongsTo('Specializations', [
+            'foreignKey' => 'specialization_id',
+            'propertyName' => 'specialization_data',
+        ]);
         $this->hasMany('News', ['foreignKey' => 'author_id']);
         $this->hasMany('Appointments', ['foreignKey' => 'doctor_id']);
         $this->hasMany('StaffUnavailabilities', [
@@ -141,6 +145,7 @@ class StaffTable extends Table
     public function buildRules(RulesChecker $rules): RulesChecker
     {
         $rules->add($rules->existsIn(['department_id'], 'Departments'), ['errorField' => 'department_id']);
+        $rules->add($rules->existsIn(['specialization_id'], 'Specializations'), ['errorField' => 'specialization_id']);
 
         return $rules;
     }

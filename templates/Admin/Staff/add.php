@@ -54,10 +54,12 @@
                                 ]) ?>
                             </div>
                             <div class="col-md-6">
-                                <?= $this->Form->control('specialization', [
-                                    'class' => 'form-control',
-                                    'label' => ['class' => 'form-label'],
-                                    'placeholder' => 'e.g., Cardiology, Pediatrics, General Practice'
+                                <?= $this->Form->control('specialization_id', [
+                                    'type' => 'select',
+                                    'options' => $specializations,
+                                    'empty' => 'Select Specialization',
+                                    'class' => 'form-select',
+                                    'label' => ['class' => 'form-label', 'text' => 'Specialization']
                                 ]) ?>
                             </div>
                         </div>

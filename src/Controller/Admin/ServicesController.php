@@ -65,11 +65,11 @@ class ServicesController extends AppController
     public function view(?string $id = null)
     {
         $service = $this->Services->get($id, [
-            'contain' => ['Departments', 'Appointments' => [
-                'conditions' => ['Appointments.appointment_date >=' => date('Y-m-d')],
-                'order' => ['Appointments.appointment_date' => 'ASC'],
-                'limit' => 10,
-            ]],
+            'contain' => ['Departments', 'Appointments' => function ($q) {
+                return $q->where(['Appointments.appointment_date >=' => date('Y-m-d')])
+                    ->order(['Appointments.appointment_date' => 'ASC'])
+                    ->limit(10);
+            }],
         ]);
 
         $this->set(compact('service'));

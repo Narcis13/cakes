@@ -149,6 +149,16 @@
                             <p>Nu sunt ore disponibile pentru această dată.</p>
                             <p class="text-muted">Vă rugăm să selectați o altă dată.</p>
                         </div>
+                        <div class="time-slots-legend" id="time-slots-legend" style="display: none;">
+                            <div class="legend-item">
+                                <div class="legend-box available"></div>
+                                <span>Disponibil</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-box unavailable"></div>
+                                <span>Ocupat</span>
+                            </div>
+                        </div>
                         <div id="time-slots" class="time-slots-grid"></div>
                         <?= $this->Form->hidden('appointment_time', ['id' => 'selected-time']) ?>
                     </div>
@@ -830,10 +840,36 @@
 
 .time-slot.unavailable {
     background: #f8f9fa;
-    color: #adb5bd;
+    color: #6c757d;
     cursor: not-allowed;
-    border-color: #e9ecef;
-    opacity: 0.6;
+    border-color: #dee2e6;
+    opacity: 0.7;
+    position: relative;
+    overflow: hidden;
+}
+
+.time-slot.unavailable::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: -10%;
+    right: -10%;
+    height: 1px;
+    background: #dc3545;
+    transform: rotate(-15deg);
+    opacity: 0.5;
+}
+
+.time-slot.unavailable::after {
+    content: 'Ocupat';
+    position: absolute;
+    top: 2px;
+    right: 5px;
+    font-size: 10px;
+    color: #dc3545;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .time-slot .time-text {
@@ -870,6 +906,126 @@
     padding: 15px;
     border-radius: 4px;
     margin-bottom: 20px;
+}
+
+/* Tooltip animation for unavailable slots */
+@keyframes fadeInOut {
+    0% {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    15% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    85% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+}
+
+.slot-tooltip {
+    pointer-events: none;
+}
+
+.slot-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-top-color: #dc3545;
+}
+
+/* Enhanced unavailable slot indication */
+.time-slot.unavailable .time-text {
+    text-decoration: line-through;
+    opacity: 0.6;
+}
+
+/* Additional visual cues for unavailable slots */
+.time-slot.unavailable:hover {
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+/* Legend for time slots */
+.time-slots-legend {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 15px;
+    font-size: 13px;
+    color: #6c757d;
+    flex-wrap: wrap;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.legend-box {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #e9ecef;
+    border-radius: 4px;
+}
+
+.legend-box.available {
+    background: #fff;
+    border-color: #007bff;
+}
+
+.legend-box.unavailable {
+    background: #f8f9fa;
+    border-color: #dee2e6;
+    position: relative;
+    overflow: hidden;
+}
+
+.legend-box.unavailable::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: -5px;
+    right: -5px;
+    height: 1px;
+    background: #dc3545;
+    transform: rotate(-15deg);
+}
+
+/* Expiring soon slots */
+.time-slot.expiring-soon {
+    border-color: #ffc107;
+    background: #fff8e1;
+}
+
+.time-slot.expiring-soon:hover {
+    border-color: #ff9800;
+    background: #fff3cd;
+}
+
+.time-slot.expiring-soon::after {
+    content: 'Urgent';
+    position: absolute;
+    top: 2px;
+    left: 5px;
+    font-size: 9px;
+    color: #ff6f00;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.legend-box.expiring {
+    background: #fff8e1;
+    border-color: #ffc107;
 }
 </style>
 
@@ -1037,6 +1193,19 @@ document.addEventListener('DOMContentLoaded', function() {
             loadingDiv.style.display = 'none';
             
             if (data.success && data.slots.length > 0) {
+                // Show legend
+                document.getElementById('time-slots-legend').style.display = 'flex';
+                
+                // Count available and unavailable slots
+                const availableCount = data.slots.filter(s => s.available).length;
+                const unavailableCount = data.slots.filter(s => !s.available).length;
+                
+                // Check if any slots are expiring soon (for today's appointments)
+                let hasExpiringSoon = false;
+                const selectedDate = new Date(date);
+                const today = new Date();
+                const isToday = selectedDate.toDateString() === today.toDateString();
+                
                 // Group slots by hour for better organization
                 const slotsByHour = {};
                 data.slots.forEach(slot => {
@@ -1050,7 +1219,26 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Create time slots with enhanced UI
                 data.slots.forEach(slot => {
                     const slotDiv = document.createElement('div');
-                    slotDiv.className = 'time-slot' + (slot.available ? '' : ' unavailable');
+                    let classNames = 'time-slot';
+                    
+                    if (!slot.available) {
+                        classNames += ' unavailable';
+                    } else if (isToday && slot.available) {
+                        // Check if slot is expiring soon (within 2 hours)
+                        const [slotHour, slotMinute] = slot.time.split(':').map(Number);
+                        const slotTime = new Date();
+                        slotTime.setHours(slotHour, slotMinute, 0, 0);
+                        
+                        const now = new Date();
+                        const timeDiff = (slotTime - now) / (1000 * 60); // difference in minutes
+                        
+                        if (timeDiff > 0 && timeDiff <= 120) { // within 2 hours
+                            classNames += ' expiring-soon';
+                            hasExpiringSoon = true;
+                        }
+                    }
+                    
+                    slotDiv.className = classNames;
                     
                     // Parse time for better display
                     const [hour, minute] = slot.time.split(':');
@@ -1086,6 +1274,42 @@ document.addEventListener('DOMContentLoaded', function() {
                             
                             enableNextButton(3);
                         });
+                    } else {
+                        // Add click handler for unavailable slots to show message
+                        slotDiv.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            
+                            // Show a tooltip or alert
+                            const tooltip = document.createElement('div');
+                            tooltip.className = 'slot-tooltip';
+                            tooltip.textContent = 'Acest interval este deja rezervat';
+                            tooltip.style.cssText = `
+                                position: absolute;
+                                background: #dc3545;
+                                color: white;
+                                padding: 8px 12px;
+                                border-radius: 4px;
+                                font-size: 12px;
+                                z-index: 1000;
+                                white-space: nowrap;
+                                animation: fadeInOut 2s ease-in-out;
+                            `;
+                            
+                            // Position tooltip above the slot
+                            const rect = this.getBoundingClientRect();
+                            const containerRect = slotsDiv.getBoundingClientRect();
+                            tooltip.style.left = (rect.left - containerRect.left) + 'px';
+                            tooltip.style.top = (rect.top - containerRect.top - 40) + 'px';
+                            
+                            slotsDiv.style.position = 'relative';
+                            slotsDiv.appendChild(tooltip);
+                            
+                            // Remove tooltip after animation
+                            setTimeout(() => {
+                                tooltip.remove();
+                            }, 2000);
+                        });
                         
                         // Add hover effect feedback
                         slotDiv.addEventListener('mouseenter', function() {
@@ -1115,8 +1339,24 @@ document.addEventListener('DOMContentLoaded', function() {
                         slot.style.transform = 'translateY(0)';
                     }, index * 30);
                 });
+                
+                // Update legend to include expiring soon if needed
+                if (hasExpiringSoon) {
+                    const legendDiv = document.getElementById('time-slots-legend');
+                    if (!legendDiv.querySelector('.legend-item.expiring')) {
+                        const expiringItem = document.createElement('div');
+                        expiringItem.className = 'legend-item expiring';
+                        expiringItem.innerHTML = `
+                            <div class="legend-box expiring"></div>
+                            <span>Expiră curând</span>
+                        `;
+                        legendDiv.appendChild(expiringItem);
+                    }
+                }
             } else {
                 noSlotsDiv.style.display = 'block';
+                // Hide legend when no slots
+                document.getElementById('time-slots-legend').style.display = 'none';
             }
         })
         .catch(error => {
@@ -1259,10 +1499,16 @@ document.addEventListener('DOMContentLoaded', function() {
     form.addEventListener('submit', function(e) {
         e.preventDefault(); // Always prevent default first
         
+        const submitButton = document.getElementById('confirm-booking');
+        
         if (!document.getElementById('terms-agree').checked) {
             alert('Vă rugăm să acceptați termenii și condițiile.');
             return;
         }
+        
+        // Disable submit button and show loading state
+        submitButton.disabled = true;
+        submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Se procesează...';
         
         // Log form data for debugging
         const formData = {
@@ -1293,21 +1539,61 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(response => {
             console.log('Response status:', response.status);
-            console.log('Response headers:', response.headers);
+            console.log('Response URL:', response.url);
+            
+            // Check if we were redirected
+            if (response.redirected) {
+                console.log('Redirected to:', response.url);
+                // If redirected to success page, go there
+                if (response.url.includes('/appointments/success/')) {
+                    window.location.href = response.url;
+                    return null;
+                }
+            }
             
             // Check if response is JSON
             const contentType = response.headers.get('content-type');
             if (contentType && contentType.includes('application/json')) {
                 return response.json();
             } else {
-                return response.text().then(text => ({html: text}));
+                // For HTML responses, check the URL first
+                return response.text().then(text => ({
+                    html: text,
+                    url: response.url
+                }));
             }
         })
         .then(data => {
+            if (!data) return; // Already redirected
+            
             if (data.html) {
                 // HTML response
+                console.log('Response URL:', data.url);
                 console.log('Response HTML preview:', data.html.substring(0, 500));
-                if (data.html.includes('Flash__error') || data.html.includes('eroare')) {
+                
+                // Check if we're already on the success page by URL
+                if (data.url && data.url.includes('/appointments/success/')) {
+                    window.location.href = data.url;
+                    return;
+                }
+                
+                // Check if the response contains success page elements
+                if (data.html.includes('appointment-success') || data.html.includes('Programare Înregistrată cu Succes')) {
+                    // Extract the appointment ID from the HTML if possible
+                    const match = data.html.match(/\/appointments\/success\/(\d+)/);
+                    if (match && match[1]) {
+                        window.location.href = `/appointments/success/${match[1]}`;
+                    } else {
+                        // Try to find appointment ID in the response
+                        const idMatch = data.html.match(/appointment-(\d+)/);
+                        if (idMatch && idMatch[1]) {
+                            window.location.href = `/appointments/success/${idMatch[1]}`;
+                        } else {
+                            // Just go to appointments page and let server redirect handle it
+                            window.location.href = '/appointments';
+                        }
+                    }
+                } else if (data.html.includes('Flash__error') || data.html.includes('eroare')) {
                     const parser = new DOMParser();
                     const doc = parser.parseFromString(data.html, 'text/html');
                     const errorDiv = doc.querySelector('.alert-danger, .message.error');
@@ -1317,29 +1603,31 @@ document.addEventListener('DOMContentLoaded', function() {
                         alert('A apărut o eroare. Verificați consola pentru detalii.');
                     }
                     console.error('Full response:', data.html);
+                    // Restore button state on error
+                    submitButton.disabled = false;
+                    submitButton.innerHTML = '<i class="fas fa-check"></i> Confirmă Programarea';
                 } else {
-                    // Form was submitted normally, redirect to home
-                    window.location.href = '/appointments';
+                    // Unknown HTML response - log it and show error
+                    console.error('Unexpected HTML response, not success or error page');
+                    console.log('Full HTML:', data.html);
+                    alert('A apărut o eroare neașteptată. Vă rugăm să încercați din nou.');
+                    // Restore button state
+                    submitButton.disabled = false;
+                    submitButton.innerHTML = '<i class="fas fa-check"></i> Confirmă Programarea';
                 }
             } else {
                 // JSON response
                 console.log('JSON response:', data);
                 if (data.success) {
-                    // Build the success URL
+                    console.log('Success! Redirecting to:', data.redirect);
+                    // Use the redirect URL directly from the response
                     if (data.redirect) {
-                        let redirectUrl;
-                        if (typeof data.redirect === 'object' && data.redirect.action) {
-                            // Handle CakePHP array format redirect
-                            const appointmentId = data.redirect[0] || data.redirect.id;
-                            redirectUrl = `/appointments/${data.redirect.action}/${appointmentId}`;
-                        } else if (typeof data.redirect === 'string') {
-                            redirectUrl = data.redirect;
-                        } else {
-                            console.log('Redirect data:', data.redirect);
-                            redirectUrl = '/appointments';
-                        }
-                        window.location.href = redirectUrl;
+                        window.location.href = data.redirect;
+                    } else if (data.appointment_id) {
+                        // Fallback: build URL with appointment ID
+                        window.location.href = `/appointments/success/${data.appointment_id}`;
                     } else {
+                        // Last fallback
                         window.location.href = '/appointments';
                     }
                 } else {
@@ -1357,12 +1645,18 @@ document.addEventListener('DOMContentLoaded', function() {
                         }
                     }
                     alert(errorMessage);
+                    // Restore button state on error
+                    submitButton.disabled = false;
+                    submitButton.innerHTML = '<i class="fas fa-check"></i> Confirmă Programarea';
                 }
             }
         })
         .catch(error => {
             console.error('Fetch error:', error);
             alert('Eroare de rețea: ' + error.message);
+            // Restore button state on error
+            submitButton.disabled = false;
+            submitButton.innerHTML = '<i class="fas fa-check"></i> Confirmă Programarea';
         });
     });
 

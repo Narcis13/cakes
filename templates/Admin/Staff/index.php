@@ -102,8 +102,8 @@
                                                 ['action' => 'view', $staffMember->id],
                                                 ['class' => 'fw-bold text-decoration-none']
                                             ) ?>
-                                            <?php if ($staffMember->specialization): ?>
-                                                <small class="text-muted d-block"><?= h($staffMember->specialization) ?></small>
+                                            <?php if ($staffMember->specialization_data ?? $staffMember->specialization): ?>
+                                                <small class="text-muted d-block"><?= h($staffMember->specialization_data->name ?? $staffMember->specialization) ?></small>
                                             <?php endif; ?>
                                         </div>
                                     </div>

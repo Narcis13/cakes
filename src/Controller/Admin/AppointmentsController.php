@@ -92,7 +92,7 @@ class AppointmentsController extends AppController
     public function view($id = null)
     {
         $appointment = $this->Appointments->get($id, [
-            'contain' => ['Staff', 'Services'],
+            'contain' => ['Doctors', 'Services'],
         ]);
 
         $this->set(compact('appointment'));
@@ -204,7 +204,7 @@ class AppointmentsController extends AppController
     public function today()
     {
         $query = $this->Appointments->find()
-            ->contain(['Staff', 'Services'])
+            ->contain(['Doctors', 'Services'])
             ->where(['Appointments.appointment_date' => Date::now()])
             ->orderBy([
                 'Appointments.appointment_time' => 'ASC'
@@ -212,7 +212,20 @@ class AppointmentsController extends AppController
 
         $appointments = $this->paginate($query);
 
-        $this->set(compact('appointments'));
+        // Get lists for filters (same as index action)
+        $doctors = $this->Appointments->Doctors->find('list', [
+            'order' => ['first_name' => 'ASC', 'last_name' => 'ASC']
+        ])->toArray();
+
+        $statuses = [
+            'pending' => 'În așteptare',
+            'confirmed' => 'Confirmată',
+            'cancelled' => 'Anulată',
+            'completed' => 'Finalizată',
+            'no-show' => 'Neprezentare'
+        ];
+
+        $this->set(compact('appointments', 'doctors', 'statuses'));
         $this->render('index');
     }
 
@@ -253,7 +266,7 @@ class AppointmentsController extends AppController
                 $appointment->patient_name,
                 $appointment->patient_phone,
                 $appointment->patient_email,
-                $appointment->doctor->name,
+                $appointment->doctor->first_name . ' ' . $appointment->doctor->last_name,
                 $appointment->service->name,
                 $appointment->status,
                 $appointment->notes

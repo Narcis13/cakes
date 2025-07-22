@@ -11,6 +11,7 @@ use Cake\I18n\Time;
 // use Cake\Mailer\Mailer;
 // use Cake\Mailer\MailerAwareTrait;
 use Cake\Utility\Security;
+use Cake\Routing\Router;
 
 /**
  * Appointments Controller
@@ -76,22 +77,16 @@ class AppointmentsController extends AppController
      */
     public function index()
     {
-        // Get all active specializations from doctors
-        $specializations = $this->Staff->find()
-            ->select(['specialization'])
-            ->where([
-                'is_active' => true,
-                'specialization IS NOT' => null,
-                'specialization !=' => '',
-                'staff_type' => 'doctor'
-            ])
-            ->distinct(['specialization'])
-            ->orderAsc('specialization')
+        // Get all active specializations
+        $specializations = $this->fetchTable('Specializations')->find()
+            ->select(['id', 'name'])
+            ->where(['is_active' => true])
+            ->orderAsc('name')
             ->all()
-            ->map(function ($staff) {
+            ->map(function ($spec) {
                 return [
-                    'value' => $staff->specialization,
-                    'text' => $staff->specialization
+                    'value' => $spec->name,
+                    'text' => $spec->name
                 ];
             })
             ->toArray();
@@ -133,11 +128,26 @@ class AppointmentsController extends AppController
         }
 
         try {
+            // First get the specialization ID
+            $specialization = $this->fetchTable('Specializations')->find()
+                ->where(['name' => $specialty])
+                ->first();
+            
+            if (!$specialization) {
+                $this->set([
+                    'success' => false,
+                    'message' => 'Specializarea selectată nu există.'
+                ]);
+                $this->viewBuilder()->setOption('serialize', ['success', 'message']);
+                return;
+            }
+
             // Get all doctors with this specialty, regardless of availability
             $doctors = $this->Staff->find()
+                ->contain(['Specializations'])
                 ->where([
-                    'specialization' => $specialty,
-                    'is_active' => true,
+                    'specialization_id' => $specialization->id,
+                    'Staff.is_active' => true,
                     'staff_type' => 'doctor'
                 ])
                 ->toArray();
@@ -343,20 +353,26 @@ class AppointmentsController extends AppController
                 }
                 */
                 
+                // Log successful save for debugging
+                \Cake\Log\Log::debug('Appointment saved successfully with ID: ' . $appointment->id);
+                
                 $this->Flash->success('Programarea a fost creată cu succes!');
                 
-                // Check if it's an AJAX request
-                if ($this->request->is('ajax')) {
+                // Always return JSON for AJAX requests with proper redirect URL
+                if ($this->request->is('ajax') || $this->request->getHeaderLine('X-Requested-With') === 'XMLHttpRequest') {
+                    \Cake\Log\Log::debug('AJAX request detected, returning JSON response');
                     $this->viewBuilder()->setClassName('Json');
                     $this->set([
                         'success' => true,
                         'message' => 'Programarea a fost creată cu succes!',
-                        'redirect' => $this->Url->build(['action' => 'success', $appointment->id])
+                        'redirect' => Router::url(['controller' => 'Appointments', 'action' => 'success', $appointment->id], true),
+                        'appointment_id' => $appointment->id
                     ]);
-                    $this->viewBuilder()->setOption('serialize', ['success', 'message', 'redirect']);
+                    $this->viewBuilder()->setOption('serialize', ['success', 'message', 'redirect', 'appointment_id']);
                     return;
                 }
                 
+                \Cake\Log\Log::debug('Non-AJAX request, redirecting to success page');
                 return $this->redirect(['action' => 'success', $appointment->id]);
             } else {
                 // Log validation errors
@@ -364,7 +380,7 @@ class AppointmentsController extends AppController
                 $this->Flash->error('Programarea nu a putut fi salvată. Vă rugăm să încercați din nou.');
                 
                 // For AJAX requests, return JSON error response
-                if ($this->request->is('ajax')) {
+                if ($this->request->is('ajax') || $this->request->getHeaderLine('X-Requested-With') === 'XMLHttpRequest') {
                     $this->viewBuilder()->setClassName('Json');
                     $this->set([
                         'success' => false,
@@ -395,7 +411,7 @@ class AppointmentsController extends AppController
 
         $appointment = $this->Appointments->find()
             ->where(['confirmation_token' => $token])
-            ->contain(['Staff', 'Services'])
+            ->contain(['Doctors', 'Services'])
             ->first();
 
         if (!$appointment) {
@@ -449,7 +465,7 @@ class AppointmentsController extends AppController
     public function success($id = null)
     {
         $appointment = $this->Appointments->get($id, [
-            'contain' => ['Staff', 'Services']
+            'contain' => ['Doctors', 'Services']
         ]);
 
         $this->set(compact('appointment'));

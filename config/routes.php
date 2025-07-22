@@ -34,6 +34,11 @@ return static function (RouteBuilder $routes) {
         $builder->connect('/doctors', ['controller' => 'Doctors', 'action' => 'index']);
         $builder->connect('/appointments', ['controller' => 'Appointments', 'action' => 'index']);
         $builder->connect('/appointments/book', ['controller' => 'Appointments', 'action' => 'book']);
+        $builder->connect('/appointments/check-availability', ['controller' => 'Appointments', 'action' => 'checkAvailability']);
+        $builder->connect('/appointments/get-available-slots', ['controller' => 'Appointments', 'action' => 'getAvailableSlots']);
+        $builder->connect('/appointments/success/{id}', ['controller' => 'Appointments', 'action' => 'success'])
+            ->setPass(['id'])
+            ->setPatterns(['id' => '\d+']);
         
         // Patient portal routes
         $builder->connect('/portal', ['controller' => 'Patients', 'action' => 'portal']);

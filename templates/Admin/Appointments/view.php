@@ -57,7 +57,7 @@
                         </tr>
                         <tr>
                             <th><?= __('Medic') ?></th>
-                            <td><?= $appointment->has('staff') ? $this->Html->link($appointment->staff->name, ['controller' => 'Staff', 'action' => 'view', $appointment->staff->id]) : '' ?></td>
+                            <td><?= $appointment->has('doctor') ? $this->Html->link($appointment->doctor->first_name . ' ' . $appointment->doctor->last_name, ['controller' => 'Staff', 'action' => 'view', $appointment->doctor->id]) : '' ?></td>
                         </tr>
                         <tr>
                             <th><?= __('Serviciu') ?></th>

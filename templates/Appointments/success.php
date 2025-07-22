@@ -3,6 +3,7 @@
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\Appointment $appointment
  */
+use Cake\Core\Configure;
 ?>
 
 <div class="appointment-success">
@@ -14,18 +15,11 @@
             
             <h1>Programare Înregistrată cu Succes!</h1>
             
-            <?php if ($appointment->status === 'pending'): ?>
-                <div class="alert alert-info">
-                    <i class="fas fa-info-circle"></i>
-                    <p><strong>Important:</strong> Un email de confirmare a fost trimis la adresa <strong><?= h($appointment->patient_email) ?></strong>.</p>
-                    <p>Vă rugăm să verificați emailul și să confirmați programarea în următoarele 24 de ore.</p>
-                </div>
-            <?php else: ?>
-                <div class="alert alert-success">
-                    <i class="fas fa-check"></i>
-                    <p>Programarea dumneavoastră a fost confirmată cu succes!</p>
-                </div>
-            <?php endif; ?>
+            <div class="alert alert-success">
+                <i class="fas fa-check"></i>
+                <p>Programarea dumneavoastră a fost înregistrată cu succes!</p>
+                <p>Veți fi contactat pentru confirmare la numărul de telefon furnizat.</p>
+            </div>
             
             <div class="appointment-details">
                 <h2>Detalii Programare</h2>
@@ -36,10 +30,10 @@
                             <h3>Informații Medicale</h3>
                             <dl>
                                 <dt>Medic:</dt>
-                                <dd><?= h($appointment->staff->name) ?></dd>
+                                <dd><?= h($appointment->doctor->first_name . ' ' . $appointment->doctor->last_name) ?></dd>
                                 
                                 <dt>Specialitate:</dt>
-                                <dd><?= h($appointment->staff->specialization) ?></dd>
+                                <dd><?= h($appointment->doctor->specialization) ?></dd>
                                 
                                 <dt>Serviciu:</dt>
                                 <dd><?= h($appointment->service->name) ?></dd>
@@ -86,8 +80,8 @@
             <div class="next-steps">
                 <h2>Următorii Pași</h2>
                 <ol>
-                    <li>Verificați emailul pentru confirmarea programării</li>
-                    <li>Confirmați programarea folosind link-ul din email</li>
+                    <li>Salvați codul programării pentru referință</li>
+                    <li>Veți fi contactat telefonic pentru confirmare</li>
                     <li>Prezentați-vă cu 10 minute înainte de ora programată</li>
                     <li>Aduceți un document de identitate și cardul de sănătate</li>
                 </ol>

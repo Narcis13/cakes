@@ -32,7 +32,7 @@ class StaffController extends AppController
     public function index()
     {
         $query = $this->Staff->find()
-            ->contain(['Departments'])
+            ->contain(['Departments', 'Specializations'])
             ->order(['Staff.first_name' => 'ASC', 'Staff.last_name' => 'ASC']);
 
         // Filter by department if requested
@@ -84,11 +84,11 @@ class StaffController extends AppController
     public function view(?string $id = null)
     {
         $staffMember = $this->Staff->get($id, [
-            'contain' => ['Departments', 'Appointments' => [
-                'conditions' => ['Appointments.appointment_date >=' => date('Y-m-d')],
-                'order' => ['Appointments.appointment_date' => 'ASC'],
-                'limit' => 10,
-            ]],
+            'contain' => ['Departments', 'Specializations', 'Appointments' => function ($q) {
+                return $q->where(['Appointments.appointment_date >=' => date('Y-m-d')])
+                    ->order(['Appointments.appointment_date' => 'ASC'])
+                    ->limit(10);
+            }],
         ]);
 
         $this->set(compact('staffMember'));
@@ -140,7 +140,13 @@ class StaffController extends AppController
             ->order(['name' => 'ASC'])
             ->toArray();
 
-        $this->set(compact('staffMember', 'departments'));
+        // Get specializations list for dropdown
+        $specializations = $this->Staff->Specializations->find('list', keyField: 'id', valueField: 'name')
+            ->where(['is_active' => true])
+            ->order(['name' => 'ASC'])
+            ->toArray();
+
+        $this->set(compact('staffMember', 'departments', 'specializations'));
     }
 
     /**
@@ -153,7 +159,7 @@ class StaffController extends AppController
     public function edit(?string $id = null)
     {
         $staffMember = $this->Staff->get($id, [
-            'contain' => [],
+            'contain' => ['Specializations'],
         ]);
 
         if ($this->request->is(['patch', 'post', 'put'])) {
@@ -189,7 +195,13 @@ class StaffController extends AppController
             ->order(['name' => 'ASC'])
             ->toArray();
 
-        $this->set(compact('staffMember', 'departments'));
+        // Get specializations list for dropdown
+        $specializations = $this->Staff->Specializations->find('list', keyField: 'id', valueField: 'name')
+            ->where(['is_active' => true])
+            ->order(['name' => 'ASC'])
+            ->toArray();
+
+        $this->set(compact('staffMember', 'departments', 'specializations'));
     }
 
     /**

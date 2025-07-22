@@ -65,7 +65,7 @@
                         </tr>
                         <tr>
                             <th class="text-muted">Specialization:</th>
-                            <td><?= h($staffMember->specialization ?: '-') ?></td>
+                            <td><?= h($staffMember->specialization_data->name ?? $staffMember->specialization ?? '-') ?></td>
                         </tr>
                         <tr>
                             <th class="text-muted">Staff Type:</th>
