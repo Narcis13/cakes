@@ -229,6 +229,28 @@
                 ]) ?>
             </div>
             
+            <!-- CAPTCHA -->
+            <div class="form-group captcha-group">
+                <label class="form-label">Verificare de Securitate *</label>
+                <div class="captcha-container">
+                    <p class="captcha-question">
+                        Pentru siguranță, vă rugăm să rezolvați această operație simplă:
+                        <strong id="captcha-question"></strong>
+                    </p>
+                    <?= $this->Form->control('captcha_answer', [
+                        'type' => 'text',
+                        'label' => false,
+                        'class' => 'form-control captcha-input',
+                        'required' => true,
+                        'placeholder' => 'Introduceti răspunsul',
+                        'autocomplete' => 'off'
+                    ]) ?>
+                    <button type="button" class="btn btn-sm btn-outline-secondary refresh-captcha" title="Generează o nouă întrebare">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
+            </div>
+            
             <div class="step-actions">
                 <button type="button" class="btn btn-secondary prev-step">
                     <i class="fas fa-arrow-left"></i> Pasul Anterior
@@ -1671,5 +1693,73 @@ document.addEventListener('DOMContentLoaded', function() {
         const csrfField = document.querySelector('input[name="_csrfToken"]');
         return csrfField ? csrfField.value : '';
     }
+
+    // CAPTCHA functionality
+    function generateCaptcha() {
+        fetch('/appointments/generate-captcha', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': getCsrfToken()
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById('captcha-question').textContent = data.question;
+                document.querySelector('input[name="captcha_answer"]').value = '';
+            }
+        })
+        .catch(error => {
+            console.error('CAPTCHA generation error:', error);
+        });
+    }
+
+    // Generate initial CAPTCHA when page loads
+    generateCaptcha();
+
+    // Handle CAPTCHA refresh button
+    document.querySelector('.refresh-captcha').addEventListener('click', function() {
+        generateCaptcha();
+        this.style.transform = 'rotate(360deg)';
+        setTimeout(() => {
+            this.style.transform = '';
+        }, 500);
+    });
 });
 </script>
+
+<style>
+.captcha-group {
+    margin: 20px 0;
+    padding: 15px;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    background-color: #f8f9fa;
+}
+
+.captcha-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.captcha-question {
+    margin: 0 0 10px 0;
+    font-size: 16px;
+}
+
+.captcha-input {
+    width: 100px !important;
+    text-align: center;
+}
+
+.refresh-captcha {
+    transition: transform 0.5s ease;
+    flex-shrink: 0;
+}
+
+.refresh-captcha:hover {
+    transform: rotate(180deg);
+}
+</style>

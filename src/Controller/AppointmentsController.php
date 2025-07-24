@@ -8,8 +8,7 @@ use Cake\Core\Configure;
 use Cake\Http\Exception\NotFoundException;
 use Cake\I18n\Date;
 use Cake\I18n\Time;
-// use Cake\Mailer\Mailer;
-// use Cake\Mailer\MailerAwareTrait;
+use App\Mailer\AppointmentMailer;
 use Cake\Utility\Security;
 use Cake\Routing\Router;
 
@@ -22,7 +21,6 @@ use Cake\Routing\Router;
  */
 class AppointmentsController extends AppController
 {
-    // use MailerAwareTrait;
     
     /**
      * @var \App\Service\AvailabilityService
@@ -61,7 +59,8 @@ class AppointmentsController extends AppController
             'getAvailableSlots',
             'book',
             'confirm',
-            'success'
+            'success',
+            'generateCaptcha'
         ]);
         
         // Load AJAX routes
@@ -291,6 +290,23 @@ class AppointmentsController extends AppController
     {
         $this->request->allowMethod(['post']);
 
+        // Rate limiting check
+        if (!$this->checkRateLimit()) {
+            $this->Flash->error('Prea multe încercări de programare. Vă rugăm să încercați din nou mai târziu.');
+            
+            if ($this->request->is('ajax')) {
+                $this->viewBuilder()->setClassName('Json');
+                $this->set([
+                    'success' => false,
+                    'message' => 'Prea multe încercări de programare. Vă rugăm să încercați din nou mai târziu.'
+                ]);
+                $this->viewBuilder()->setOption('serialize', ['success', 'message']);
+                return;
+            }
+            
+            return $this->redirect(['action' => 'index']);
+        }
+
         $appointment = $this->Appointments->newEmptyEntity();
         
         if ($this->request->is('post')) {
@@ -304,6 +320,23 @@ class AppointmentsController extends AppController
                 empty($data['appointment_date']) || empty($data['appointment_time'])) {
                 \Cake\Log\Log::error('Missing required fields. Data: ' . json_encode($data));
                 $this->Flash->error('Vă rugăm să completați toate câmpurile obligatorii.');
+                return $this->redirect(['action' => 'index']);
+            }
+            
+            // Validate CAPTCHA
+            if (!$this->validateCaptcha($data['captcha_answer'] ?? '')) {
+                $this->Flash->error('Răspunsul la întrebarea de securitate este incorect.');
+                
+                if ($this->request->is('ajax')) {
+                    $this->viewBuilder()->setClassName('Json');
+                    $this->set([
+                        'success' => false,
+                        'message' => 'Răspunsul la întrebarea de securitate este incorect.'
+                    ]);
+                    $this->viewBuilder()->setOption('serialize', ['success', 'message']);
+                    return;
+                }
+                
                 return $this->redirect(['action' => 'index']);
             }
             
@@ -342,16 +375,33 @@ class AppointmentsController extends AppController
             }
 
             if ($this->Appointments->save($appointment)) {
-                // Send confirmation email - disabled temporarily
-                /*
+                // Send confirmation email
                 try {
-                    $this->getMailer('Appointment')->send('confirmationEmail', [$appointment]);
+                    $mailer = new AppointmentMailer();
+                    $mailer->confirmation($appointment, $appointment->confirmation_token)->send();
+                    
                     $this->Flash->success('Programarea a fost creată cu succes. Vă rugăm să verificați emailul pentru confirmare.');
                 } catch (\Exception $e) {
                     \Cake\Log\Log::error('Email error: ' . $e->getMessage());
                     $this->Flash->warning('Programarea a fost creată, dar emailul de confirmare nu a putut fi trimis.');
                 }
-                */
+                
+                // Send admin notification email
+                try {
+                    // Reload appointment with associations for admin email
+                    $appointmentForAdmin = $this->Appointments->get($appointment->id, [
+                        'contain' => [
+                            'Doctors' => ['Departments'],
+                            'Services'
+                        ]
+                    ]);
+                    
+                    $adminMailer = new AppointmentMailer();
+                    $adminMailer->adminNotification($appointmentForAdmin)->send();
+                } catch (\Exception $e) {
+                    \Cake\Log\Log::error('Admin notification email error: ' . $e->getMessage());
+                    // Don't show error to user as this is internal
+                }
                 
                 // Log successful save for debugging
                 \Cake\Log\Log::debug('Appointment saved successfully with ID: ' . $appointment->id);
@@ -411,7 +461,10 @@ class AppointmentsController extends AppController
 
         $appointment = $this->Appointments->find()
             ->where(['confirmation_token' => $token])
-            ->contain(['Doctors', 'Services'])
+            ->contain([
+                'Doctors' => ['Departments'],
+                'Services'
+            ])
             ->first();
 
         if (!$appointment) {
@@ -437,14 +490,13 @@ class AppointmentsController extends AppController
         $appointment->confirmed_at = Time::now();
 
         if ($this->Appointments->save($appointment)) {
-            // Send confirmation email - disabled temporarily
-            /*
+            // Send confirmed email
             try {
-                $this->getMailer('Appointment')->send('confirmedEmail', [$appointment]);
+                $mailer = new AppointmentMailer();
+                $mailer->confirmed($appointment)->send();
             } catch (\Exception $e) {
-                // Log error but don't show to user
+                \Cake\Log\Log::error('Confirmed email error: ' . $e->getMessage());
             }
-            */
 
             $this->Flash->success('Programarea a fost confirmată cu succes!');
             return $this->redirect(['action' => 'success', $appointment->id]);
@@ -465,9 +517,106 @@ class AppointmentsController extends AppController
     public function success($id = null)
     {
         $appointment = $this->Appointments->get($id, [
-            'contain' => ['Doctors', 'Services']
+            'contain' => [
+                'Doctors' => ['Departments'],
+                'Services'
+            ]
         ]);
 
         $this->set(compact('appointment'));
+    }
+
+    /**
+     * Generate CAPTCHA question and store answer in session
+     *
+     * @return array
+     */
+    public function generateCaptcha(): array
+    {
+        $this->request->allowMethod(['post']);
+        $this->viewBuilder()->setClassName('Json');
+        
+        $num1 = rand(1, 10);
+        $num2 = rand(1, 10);
+        $operation = rand(0, 1) ? '+' : '-';
+        
+        if ($operation === '-' && $num1 < $num2) {
+            // Ensure positive result
+            $temp = $num1;
+            $num1 = $num2;
+            $num2 = $temp;
+        }
+        
+        $question = "$num1 $operation $num2 = ?";
+        $answer = $operation === '+' ? $num1 + $num2 : $num1 - $num2;
+        
+        // Store answer in session
+        $session = $this->request->getSession();
+        $session->write('captcha_answer', $answer);
+        
+        $this->set([
+            'success' => true,
+            'question' => $question
+        ]);
+        $this->viewBuilder()->setOption('serialize', ['success', 'question']);
+        
+        return [
+            'question' => $question,
+            'answer' => $answer
+        ];
+    }
+    
+    /**
+     * Validate CAPTCHA answer
+     *
+     * @param string $userAnswer
+     * @return bool
+     */
+    private function validateCaptcha(string $userAnswer): bool
+    {
+        $session = $this->request->getSession();
+        $correctAnswer = $session->read('captcha_answer');
+        
+        if ($correctAnswer === null) {
+            return false;
+        }
+        
+        // Clean up session after validation
+        $session->delete('captcha_answer');
+        
+        return (int)$userAnswer === (int)$correctAnswer;
+    }
+
+    /**
+     * Check rate limiting for appointment booking
+     *
+     * @return bool
+     */
+    private function checkRateLimit(): bool
+    {
+        $rateLimitConfig = Configure::read('Appointments.rate_limit');
+        $maxAttempts = $rateLimitConfig['attempts'] ?? 10;
+        $timeWindow = $rateLimitConfig['window'] ?? 3600; // 1 hour
+        
+        $clientIp = $this->request->clientIp();
+        $cacheKey = 'appointment_rate_limit_' . md5($clientIp);
+        
+        // Get current attempt count from cache
+        $attempts = \Cake\Cache\Cache::read($cacheKey, 'default');
+        
+        if ($attempts === false) {
+            // First attempt, initialize counter
+            \Cake\Cache\Cache::write($cacheKey, 1, $timeWindow);
+            return true;
+        }
+        
+        if ($attempts >= $maxAttempts) {
+            // Rate limit exceeded
+            return false;
+        }
+        
+        // Increment counter
+        \Cake\Cache\Cache::write($cacheKey, $attempts + 1, $timeWindow);
+        return true;
     }
 }

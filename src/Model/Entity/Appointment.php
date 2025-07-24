@@ -60,6 +60,8 @@ class Appointment extends Entity
         'confirmed_at' => true,
         'cancelled_at' => true,
         'cancellation_reason' => true,
+        'reminded_24h' => true,
+        'reminded_2h' => true,
         'created' => true,
         'modified' => true,
         'service' => true,

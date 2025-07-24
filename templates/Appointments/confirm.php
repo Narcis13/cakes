@@ -22,7 +22,7 @@
                         <i class="fas fa-user-md"></i>
                         <div>
                             <strong>Medic:</strong><br>
-                            <?= h($appointment->staff->name) ?>
+                            <?= h($appointment->doctors->first_name . ' ' . $appointment->doctors->last_name) ?>
                         </div>
                     </div>
                     
