@@ -17,9 +17,9 @@ class HeroCell extends Cell
      */
     public function display(): void
     {
-        $title = 'Welcome to Medilab';
-        $subtitle = 'We are team of talented designers making websites with Bootstrap';
-        $buttonText = 'Get Started';
+        $title = 'Empatie.Excelență.';
+        $subtitle = 'Suntem o echipă medicală dedicată, oferind îngrijire de calitate și suport pacienților noștri.';
+        $buttonText = 'Despre noi';
         $buttonLink = '#about';
 
         $this->set(compact('title', 'subtitle', 'buttonText', 'buttonLink'));

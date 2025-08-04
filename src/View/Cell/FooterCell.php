@@ -27,7 +27,7 @@ class FooterCell extends Cell
         // For now, using static data as in the original template
         $contactInfo = [
             'name' => 'Medilab',
-            'address' => 'A108 Adam Street',
+            'address' => 'A109 Adam Street',
             'city' => 'New York, NY 535022',
             'country' => 'United States',
             'phone' => '+1 5589 55488 55',
