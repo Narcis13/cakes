@@ -3,8 +3,9 @@ declare(strict_types=1);
 
 namespace App\Mailer;
 
-use Cake\Mailer\Mailer;
 use Cake\Core\Configure;
+use Cake\Mailer\Mailer;
+use Cake\Routing\Router;
 
 class AppointmentMailer extends Mailer
 {
@@ -19,7 +20,7 @@ class AppointmentMailer extends Mailer
     public function confirmation($appointment, $token = null)
     {
         $hospitalConfig = Configure::read('Hospital');
-        
+
         $this
             ->setTo($appointment->patient_email)
             ->setSubject('Confirmare programare - ' . $hospitalConfig['name'])
@@ -28,12 +29,12 @@ class AppointmentMailer extends Mailer
                 'appointment' => $appointment,
                 'token' => $token,
                 'hospital' => $hospitalConfig,
-                'confirmationUrl' => $token ? 
-                    \Cake\Routing\Router::url([
+                'confirmationUrl' => $token ?
+                    Router::url([
                         'controller' => 'Appointments',
                         'action' => 'confirm',
-                        $token
-                    ], true) : null
+                        $token,
+                    ], true) : null,
             ])
             ->viewBuilder()->setTemplate('appointment_confirmation');
 
@@ -43,7 +44,7 @@ class AppointmentMailer extends Mailer
     public function reminder($appointment, $hoursUntil = 24)
     {
         $hospitalConfig = Configure::read('Hospital');
-        
+
         $this
             ->setTo($appointment->patient_email)
             ->setSubject('Reamintire programare - ' . $hospitalConfig['name'])
@@ -51,7 +52,7 @@ class AppointmentMailer extends Mailer
             ->setViewVars([
                 'appointment' => $appointment,
                 'hospital' => $hospitalConfig,
-                'hoursUntil' => $hoursUntil
+                'hoursUntil' => $hoursUntil,
             ])
             ->viewBuilder()->setTemplate('appointment_reminder');
 
@@ -61,7 +62,7 @@ class AppointmentMailer extends Mailer
     public function cancellation($appointment, $reason = null)
     {
         $hospitalConfig = Configure::read('Hospital');
-        
+
         $this
             ->setTo($appointment->patient_email)
             ->setSubject('Anulare programare - ' . $hospitalConfig['name'])
@@ -69,7 +70,7 @@ class AppointmentMailer extends Mailer
             ->setViewVars([
                 'appointment' => $appointment,
                 'hospital' => $hospitalConfig,
-                'reason' => $reason
+                'reason' => $reason,
             ])
             ->viewBuilder()->setTemplate('appointment_cancellation');
 
@@ -79,7 +80,7 @@ class AppointmentMailer extends Mailer
     public function rescheduled($appointment, $oldDateTime = null)
     {
         $hospitalConfig = Configure::read('Hospital');
-        
+
         $this
             ->setTo($appointment->patient_email)
             ->setSubject('Reprogramare - ' . $hospitalConfig['name'])
@@ -87,7 +88,7 @@ class AppointmentMailer extends Mailer
             ->setViewVars([
                 'appointment' => $appointment,
                 'hospital' => $hospitalConfig,
-                'oldDateTime' => $oldDateTime
+                'oldDateTime' => $oldDateTime,
             ])
             ->viewBuilder()->setTemplate('appointment_rescheduled');
 
@@ -97,7 +98,7 @@ class AppointmentMailer extends Mailer
     public function adminNotification($appointment)
     {
         $hospitalConfig = Configure::read('Hospital');
-        
+
         $this
             ->setTo($hospitalConfig['email'])
             ->setSubject('Programare nouă - ' . $hospitalConfig['name'])
@@ -105,12 +106,12 @@ class AppointmentMailer extends Mailer
             ->setViewVars([
                 'appointment' => $appointment,
                 'hospital' => $hospitalConfig,
-                'adminUrl' => \Cake\Routing\Router::url([
+                'adminUrl' => Router::url([
                     'controller' => 'Appointments',
                     'action' => 'view',
                     $appointment->id,
-                    'prefix' => 'Admin'
-                ], true)
+                    'prefix' => 'Admin',
+                ], true),
             ])
             ->viewBuilder()->setTemplate('appointment_admin_notification');
 
@@ -120,14 +121,14 @@ class AppointmentMailer extends Mailer
     public function confirmed($appointment)
     {
         $hospitalConfig = Configure::read('Hospital');
-        
+
         $this
             ->setTo($appointment->patient_email)
             ->setSubject('Programare confirmată - ' . $hospitalConfig['name'])
             ->setEmailFormat('both')
             ->setViewVars([
                 'appointment' => $appointment,
-                'hospital' => $hospitalConfig
+                'hospital' => $hospitalConfig,
             ])
             ->viewBuilder()->setTemplate('appointment_confirmed');
 

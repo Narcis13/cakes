@@ -8,12 +8,12 @@ use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use InvalidArgumentException;
 
 /**
  * ScheduleExceptions Model
  *
  * @property \App\Model\Table\StaffTable&\Cake\ORM\Association\BelongsTo $Staff
- *
  * @method \App\Model\Entity\ScheduleException newEmptyEntity()
  * @method \App\Model\Entity\ScheduleException newEntity(array $data, array $options = [])
  * @method array<\App\Model\Entity\ScheduleException> newEntities(array $data, array $options = [])
@@ -27,7 +27,6 @@ use Cake\Validation\Validator;
  * @method iterable<\App\Model\Entity\ScheduleException>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\ScheduleException> saveManyOrFail(iterable $entities, array $options = [])
  * @method iterable<\App\Model\Entity\ScheduleException>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\ScheduleException>|false deleteMany(iterable $entities, array $options = [])
  * @method iterable<\App\Model\Entity\ScheduleException>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\ScheduleException> deleteManyOrFail(iterable $entities, array $options = [])
- *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
 class ScheduleExceptionsTable extends Table
@@ -75,7 +74,7 @@ class ScheduleExceptionsTable extends Table
                 'rule' => function ($value) {
                     return $value >= Date::now();
                 },
-                'message' => __('Exception date must be today or in the future')
+                'message' => __('Exception date must be today or in the future'),
             ]);
 
         $validator
@@ -90,9 +89,10 @@ class ScheduleExceptionsTable extends Table
                     if (!empty($context['data']['is_working']) && $context['data']['is_working']) {
                         return !empty($value);
                     }
+
                     return true;
                 },
-                'message' => __('Start time is required when working')
+                'message' => __('Start time is required when working'),
             ]);
 
         $validator
@@ -103,18 +103,20 @@ class ScheduleExceptionsTable extends Table
                     if (!empty($context['data']['is_working']) && $context['data']['is_working']) {
                         return !empty($value);
                     }
+
                     return true;
                 },
-                'message' => __('End time is required when working')
+                'message' => __('End time is required when working'),
             ])
             ->add('end_time', 'validTimeRange', [
                 'rule' => function ($value, $context) {
                     if (!isset($context['data']['start_time']) || empty($value)) {
                         return true;
                     }
+
                     return strtotime($value) > strtotime($context['data']['start_time']);
                 },
-                'message' => __('End time must be after start time')
+                'message' => __('End time must be after start time'),
             ]);
 
         $validator
@@ -171,7 +173,7 @@ class ScheduleExceptionsTable extends Table
     public function findByStaff(SelectQuery $query, array $options): SelectQuery
     {
         if (empty($options['staff_id'])) {
-            throw new \InvalidArgumentException('staff_id is required');
+            throw new InvalidArgumentException('staff_id is required');
         }
 
         return $query
@@ -191,7 +193,7 @@ class ScheduleExceptionsTable extends Table
         return $this->find()
             ->where([
                 'staff_id' => $staffId,
-                'exception_date' => $date->format('Y-m-d')
+                'exception_date' => $date->format('Y-m-d'),
             ])
             ->first();
     }

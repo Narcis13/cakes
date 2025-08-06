@@ -5,10 +5,12 @@ namespace App\Model\Table;
 
 use Cake\I18n\Date;
 use Cake\I18n\Time;
+use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
-use Cake\Validation\Validator;
 use Cake\Utility\Security;
+use Cake\Validation\Validator;
+use DateTime;
 
 /**
  * Appointments Model
@@ -102,9 +104,10 @@ class AppointmentsTable extends Table
                     // Allow today and future dates
                     $today = Date::now()->format('Y-m-d');
                     $appointmentDate = is_string($value) ? $value : $value->format('Y-m-d');
+
                     return $appointmentDate >= $today;
                 },
-                'message' => __('Appointment date must be today or in the future')
+                'message' => __('Appointment date must be today or in the future'),
             ]);
 
         $validator
@@ -130,7 +133,7 @@ class AppointmentsTable extends Table
             ->scalar('patient_phone')
             ->add('patient_phone', 'validPhone', [
                 'rule' => ['custom', '/^[\\d\\s\\-\\+\\(\\)]+$/'],
-                'message' => __('Please enter a valid phone number')
+                'message' => __('Please enter a valid phone number'),
             ]);
 
         $validator
@@ -168,7 +171,7 @@ class AppointmentsTable extends Table
 
         return $rules;
     }
-    
+
     /**
      * Custom validation: Check if date is not a weekend
      *
@@ -176,17 +179,18 @@ class AppointmentsTable extends Table
      * @param array $context The validation context
      * @return bool
      */
-    public function isNotWeekend($value, array $context): bool
+    public function isNotWeekend(mixed $value, array $context): bool
     {
         if (empty($value)) {
             return true;
         }
-        
-        $date = new \DateTime($value);
+
+        $date = new DateTime($value);
         $dayOfWeek = (int)$date->format('N'); // 1 = Monday, 7 = Sunday
+
         return $dayOfWeek < 6; // Returns true if Monday-Friday
     }
-    
+
     /**
      * Custom validation: Check if date is not a hospital holiday
      *
@@ -194,20 +198,21 @@ class AppointmentsTable extends Table
      * @param array $context The validation context
      * @return bool
      */
-    public function isNotHoliday($value, array $context): bool
+    public function isNotHoliday(mixed $value, array $context): bool
     {
         if (empty($value)) {
             return true;
         }
-        
-        $date = new \DateTime($value);
+
+        $date = new DateTime($value);
         $dateString = $date->format('Y-m-d');
-        
+
         // Check if date is a holiday using HospitalHolidaysTable
         $HospitalHolidays = $this->getTableLocator()->get('HospitalHolidays');
+
         return !$HospitalHolidays->isHoliday($dateString);
     }
-    
+
     /**
      * Custom validation: Check if date is in the future
      *
@@ -215,17 +220,18 @@ class AppointmentsTable extends Table
      * @param array $context The validation context
      * @return bool
      */
-    public function isFutureDate($value, array $context): bool
+    public function isFutureDate(mixed $value, array $context): bool
     {
         if (empty($value)) {
             return true;
         }
-        
-        $date = new \DateTime($value);
-        $today = new \DateTime('today');
+
+        $date = new DateTime($value);
+        $today = new DateTime('today');
+
         return $date > $today;
     }
-    
+
     /**
      * Check if a doctor is available on a specific date
      *
@@ -241,10 +247,10 @@ class AppointmentsTable extends Table
             ->where([
                 'staff_id' => $doctorId,
                 'date_from <=' => $date,
-                'date_to >=' => $date
+                'date_to >=' => $date,
             ])
             ->count();
-            
+
         return $unavailable === 0;
     }
 
@@ -278,13 +284,13 @@ class AppointmentsTable extends Table
      * @param \Cake\I18n\Date $date Date
      * @return \Cake\ORM\Query
      */
-    public function findByDoctorAndDate(int $doctorId, Date $date)
+    public function findByDoctorAndDate(int $doctorId, Date $date): Query
     {
         return $this->find()
             ->where([
                 'doctor_id' => $doctorId,
                 'appointment_date' => $date->format('Y-m-d'),
-                'status NOT IN' => ['cancelled', 'no-show']
+                'status NOT IN' => ['cancelled', 'no-show'],
             ])
             ->orderBy(['appointment_time' => 'ASC']);
     }
@@ -309,19 +315,19 @@ class AppointmentsTable extends Table
                     // New appointment starts during existing appointment
                     [
                         'appointment_time <=' => $startTime->format('H:i:s'),
-                        'end_time >' => $startTime->format('H:i:s')
+                        'end_time >' => $startTime->format('H:i:s'),
                     ],
                     // New appointment ends during existing appointment
                     [
                         'appointment_time <' => $endTime->format('H:i:s'),
-                        'end_time >=' => $endTime->format('H:i:s')
+                        'end_time >=' => $endTime->format('H:i:s'),
                     ],
                     // New appointment completely overlaps existing appointment
                     [
                         'appointment_time >=' => $startTime->format('H:i:s'),
-                        'end_time <=' => $endTime->format('H:i:s')
-                    ]
-                ]
+                        'end_time <=' => $endTime->format('H:i:s'),
+                    ],
+                ],
             ])
             ->count();
 

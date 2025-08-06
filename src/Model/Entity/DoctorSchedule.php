@@ -82,7 +82,7 @@ class DoctorSchedule extends Entity
             return sprintf(
                 '%s - %s',
                 $this->start_time->format('H:i'),
-                $this->end_time->format('H:i')
+                $this->end_time->format('H:i'),
             );
         }
 

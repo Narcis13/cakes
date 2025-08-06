@@ -3,7 +3,9 @@ declare(strict_types=1);
 
 namespace App\Model\Entity;
 
+use Cake\I18n\DateTime;
 use Cake\ORM\Entity;
+use DateTimeZone;
 
 /**
  * WorkflowSchedule Entity
@@ -193,32 +195,33 @@ class WorkflowSchedule extends Entity
      *
      * @return \Cake\I18n\DateTime|null
      */
-    public function calculateNextRunTime(): ?\Cake\I18n\DateTime
+    public function calculateNextRunTime(): ?DateTime
     {
         if (!$this->is_active || $this->has_reached_max_runs) {
             return null;
         }
 
-        $now = new \Cake\I18n\DateTime('now', new \DateTimeZone($this->timezone));
+        $now = new DateTime('now', new DateTimeZone($this->timezone));
 
         switch ($this->schedule_type) {
             case 'cron':
                 // TODO: Implement cron expression parser
                 return null;
-                
+
             case 'interval':
                 if ($this->last_run_at) {
                     return $this->last_run_at->addMinutes($this->interval_minutes);
                 } else {
                     return $now;
                 }
-                
+
             case 'once':
                 if (!$this->last_run_at && $this->run_at) {
                     return $this->run_at;
                 }
+
                 return null;
-                
+
             default:
                 return null;
         }
@@ -232,11 +235,11 @@ class WorkflowSchedule extends Entity
      */
     public function markAsExecuted(int $executionId): void
     {
-        $this->last_run_at = new \Cake\I18n\DateTime();
+        $this->last_run_at = new DateTime();
         $this->last_execution_id = $executionId;
         $this->run_count = $this->run_count + 1;
         $this->next_run_at = $this->calculateNextRunTime();
-        
+
         if ($this->has_reached_max_runs) {
             $this->is_active = false;
         }

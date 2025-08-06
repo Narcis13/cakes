@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace App\Model\Table;
 
-use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
@@ -12,7 +11,6 @@ use Cake\Validation\Validator;
  * Specializations Model
  *
  * @property \App\Model\Table\StaffTable&\Cake\ORM\Association\HasMany $Staff
- *
  * @method \App\Model\Entity\Specialization newEmptyEntity()
  * @method \App\Model\Entity\Specialization newEntity(array $data, array $options = [])
  * @method array<\App\Model\Entity\Specialization> newEntities(array $data, array $options = [])
@@ -26,7 +24,6 @@ use Cake\Validation\Validator;
  * @method iterable<\App\Model\Entity\Specialization>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\Specialization> saveManyOrFail(iterable $entities, array $options = [])
  * @method iterable<\App\Model\Entity\Specialization>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\Specialization>|false deleteMany(iterable $entities, array $options = [])
  * @method iterable<\App\Model\Entity\Specialization>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\Specialization> deleteManyOrFail(iterable $entities, array $options = [])
- *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
 class SpecializationsTable extends Table

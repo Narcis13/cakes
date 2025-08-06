@@ -178,7 +178,7 @@ class WorkflowExecutionLog extends Entity
      */
     public function getLevelColor(): string
     {
-        return match($this->level) {
+        return match ($this->level) {
             'error' => 'danger',
             'warning' => 'warning',
             'info' => 'info',
@@ -194,7 +194,7 @@ class WorkflowExecutionLog extends Entity
      */
     public function getLevelIcon(): string
     {
-        return match($this->level) {
+        return match ($this->level) {
             'error' => 'fa-times-circle',
             'warning' => 'fa-exclamation-triangle',
             'info' => 'fa-info-circle',

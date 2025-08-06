@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Model\Entity;
 
+use Cake\I18n\DateTime;
 use Cake\ORM\Entity;
 
 /**
@@ -159,7 +160,7 @@ class WorkflowHumanTask extends Entity
         if ($this->assigned_at && $this->completed_at) {
             $diff = $this->completed_at->diff($this->assigned_at);
             $seconds = $diff->s + ($diff->i * 60) + ($diff->h * 3600) + ($diff->days * 86400);
-            
+
             if ($seconds < 60) {
                 return $seconds . 's';
             } elseif ($seconds < 3600) {
@@ -218,7 +219,7 @@ class WorkflowHumanTask extends Entity
     {
         $this->status = 'completed';
         $this->completed_by = $userId;
-        $this->completed_at = new \Cake\I18n\DateTime();
+        $this->completed_at = new DateTime();
         $this->setResponseData($responseData);
     }
 
@@ -232,7 +233,7 @@ class WorkflowHumanTask extends Entity
     {
         $this->status = 'assigned';
         $this->assigned_to = $userId;
-        $this->assigned_at = new \Cake\I18n\DateTime();
+        $this->assigned_at = new DateTime();
     }
 
     /**
@@ -252,7 +253,7 @@ class WorkflowHumanTask extends Entity
      */
     public function getPriorityColor(): string
     {
-        return match($this->priority) {
+        return match ($this->priority) {
             'urgent' => 'danger',
             'high' => 'warning',
             'medium' => 'info',
@@ -268,7 +269,7 @@ class WorkflowHumanTask extends Entity
      */
     public function getStatusColor(): string
     {
-        return match($this->status) {
+        return match ($this->status) {
             'completed' => 'success',
             'in_progress' => 'primary',
             'assigned' => 'info',

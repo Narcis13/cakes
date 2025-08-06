@@ -3,17 +3,21 @@ declare(strict_types=1);
 
 namespace App\Model\Table;
 
+use App\Model\Entity\WorkflowSchedule;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use DateTime;
+use Exception;
+use InvalidArgumentException;
+use RuntimeException;
 
 /**
  * WorkflowSchedules Model
  *
  * @property \App\Model\Table\WorkflowsTable&\Cake\ORM\Association\BelongsTo $Workflows
  * @property \App\Model\Table\WorkflowExecutionsTable&\Cake\ORM\Association\BelongsTo $LastExecutions
- *
  * @method \App\Model\Entity\WorkflowSchedule newEmptyEntity()
  * @method \App\Model\Entity\WorkflowSchedule newEntity(array $data, array $options = [])
  * @method array<\App\Model\Entity\WorkflowSchedule> newEntities(array $data, array $options = [])
@@ -27,7 +31,6 @@ use Cake\Validation\Validator;
  * @method iterable<\App\Model\Entity\WorkflowSchedule>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\WorkflowSchedule> saveManyOrFail(iterable $entities, array $options = [])
  * @method iterable<\App\Model\Entity\WorkflowSchedule>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\WorkflowSchedule>|false deleteMany(iterable $entities, array $options = [])
  * @method iterable<\App\Model\Entity\WorkflowSchedule>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\WorkflowSchedule> deleteManyOrFail(iterable $entities, array $options = [])
- *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
 class WorkflowSchedulesTable extends Table
@@ -56,7 +59,7 @@ class WorkflowSchedulesTable extends Table
             'foreignKey' => 'last_execution_id',
             'className' => 'WorkflowExecutions',
         ]);
-        
+
         $this->belongsTo('CreatedByUser', [
             'foreignKey' => 'created_by',
             'className' => 'Users',
@@ -95,6 +98,7 @@ class WorkflowSchedulesTable extends Table
                     if (isset($context['data']['schedule_type']) && $context['data']['schedule_type'] === 'cron') {
                         return !empty($value);
                     }
+
                     return true;
                 },
                 'message' => 'Cron expression is required for cron schedules',
@@ -113,6 +117,7 @@ class WorkflowSchedulesTable extends Table
                     if (isset($context['data']['schedule_type']) && $context['data']['schedule_type'] === 'interval') {
                         return !empty($value) && $value > 0;
                     }
+
                     return true;
                 },
                 'message' => 'Interval minutes is required and must be positive for interval schedules',
@@ -126,6 +131,7 @@ class WorkflowSchedulesTable extends Table
                     if (isset($context['data']['schedule_type']) && $context['data']['schedule_type'] === 'once') {
                         return !empty($value);
                     }
+
                     return true;
                 },
                 'message' => 'Run at date is required for one-time schedules',
@@ -218,8 +224,8 @@ class WorkflowSchedulesTable extends Table
      */
     public function findDue(SelectQuery $query): SelectQuery
     {
-        $now = new \DateTime();
-        
+        $now = new DateTime();
+
         return $query
             ->where([
                 'WorkflowSchedules.is_active' => true,
@@ -246,7 +252,7 @@ class WorkflowSchedulesTable extends Table
     public function findByType(SelectQuery $query, array $options): SelectQuery
     {
         if (empty($options['type'])) {
-            throw new \InvalidArgumentException('type is required');
+            throw new InvalidArgumentException('type is required');
         }
 
         return $query->where(['WorkflowSchedules.schedule_type' => $options['type']]);
@@ -262,7 +268,7 @@ class WorkflowSchedulesTable extends Table
     public function findForWorkflow(SelectQuery $query, array $options): SelectQuery
     {
         if (empty($options['workflow_id'])) {
-            throw new \InvalidArgumentException('workflow_id is required');
+            throw new InvalidArgumentException('workflow_id is required');
         }
 
         return $query->where(['WorkflowSchedules.workflow_id' => $options['workflow_id']]);
@@ -275,7 +281,7 @@ class WorkflowSchedulesTable extends Table
      * @param array $scheduleData Schedule data
      * @return \App\Model\Entity\WorkflowSchedule
      */
-    public function createSchedule(int $workflowId, array $scheduleData): \App\Model\Entity\WorkflowSchedule
+    public function createSchedule(int $workflowId, array $scheduleData): WorkflowSchedule
     {
         $schedule = $this->newEntity(array_merge($scheduleData, [
             'workflow_id' => $workflowId,
@@ -287,7 +293,7 @@ class WorkflowSchedulesTable extends Table
         $schedule->next_run_at = $schedule->calculateNextRunTime();
 
         if (!$this->save($schedule)) {
-            throw new \RuntimeException('Failed to create schedule');
+            throw new RuntimeException('Failed to create schedule');
         }
 
         return $schedule;
@@ -310,11 +316,11 @@ class WorkflowSchedulesTable extends Table
                 // Here you would trigger the workflow execution
                 // For now, we'll just mark it as processed
                 $schedule->markAsExecuted(0); // TODO: Use actual execution ID
-                
+
                 if ($this->save($schedule)) {
                     $processed[] = $schedule;
                 }
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 // Log error
                 continue;
             }

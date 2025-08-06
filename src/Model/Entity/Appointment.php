@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Model\Entity;
 
+use Cake\I18n\DateTime;
 use Cake\ORM\Entity;
 
 /**
@@ -73,15 +74,17 @@ class Appointment extends Entity
      *
      * @return \Cake\I18n\DateTime|null
      */
-    protected function _getFullDateTime(): ?\Cake\I18n\DateTime
+    protected function _getFullDateTime(): ?DateTime
     {
         if ($this->has('appointment_date') && $this->has('appointment_time')) {
             $dateTime = clone $this->appointment_date;
+
             return $dateTime->setTime(
                 (int)$this->appointment_time->format('H'),
-                (int)$this->appointment_time->format('i')
+                (int)$this->appointment_time->format('i'),
             );
         }
+
         return null;
     }
 
@@ -113,8 +116,9 @@ class Appointment extends Entity
     protected function _getIsPast(): bool
     {
         if ($this->full_date_time) {
-            return $this->full_date_time < new \Cake\I18n\DateTime();
+            return $this->full_date_time < new DateTime();
         }
+
         return false;
     }
 
@@ -130,7 +134,7 @@ class Appointment extends Entity
             'confirmed' => 'success',
             'cancelled' => 'danger',
             'completed' => 'info',
-            'no-show' => 'secondary'
+            'no-show' => 'secondary',
         ];
 
         return $classes[$this->status] ?? 'light';

@@ -3,16 +3,18 @@ declare(strict_types=1);
 
 namespace App\Model\Table;
 
+use App\Model\Entity\WorkflowExecutionLog;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use InvalidArgumentException;
+use RuntimeException;
 
 /**
  * WorkflowExecutionLogs Model
  *
  * @property \App\Model\Table\WorkflowExecutionsTable&\Cake\ORM\Association\BelongsTo $Executions
- *
  * @method \App\Model\Entity\WorkflowExecutionLog newEmptyEntity()
  * @method \App\Model\Entity\WorkflowExecutionLog newEntity(array $data, array $options = [])
  * @method array<\App\Model\Entity\WorkflowExecutionLog> newEntities(array $data, array $options = [])
@@ -26,7 +28,6 @@ use Cake\Validation\Validator;
  * @method iterable<\App\Model\Entity\WorkflowExecutionLog>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\WorkflowExecutionLog> saveManyOrFail(iterable $entities, array $options = [])
  * @method iterable<\App\Model\Entity\WorkflowExecutionLog>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\WorkflowExecutionLog>|false deleteMany(iterable $entities, array $options = [])
  * @method iterable<\App\Model\Entity\WorkflowExecutionLog>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\WorkflowExecutionLog> deleteManyOrFail(iterable $entities, array $options = [])
- *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
 class WorkflowExecutionLogsTable extends Table
@@ -151,7 +152,7 @@ class WorkflowExecutionLogsTable extends Table
     public function findByLevel(SelectQuery $query, array $options): SelectQuery
     {
         if (empty($options['level'])) {
-            throw new \InvalidArgumentException('level is required');
+            throw new InvalidArgumentException('level is required');
         }
 
         return $query->where(['WorkflowExecutionLogs.level' => $options['level']]);
@@ -167,7 +168,7 @@ class WorkflowExecutionLogsTable extends Table
     public function findByNode(SelectQuery $query, array $options): SelectQuery
     {
         if (empty($options['node_name'])) {
-            throw new \InvalidArgumentException('node_name is required');
+            throw new InvalidArgumentException('node_name is required');
         }
 
         return $query->where(['WorkflowExecutionLogs.node_name' => $options['node_name']]);
@@ -199,8 +200,8 @@ class WorkflowExecutionLogsTable extends Table
         string $nodeName,
         string $level,
         string $message,
-        array $options = []
-    ): \App\Model\Entity\WorkflowExecutionLog {
+        array $options = [],
+    ): WorkflowExecutionLog {
         $log = $this->newEntity([
             'execution_id' => $executionId,
             'node_name' => $nodeName,
@@ -214,7 +215,7 @@ class WorkflowExecutionLogsTable extends Table
         ]);
 
         if (!$this->save($log)) {
-            throw new \RuntimeException('Failed to save workflow execution log');
+            throw new RuntimeException('Failed to save workflow execution log');
         }
 
         return $log;
@@ -229,7 +230,7 @@ class WorkflowExecutionLogsTable extends Table
      * @param array $data Additional data
      * @return \App\Model\Entity\WorkflowExecutionLog
      */
-    public function logError(int $executionId, string $nodeName, string $message, array $data = []): \App\Model\Entity\WorkflowExecutionLog
+    public function logError(int $executionId, string $nodeName, string $message, array $data = []): WorkflowExecutionLog
     {
         return $this->log($executionId, $nodeName, 'error', $message, ['data' => $data]);
     }
@@ -243,7 +244,7 @@ class WorkflowExecutionLogsTable extends Table
      * @param array $data Additional data
      * @return \App\Model\Entity\WorkflowExecutionLog
      */
-    public function logWarning(int $executionId, string $nodeName, string $message, array $data = []): \App\Model\Entity\WorkflowExecutionLog
+    public function logWarning(int $executionId, string $nodeName, string $message, array $data = []): WorkflowExecutionLog
     {
         return $this->log($executionId, $nodeName, 'warning', $message, ['data' => $data]);
     }
@@ -257,7 +258,7 @@ class WorkflowExecutionLogsTable extends Table
      * @param array $data Additional data
      * @return \App\Model\Entity\WorkflowExecutionLog
      */
-    public function logInfo(int $executionId, string $nodeName, string $message, array $data = []): \App\Model\Entity\WorkflowExecutionLog
+    public function logInfo(int $executionId, string $nodeName, string $message, array $data = []): WorkflowExecutionLog
     {
         return $this->log($executionId, $nodeName, 'info', $message, ['data' => $data]);
     }
@@ -271,7 +272,7 @@ class WorkflowExecutionLogsTable extends Table
      * @param array $data Additional data
      * @return \App\Model\Entity\WorkflowExecutionLog
      */
-    public function logDebug(int $executionId, string $nodeName, string $message, array $data = []): \App\Model\Entity\WorkflowExecutionLog
+    public function logDebug(int $executionId, string $nodeName, string $message, array $data = []): WorkflowExecutionLog
     {
         return $this->log($executionId, $nodeName, 'debug', $message, ['data' => $data]);
     }

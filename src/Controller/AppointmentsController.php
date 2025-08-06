@@ -3,14 +3,19 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Mailer\AppointmentMailer;
+use App\Model\Table\ServicesTable;
+use App\Model\Table\StaffTable;
 use App\Service\AvailabilityService;
+use Cake\Cache\Cache;
 use Cake\Core\Configure;
 use Cake\Http\Exception\NotFoundException;
 use Cake\I18n\Date;
 use Cake\I18n\Time;
-use App\Mailer\AppointmentMailer;
-use Cake\Utility\Security;
+use Cake\Log\Log;
 use Cake\Routing\Router;
+use Cake\Utility\Security;
+use Exception;
 
 /**
  * Appointments Controller
@@ -21,21 +26,20 @@ use Cake\Routing\Router;
  */
 class AppointmentsController extends AppController
 {
-    
     /**
      * @var \App\Service\AvailabilityService
      */
-    private $availabilityService;
-    
+    private AvailabilityService $availabilityService;
+
     /**
      * @var \App\Model\Table\StaffTable
      */
-    private $Staff;
-    
+    private StaffTable $Staff;
+
     /**
      * @var \App\Model\Table\ServicesTable
      */
-    private $Services;
+    private ServicesTable $Services;
 
     /**
      * Initialize method
@@ -45,13 +49,13 @@ class AppointmentsController extends AppController
     public function initialize(): void
     {
         parent::initialize();
-        
+
         $this->Staff = $this->fetchTable('Staff');
         $this->Services = $this->fetchTable('Services');
-        
+
         // Initialize AvailabilityService
         $this->availabilityService = new AvailabilityService();
-        
+
         // Allow public access to all appointment actions
         $this->Authentication->allowUnauthenticated([
             'index',
@@ -60,12 +64,12 @@ class AppointmentsController extends AppController
             'book',
             'confirm',
             'success',
-            'generateCaptcha'
+            'generateCaptcha',
         ]);
-        
+
         // Load AJAX routes
         $this->Authentication->allowUnauthenticated([
-            'getDoctorsBySpecialty'
+            'getDoctorsBySpecialty',
         ]);
     }
 
@@ -85,7 +89,7 @@ class AppointmentsController extends AppController
             ->map(function ($spec) {
                 return [
                     'value' => $spec->name,
-                    'text' => $spec->name
+                    'text' => $spec->name,
                 ];
             })
             ->toArray();
@@ -93,7 +97,7 @@ class AppointmentsController extends AppController
         // Get all active services
         $services = $this->Services->find('list', [
             'keyField' => 'id',
-            'valueField' => 'name'
+            'valueField' => 'name',
         ])
         ->where(['is_active' => true])
         ->orderAsc('name')
@@ -115,14 +119,15 @@ class AppointmentsController extends AppController
         $data = $this->request->getData();
         $specialty = $data['specialty'] ?? null;
 
-        \Cake\Log\Log::debug('CheckAvailability called with specialty: ' . $specialty);
+        Log::debug('CheckAvailability called with specialty: ' . $specialty);
 
         if (!$specialty) {
             $this->set([
                 'success' => false,
-                'message' => 'Vă rugăm să selectați specializarea.'
+                'message' => 'Vă rugăm să selectați specializarea.',
             ]);
             $this->viewBuilder()->setOption('serialize', ['success', 'message']);
+
             return;
         }
 
@@ -131,13 +136,14 @@ class AppointmentsController extends AppController
             $specialization = $this->fetchTable('Specializations')->find()
                 ->where(['name' => $specialty])
                 ->first();
-            
+
             if (!$specialization) {
                 $this->set([
                     'success' => false,
-                    'message' => 'Specializarea selectată nu există.'
+                    'message' => 'Specializarea selectată nu există.',
                 ]);
                 $this->viewBuilder()->setOption('serialize', ['success', 'message']);
+
                 return;
             }
 
@@ -147,7 +153,7 @@ class AppointmentsController extends AppController
                 ->where([
                     'specialization_id' => $specialization->id,
                     'Staff.is_active' => true,
-                    'staff_type' => 'doctor'
+                    'staff_type' => 'doctor',
                 ])
                 ->toArray();
 
@@ -157,32 +163,32 @@ class AppointmentsController extends AppController
                 $doctorSchedules = $this->fetchTable('DoctorSchedules')->find()
                     ->where([
                         'staff_id' => $doctor->id,
-                        'is_active' => true
+                        'is_active' => true,
                     ])
                     ->select(['service_id'])
                     ->distinct(['service_id'])
                     ->toArray();
-                
-                $serviceIds = array_map(function($schedule) {
+
+                $serviceIds = array_map(function ($schedule) {
                     return $schedule->service_id;
                 }, $doctorSchedules);
-                
+
                 $services = [];
                 if (!empty($serviceIds)) {
                     // Get services that this doctor provides
                     $doctorServices = $this->Services->find()
                         ->where([
                             'id IN' => $serviceIds,
-                            'is_active' => true
+                            'is_active' => true,
                         ])
                         ->toArray();
-                    
+
                     foreach ($doctorServices as $service) {
                         $services[] = [
                             'id' => $service->id,
                             'name' => $service->name,
                             'duration_minutes' => $service->duration_minutes,
-                            'price' => $service->price
+                            'price' => $service->price,
                         ];
                     }
                 } else {
@@ -195,11 +201,11 @@ class AppointmentsController extends AppController
                             'id' => $service->id,
                             'name' => $service->name,
                             'duration_minutes' => $service->duration_minutes,
-                            'price' => $service->price
+                            'price' => $service->price,
                         ];
                     }
                 }
-                
+
                 if (!empty($services)) {
                     $availableDoctors[] = [
                         'id' => $doctor->id,
@@ -208,26 +214,25 @@ class AppointmentsController extends AppController
                         'photo' => $doctor->photo,
                         'email' => $doctor->email,
                         'phone' => $doctor->phone,
-                        'services' => $services
+                        'services' => $services,
                     ];
                 }
             }
 
-            \Cake\Log\Log::debug('Found ' . count($availableDoctors) . ' available doctors');
+            Log::debug('Found ' . count($availableDoctors) . ' available doctors');
 
             $this->set([
                 'success' => true,
-                'doctors' => $availableDoctors
+                'doctors' => $availableDoctors,
             ]);
             $this->viewBuilder()->setOption('serialize', ['success', 'doctors']);
+        } catch (Exception $e) {
+            Log::error('Appointment availability error: ' . $e->getMessage());
+            Log::error('Stack trace: ' . $e->getTraceAsString());
 
-        } catch (\Exception $e) {
-            \Cake\Log\Log::error('Appointment availability error: ' . $e->getMessage());
-            \Cake\Log\Log::error('Stack trace: ' . $e->getTraceAsString());
-            
             $this->set([
                 'success' => false,
-                'message' => 'A apărut o eroare: ' . $e->getMessage()
+                'message' => 'A apărut o eroare: ' . $e->getMessage(),
             ]);
             $this->viewBuilder()->setOption('serialize', ['success', 'message']);
         }
@@ -251,15 +256,16 @@ class AppointmentsController extends AppController
         if (!$doctorId || !$date || !$serviceId) {
             $this->set([
                 'success' => false,
-                'message' => 'Date invalide.'
+                'message' => 'Date invalide.',
             ]);
             $this->viewBuilder()->setOption('serialize', ['success', 'message']);
+
             return;
         }
 
         try {
             $appointmentDate = new Date($date);
-            
+
             // Use AvailabilityService to get available slots
             $slots = $this->availabilityService->getAvailableSlots((int)$doctorId, $appointmentDate, (int)$serviceId);
 
@@ -268,14 +274,13 @@ class AppointmentsController extends AppController
                 'date' => $appointmentDate->format('Y-m-d'),
                 'doctor_id' => $doctorId,
                 'service_id' => $serviceId,
-                'slots' => $slots
+                'slots' => $slots,
             ]);
             $this->viewBuilder()->setOption('serialize', ['success', 'date', 'doctor_id', 'service_id', 'slots']);
-
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->set([
                 'success' => false,
-                'message' => 'A apărut o eroare la încărcarea sloturilor disponibile.'
+                'message' => 'A apărut o eroare la încărcarea sloturilor disponibile.',
             ]);
             $this->viewBuilder()->setOption('serialize', ['success', 'message']);
         }
@@ -293,53 +298,58 @@ class AppointmentsController extends AppController
         // Rate limiting check
         if (!$this->checkRateLimit()) {
             $this->Flash->error('Prea multe încercări de programare. Vă rugăm să încercați din nou mai târziu.');
-            
+
             if ($this->request->is('ajax')) {
                 $this->viewBuilder()->setClassName('Json');
                 $this->set([
                     'success' => false,
-                    'message' => 'Prea multe încercări de programare. Vă rugăm să încercați din nou mai târziu.'
+                    'message' => 'Prea multe încercări de programare. Vă rugăm să încercați din nou mai târziu.',
                 ]);
                 $this->viewBuilder()->setOption('serialize', ['success', 'message']);
+
                 return;
             }
-            
+
             return $this->redirect(['action' => 'index']);
         }
 
         $appointment = $this->Appointments->newEmptyEntity();
-        
+
         if ($this->request->is('post')) {
             $data = $this->request->getData();
-            
+
             // Debug log the received data
-            \Cake\Log\Log::debug('Book appointment data received: ' . json_encode($data));
-            
+            Log::debug('Book appointment data received: ' . json_encode($data));
+
             // Validate required fields
-            if (empty($data['doctor_id']) || empty($data['service_id']) || 
-                empty($data['appointment_date']) || empty($data['appointment_time'])) {
-                \Cake\Log\Log::error('Missing required fields. Data: ' . json_encode($data));
+            if (
+                empty($data['doctor_id']) || empty($data['service_id']) ||
+                empty($data['appointment_date']) || empty($data['appointment_time'])
+            ) {
+                Log::error('Missing required fields. Data: ' . json_encode($data));
                 $this->Flash->error('Vă rugăm să completați toate câmpurile obligatorii.');
+
                 return $this->redirect(['action' => 'index']);
             }
-            
+
             // Validate CAPTCHA
             if (!$this->validateCaptcha($data['captcha_answer'] ?? '')) {
                 $this->Flash->error('Răspunsul la întrebarea de securitate este incorect.');
-                
+
                 if ($this->request->is('ajax')) {
                     $this->viewBuilder()->setClassName('Json');
                     $this->set([
                         'success' => false,
-                        'message' => 'Răspunsul la întrebarea de securitate este incorect.'
+                        'message' => 'Răspunsul la întrebarea de securitate este incorect.',
                     ]);
                     $this->viewBuilder()->setOption('serialize', ['success', 'message']);
+
                     return;
                 }
-                
+
                 return $this->redirect(['action' => 'index']);
             }
-            
+
             try {
                 $appointmentDate = new Date($data['appointment_date']);
                 // Ensure time format is HH:MM:SS
@@ -348,29 +358,33 @@ class AppointmentsController extends AppController
                     $timeStr .= ':00'; // Add seconds
                 }
                 $appointmentTime = new Time($timeStr);
-                
+
                 // Check if slot is still available using AvailabilityService
-                if (!$this->availabilityService->isSlotAvailable(
-                    (int)$data['doctor_id'],
-                    $appointmentDate,
-                    $appointmentTime,
-                    (int)$data['service_id']
-                )) {
+                if (
+                    !$this->availabilityService->isSlotAvailable(
+                        (int)$data['doctor_id'],
+                        $appointmentDate,
+                        $appointmentTime,
+                        (int)$data['service_id'],
+                    )
+                ) {
                     $this->Flash->error('Acest slot nu mai este disponibil. Vă rugăm să alegeți altul.');
+
                     return $this->redirect(['action' => 'index']);
                 }
-                
+
                 // Calculate end time based on service duration
                 $service = $this->Services->get($data['service_id']);
                 $data['end_time'] = $this->availabilityService->calculateEndTime($appointmentTime, $service->duration_minutes);
-                
+
                 // Generate confirmation token
                 $data['confirmation_token'] = Security::randomString(64);
                 $data['status'] = 'pending';
-                
+
                 $appointment = $this->Appointments->patchEntity($appointment, $data);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $this->Flash->error('Date invalide. Vă rugăm să încercați din nou.');
+
                 return $this->redirect(['action' => 'index']);
             }
 
@@ -379,65 +393,68 @@ class AppointmentsController extends AppController
                 try {
                     $mailer = new AppointmentMailer();
                     $mailer->confirmation($appointment, $appointment->confirmation_token)->send();
-                    
+
                     $this->Flash->success('Programarea a fost creată cu succes. Vă rugăm să verificați emailul pentru confirmare.');
-                } catch (\Exception $e) {
-                    \Cake\Log\Log::error('Email error: ' . $e->getMessage());
+                } catch (Exception $e) {
+                    Log::error('Email error: ' . $e->getMessage());
                     $this->Flash->warning('Programarea a fost creată, dar emailul de confirmare nu a putut fi trimis.');
                 }
-                
+
                 // Send admin notification email
                 try {
                     // Reload appointment with associations for admin email
                     $appointmentForAdmin = $this->Appointments->get($appointment->id, [
                         'contain' => [
                             'Doctors' => ['Departments'],
-                            'Services'
-                        ]
+                            'Services',
+                        ],
                     ]);
-                    
+
                     $adminMailer = new AppointmentMailer();
                     $adminMailer->adminNotification($appointmentForAdmin)->send();
-                } catch (\Exception $e) {
-                    \Cake\Log\Log::error('Admin notification email error: ' . $e->getMessage());
+                } catch (Exception $e) {
+                    Log::error('Admin notification email error: ' . $e->getMessage());
                     // Don't show error to user as this is internal
                 }
-                
+
                 // Log successful save for debugging
-                \Cake\Log\Log::debug('Appointment saved successfully with ID: ' . $appointment->id);
-                
+                Log::debug('Appointment saved successfully with ID: ' . $appointment->id);
+
                 $this->Flash->success('Programarea a fost creată cu succes!');
-                
+
                 // Always return JSON for AJAX requests with proper redirect URL
                 if ($this->request->is('ajax') || $this->request->getHeaderLine('X-Requested-With') === 'XMLHttpRequest') {
-                    \Cake\Log\Log::debug('AJAX request detected, returning JSON response');
+                    Log::debug('AJAX request detected, returning JSON response');
                     $this->viewBuilder()->setClassName('Json');
                     $this->set([
                         'success' => true,
                         'message' => 'Programarea a fost creată cu succes!',
                         'redirect' => Router::url(['controller' => 'Appointments', 'action' => 'success', $appointment->id], true),
-                        'appointment_id' => $appointment->id
+                        'appointment_id' => $appointment->id,
                     ]);
                     $this->viewBuilder()->setOption('serialize', ['success', 'message', 'redirect', 'appointment_id']);
+
                     return;
                 }
-                
-                \Cake\Log\Log::debug('Non-AJAX request, redirecting to success page');
+
+                Log::debug('Non-AJAX request, redirecting to success page');
+
                 return $this->redirect(['action' => 'success', $appointment->id]);
             } else {
                 // Log validation errors
-                \Cake\Log\Log::error('Appointment save failed. Errors: ' . json_encode($appointment->getErrors()));
+                Log::error('Appointment save failed. Errors: ' . json_encode($appointment->getErrors()));
                 $this->Flash->error('Programarea nu a putut fi salvată. Vă rugăm să încercați din nou.');
-                
+
                 // For AJAX requests, return JSON error response
                 if ($this->request->is('ajax') || $this->request->getHeaderLine('X-Requested-With') === 'XMLHttpRequest') {
                     $this->viewBuilder()->setClassName('Json');
                     $this->set([
                         'success' => false,
                         'message' => 'Programarea nu a putut fi salvată. Vă rugăm să încercați din nou.',
-                        'errors' => $appointment->getErrors()
+                        'errors' => $appointment->getErrors(),
                     ]);
                     $this->viewBuilder()->setOption('serialize', ['success', 'message', 'errors']);
+
                     return;
                 }
             }
@@ -453,7 +470,7 @@ class AppointmentsController extends AppController
      * @return \Cake\Http\Response|null|void
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found
      */
-    public function confirm($token = null)
+    public function confirm(?string $token = null)
     {
         if (!$token) {
             throw new NotFoundException('Token invalid.');
@@ -463,18 +480,20 @@ class AppointmentsController extends AppController
             ->where(['confirmation_token' => $token])
             ->contain([
                 'Doctors' => ['Departments'],
-                'Services'
+                'Services',
             ])
             ->first();
 
         if (!$appointment) {
             $this->Flash->error('Token de confirmare invalid sau expirat.');
+
             return $this->redirect(['action' => 'index']);
         }
 
         // Check if already confirmed
         if ($appointment->status === 'confirmed') {
             $this->Flash->info('Această programare a fost deja confirmată.');
+
             return $this->redirect(['action' => 'success', $appointment->id]);
         }
 
@@ -482,6 +501,7 @@ class AppointmentsController extends AppController
         $tokenAge = Time::now()->diffInHours($appointment->created);
         if ($tokenAge > 24) {
             $this->Flash->error('Token de confirmare expirat. Vă rugăm să faceți o nouă programare.');
+
             return $this->redirect(['action' => 'index']);
         }
 
@@ -494,11 +514,12 @@ class AppointmentsController extends AppController
             try {
                 $mailer = new AppointmentMailer();
                 $mailer->confirmed($appointment)->send();
-            } catch (\Exception $e) {
-                \Cake\Log\Log::error('Confirmed email error: ' . $e->getMessage());
+            } catch (Exception $e) {
+                Log::error('Confirmed email error: ' . $e->getMessage());
             }
 
             $this->Flash->success('Programarea a fost confirmată cu succes!');
+
             return $this->redirect(['action' => 'success', $appointment->id]);
         } else {
             $this->Flash->error('Nu am putut confirma programarea. Vă rugăm să încercați din nou.');
@@ -514,13 +535,13 @@ class AppointmentsController extends AppController
      * @return \Cake\Http\Response|null|void
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found
      */
-    public function success($id = null)
+    public function success(?string $id = null)
     {
         $appointment = $this->Appointments->get($id, [
             'contain' => [
                 'Doctors' => ['Departments'],
-                'Services'
-            ]
+                'Services',
+            ],
         ]);
 
         $this->set(compact('appointment'));
@@ -535,37 +556,37 @@ class AppointmentsController extends AppController
     {
         $this->request->allowMethod(['post']);
         $this->viewBuilder()->setClassName('Json');
-        
+
         $num1 = rand(1, 10);
         $num2 = rand(1, 10);
         $operation = rand(0, 1) ? '+' : '-';
-        
+
         if ($operation === '-' && $num1 < $num2) {
             // Ensure positive result
             $temp = $num1;
             $num1 = $num2;
             $num2 = $temp;
         }
-        
+
         $question = "$num1 $operation $num2 = ?";
         $answer = $operation === '+' ? $num1 + $num2 : $num1 - $num2;
-        
+
         // Store answer in session
         $session = $this->request->getSession();
         $session->write('captcha_answer', $answer);
-        
+
         $this->set([
             'success' => true,
-            'question' => $question
+            'question' => $question,
         ]);
         $this->viewBuilder()->setOption('serialize', ['success', 'question']);
-        
+
         return [
             'question' => $question,
-            'answer' => $answer
+            'answer' => $answer,
         ];
     }
-    
+
     /**
      * Validate CAPTCHA answer
      *
@@ -576,14 +597,14 @@ class AppointmentsController extends AppController
     {
         $session = $this->request->getSession();
         $correctAnswer = $session->read('captcha_answer');
-        
+
         if ($correctAnswer === null) {
             return false;
         }
-        
+
         // Clean up session after validation
         $session->delete('captcha_answer');
-        
+
         return (int)$userAnswer === (int)$correctAnswer;
     }
 
@@ -597,26 +618,28 @@ class AppointmentsController extends AppController
         $rateLimitConfig = Configure::read('Appointments.rate_limit');
         $maxAttempts = $rateLimitConfig['attempts'] ?? 10;
         $timeWindow = $rateLimitConfig['window'] ?? 3600; // 1 hour
-        
+
         $clientIp = $this->request->clientIp();
         $cacheKey = 'appointment_rate_limit_' . md5($clientIp);
-        
+
         // Get current attempt count from cache
-        $attempts = \Cake\Cache\Cache::read($cacheKey, 'default');
-        
+        $attempts = Cache::read($cacheKey, 'default');
+
         if ($attempts === false) {
             // First attempt, initialize counter
-            \Cake\Cache\Cache::write($cacheKey, 1, $timeWindow);
+            Cache::write($cacheKey, 1, $timeWindow);
+
             return true;
         }
-        
+
         if ($attempts >= $maxAttempts) {
             // Rate limit exceeded
             return false;
         }
-        
+
         // Increment counter
-        \Cake\Cache\Cache::write($cacheKey, $attempts + 1, $timeWindow);
+        Cache::write($cacheKey, $attempts + 1, $timeWindow);
+
         return true;
     }
 }

@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace App\Model\Table;
 
-use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
@@ -12,7 +11,6 @@ use Cake\Validation\Validator;
  * StaffUnavailabilities Model
  *
  * @property \App\Model\Table\StaffTable&\Cake\ORM\Association\BelongsTo $Staffs
- *
  * @method \App\Model\Entity\StaffUnavailability newEmptyEntity()
  * @method \App\Model\Entity\StaffUnavailability newEntity(array $data, array $options = [])
  * @method array<\App\Model\Entity\StaffUnavailability> newEntities(array $data, array $options = [])
@@ -26,7 +24,6 @@ use Cake\Validation\Validator;
  * @method iterable<\App\Model\Entity\StaffUnavailability>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\StaffUnavailability> saveManyOrFail(iterable $entities, array $options = [])
  * @method iterable<\App\Model\Entity\StaffUnavailability>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\StaffUnavailability>|false deleteMany(iterable $entities, array $options = [])
  * @method iterable<\App\Model\Entity\StaffUnavailability>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\StaffUnavailability> deleteManyOrFail(iterable $entities, array $options = [])
- *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
 class StaffUnavailabilitiesTable extends Table
@@ -79,9 +76,10 @@ class StaffUnavailabilitiesTable extends Table
                     if (!empty($context['data']['date_from']) && !empty($value)) {
                         return $value >= $context['data']['date_from'];
                     }
+
                     return true;
                 },
-                'message' => 'End date must be after or equal to start date'
+                'message' => 'End date must be after or equal to start date',
             ]);
 
         $validator

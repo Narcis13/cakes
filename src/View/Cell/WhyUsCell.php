@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\View\Cell;
 
+use Cake\ORM\TableRegistry;
 use Cake\View\Cell;
 
 /**
@@ -17,9 +18,9 @@ class WhyUsCell extends Cell
      */
     public function display(): void
     {
-        $title = 'Why Choose Medilab?';
-        $description = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Duis aute irure dolor in reprehenderit Asperiores dolores sed et. Tenetur quia eos. Autem tempore quibusdam vel necessitatibus optio ad corporis.';
-
+        $title = 'Program vizita';
+        $settingsTable = TableRegistry::getTableLocator()->get('Settings');
+        $description = $settingsTable->find()->where(['key_name' => 'program_vizita'])->firstOrFail()->value;
         $features = [
             [
                 'icon' => 'bx bx-receipt',

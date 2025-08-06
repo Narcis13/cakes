@@ -64,7 +64,7 @@ class ScheduleException extends Entity
             return sprintf(
                 '%s - %s',
                 $this->start_time->format('H:i'),
-                $this->end_time->format('H:i')
+                $this->end_time->format('H:i'),
             );
         }
 
@@ -79,11 +79,11 @@ class ScheduleException extends Entity
     protected function _getDisplayLabel(): string
     {
         $label = $this->exception_date->format('Y-m-d') . ' - ' . $this->exception_type;
-        
+
         if ($this->is_working && $this->time_range) {
             $label .= ' (' . $this->time_range . ')';
         }
-        
+
         if ($this->reason) {
             $label .= ' - ' . $this->reason;
         }

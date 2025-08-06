@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Controller\Admin\AppController;
 use Cake\I18n\Date;
 use Cake\I18n\Time;
 
@@ -36,7 +35,7 @@ class AppointmentsController extends AppController
         if ($dateFrom && $dateTo) {
             $query->where([
                 'Appointments.appointment_date >=' => $dateFrom,
-                'Appointments.appointment_date <=' => $dateTo
+                'Appointments.appointment_date <=' => $dateTo,
             ]);
         }
 
@@ -61,14 +60,14 @@ class AppointmentsController extends AppController
         // Order by date and time
         $query->orderBy([
             'Appointments.appointment_date' => 'DESC',
-            'Appointments.appointment_time' => 'DESC'
+            'Appointments.appointment_time' => 'DESC',
         ]);
 
         $appointments = $this->paginate($query);
 
         // Get lists for filters
         $doctors = $this->Appointments->Doctors->find('list', [
-            'order' => ['first_name' => 'ASC', 'last_name' => 'ASC']
+            'order' => ['first_name' => 'ASC', 'last_name' => 'ASC'],
         ])->toArray();
 
         $statuses = [
@@ -76,7 +75,7 @@ class AppointmentsController extends AppController
             'confirmed' => 'Confirmată',
             'cancelled' => 'Anulată',
             'completed' => 'Finalizată',
-            'no-show' => 'Neprezentare'
+            'no-show' => 'Neprezentare',
         ];
 
         $this->set(compact('appointments', 'doctors', 'statuses'));
@@ -89,7 +88,7 @@ class AppointmentsController extends AppController
      * @return \Cake\Http\Response|null|void Renders view
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function view($id = null)
+    public function view(?string $id = null)
     {
         $appointment = $this->Appointments->get($id, [
             'contain' => ['Doctors', 'Services'],
@@ -105,7 +104,7 @@ class AppointmentsController extends AppController
      * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function edit($id = null)
+    public function edit(?string $id = null)
     {
         $appointment = $this->Appointments->get($id, [
             'contain' => [],
@@ -113,7 +112,7 @@ class AppointmentsController extends AppController
 
         if ($this->request->is(['patch', 'post', 'put'])) {
             $appointment = $this->Appointments->patchEntity($appointment, $this->request->getData());
-            
+
             // If changing appointment time, recalculate end time
             if ($appointment->isDirty('appointment_time') || $appointment->isDirty('service_id')) {
                 $service = $this->Appointments->Services->get($appointment->service_id);
@@ -122,17 +121,18 @@ class AppointmentsController extends AppController
 
             if ($this->Appointments->save($appointment)) {
                 $this->Flash->success(__('Programarea a fost actualizată.'));
+
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('Programarea nu a putut fi actualizată. Vă rugăm să încercați din nou.'));
         }
 
         $staff = $this->Appointments->Doctors->find('list', [
-            'order' => ['first_name' => 'ASC', 'last_name' => 'ASC']
+            'order' => ['first_name' => 'ASC', 'last_name' => 'ASC'],
         ])->toArray();
-        
+
         $services = $this->Appointments->Services->find('list', [
-            'order' => ['name' => 'ASC']
+            'order' => ['name' => 'ASC'],
         ])->toArray();
 
         $statuses = [
@@ -140,7 +140,7 @@ class AppointmentsController extends AppController
             'confirmed' => 'Confirmată',
             'cancelled' => 'Anulată',
             'completed' => 'Finalizată',
-            'no-show' => 'Neprezentare'
+            'no-show' => 'Neprezentare',
         ];
 
         $this->set(compact('appointment', 'staff', 'services', 'statuses'));
@@ -153,11 +153,11 @@ class AppointmentsController extends AppController
      * @return \Cake\Http\Response|null|void Redirects to index.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function delete($id = null)
+    public function delete(?string $id = null)
     {
         $this->request->allowMethod(['post', 'delete']);
         $appointment = $this->Appointments->get($id);
-        
+
         if ($this->Appointments->delete($appointment)) {
             $this->Flash->success(__('Programarea a fost ștearsă.'));
         } else {
@@ -174,14 +174,14 @@ class AppointmentsController extends AppController
      * @return \Cake\Http\Response|null|void Redirects to index.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function cancel($id = null)
+    public function cancel(?string $id = null)
     {
         $this->request->allowMethod(['post']);
         $appointment = $this->Appointments->get($id);
-        
+
         $appointment->status = 'cancelled';
         $appointment->cancelled_at = Time::now();
-        
+
         $reason = $this->request->getData('cancellation_reason');
         if ($reason) {
             $appointment->cancellation_reason = $reason;
@@ -207,14 +207,14 @@ class AppointmentsController extends AppController
             ->contain(['Doctors', 'Services'])
             ->where(['Appointments.appointment_date' => Date::now()])
             ->orderBy([
-                'Appointments.appointment_time' => 'ASC'
+                'Appointments.appointment_time' => 'ASC',
             ]);
 
         $appointments = $this->paginate($query);
 
         // Get lists for filters (same as index action)
         $doctors = $this->Appointments->Doctors->find('list', [
-            'order' => ['first_name' => 'ASC', 'last_name' => 'ASC']
+            'order' => ['first_name' => 'ASC', 'last_name' => 'ASC'],
         ])->toArray();
 
         $statuses = [
@@ -222,7 +222,7 @@ class AppointmentsController extends AppController
             'confirmed' => 'Confirmată',
             'cancelled' => 'Anulată',
             'completed' => 'Finalizată',
-            'no-show' => 'Neprezentare'
+            'no-show' => 'Neprezentare',
         ];
 
         $this->set(compact('appointments', 'doctors', 'statuses'));
@@ -245,7 +245,7 @@ class AppointmentsController extends AppController
         if ($dateFrom && $dateTo) {
             $query->where([
                 'Appointments.appointment_date >=' => $dateFrom,
-                'Appointments.appointment_date <=' => $dateTo
+                'Appointments.appointment_date <=' => $dateTo,
             ]);
         }
 
@@ -269,7 +269,7 @@ class AppointmentsController extends AppController
                 $appointment->doctor->first_name . ' ' . $appointment->doctor->last_name,
                 $appointment->service->name,
                 $appointment->status,
-                $appointment->notes
+                $appointment->notes,
             ];
         }
 
@@ -278,7 +278,7 @@ class AppointmentsController extends AppController
         $this->viewBuilder()->setClassName('CsvView.Csv');
         $this->viewBuilder()->setOptions([
             'serialize' => 'data',
-            'header' => false
+            'header' => false,
         ]);
     }
 }

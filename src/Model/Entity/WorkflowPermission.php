@@ -146,7 +146,7 @@ class WorkflowPermission extends Entity
      */
     public function hasPermission(string $permission): bool
     {
-        return match($permission) {
+        return match ($permission) {
             'execute' => $this->can_execute,
             'edit' => $this->can_edit,
             'delete' => $this->can_delete,
@@ -164,7 +164,7 @@ class WorkflowPermission extends Entity
     public function getGrantedPermissions(): array
     {
         $permissions = [];
-        
+
         if ($this->can_execute) {
             $permissions[] = 'execute';
         }
@@ -180,7 +180,7 @@ class WorkflowPermission extends Entity
         if ($this->can_manage_permissions) {
             $permissions[] = 'manage_permissions';
         }
-        
+
         return $permissions;
     }
 }

@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Controller\Admin\AppController;
-use Cake\Http\Exception\NotFoundException;
+use Cake\I18n\Time;
+use Exception;
 
 /**
  * DoctorSchedules Controller
@@ -51,18 +51,18 @@ class DoctorSchedulesController extends AppController
             'Staff.first_name' => 'ASC',
             'Staff.last_name' => 'ASC',
             'DoctorSchedules.day_of_week' => 'ASC',
-            'DoctorSchedules.start_time' => 'ASC'
+            'DoctorSchedules.start_time' => 'ASC',
         ]);
 
         $doctorSchedules = $this->paginate($query);
 
         // Get lists for filters
         $staff = $this->DoctorSchedules->Staff->find('list', [
-            'order' => ['first_name' => 'ASC', 'last_name' => 'ASC']
+            'order' => ['first_name' => 'ASC', 'last_name' => 'ASC'],
         ])->toArray();
-        
+
         $services = $this->DoctorSchedules->Services->find('list', [
-            'order' => ['name' => 'ASC']
+            'order' => ['name' => 'ASC'],
         ])->toArray();
 
         $daysOfWeek = [
@@ -72,7 +72,7 @@ class DoctorSchedulesController extends AppController
             4 => __('Thursday'),
             5 => __('Friday'),
             6 => __('Saturday'),
-            7 => __('Sunday')
+            7 => __('Sunday'),
         ];
 
         $this->set(compact('doctorSchedules', 'staff', 'services', 'daysOfWeek'));
@@ -85,7 +85,7 @@ class DoctorSchedulesController extends AppController
      * @return \Cake\Http\Response|null|void Renders view
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function view($id = null)
+    public function view(?string $id = null)
     {
         $doctorSchedule = $this->DoctorSchedules->get($id, [
             'contain' => ['Staff', 'Services'],
@@ -102,24 +102,24 @@ class DoctorSchedulesController extends AppController
     public function add()
     {
         $doctorSchedule = $this->DoctorSchedules->newEmptyEntity();
-        
+
         if ($this->request->is('post')) {
             $doctorSchedule = $this->DoctorSchedules->patchEntity($doctorSchedule, $this->request->getData());
-            
+
             if ($this->DoctorSchedules->save($doctorSchedule)) {
                 $this->Flash->success(__('The doctor schedule has been saved.'));
-                
+
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('The doctor schedule could not be saved. Please, try again.'));
         }
-        
+
         $staff = $this->DoctorSchedules->Staff->find('list', [
-            'order' => ['first_name' => 'ASC', 'last_name' => 'ASC']
+            'order' => ['first_name' => 'ASC', 'last_name' => 'ASC'],
         ]);
-        
+
         $services = $this->DoctorSchedules->Services->find('list', [
-            'order' => ['name' => 'ASC']
+            'order' => ['name' => 'ASC'],
         ]);
 
         $daysOfWeek = [
@@ -129,9 +129,9 @@ class DoctorSchedulesController extends AppController
             4 => __('Thursday'),
             5 => __('Friday'),
             6 => __('Saturday'),
-            7 => __('Sunday')
+            7 => __('Sunday'),
         ];
-        
+
         $this->set(compact('doctorSchedule', 'staff', 'services', 'daysOfWeek'));
     }
 
@@ -155,7 +155,7 @@ class DoctorSchedulesController extends AppController
                 // Handle multiple staff members
                 $staffIds = (array)($data['staff_ids'] ?? []);
                 $daysOfWeek = (array)($data['days_of_week'] ?? []);
-                
+
                 foreach ($staffIds as $staffId) {
                     foreach ($daysOfWeek as $dayOfWeek) {
                         $scheduleData = [
@@ -167,11 +167,11 @@ class DoctorSchedulesController extends AppController
                             'max_appointments' => $data['max_appointments'] ?? 1,
                             'slot_duration' => $data['slot_duration'] ?? null,
                             'buffer_minutes' => $data['buffer_minutes'] ?? 0,
-                            'is_active' => $data['is_active'] ?? true
+                            'is_active' => $data['is_active'] ?? true,
                         ];
 
                         $schedule = $this->DoctorSchedules->newEntity($scheduleData);
-                        
+
                         if ($this->DoctorSchedules->save($schedule)) {
                             $savedCount++;
                         } else {
@@ -180,7 +180,7 @@ class DoctorSchedulesController extends AppController
                                 __('Failed to create schedule for %s on %s: %s'),
                                 $staff->name,
                                 $this->getDayName((int)$dayOfWeek),
-                                $this->formatErrors($schedule->getErrors())
+                                $this->formatErrors($schedule->getErrors()),
                             );
                         }
                     }
@@ -193,9 +193,10 @@ class DoctorSchedulesController extends AppController
                             '{0} schedule has been created.',
                             '{0} schedules have been created.',
                             $savedCount,
-                            $savedCount
-                        )
+                            $savedCount,
+                        ),
                     );
+
                     return $this->redirect(['action' => 'index']);
                 } else {
                     $connection->rollback();
@@ -203,18 +204,18 @@ class DoctorSchedulesController extends AppController
                         $this->Flash->error($error);
                     }
                 }
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $connection->rollback();
                 $this->Flash->error(__('An error occurred while creating schedules: {0}', $e->getMessage()));
             }
         }
 
         $staff = $this->DoctorSchedules->Staff->find('list', [
-            'order' => ['first_name' => 'ASC', 'last_name' => 'ASC']
+            'order' => ['first_name' => 'ASC', 'last_name' => 'ASC'],
         ]);
-        
+
         $services = $this->DoctorSchedules->Services->find('list', [
-            'order' => ['name' => 'ASC']
+            'order' => ['name' => 'ASC'],
         ]);
 
         $daysOfWeek = [
@@ -224,7 +225,7 @@ class DoctorSchedulesController extends AppController
             4 => __('Thursday'),
             5 => __('Friday'),
             6 => __('Saturday'),
-            7 => __('Sunday')
+            7 => __('Sunday'),
         ];
 
         $this->set(compact('staff', 'services', 'daysOfWeek'));
@@ -253,7 +254,7 @@ class DoctorSchedulesController extends AppController
                 $sourceSchedules = $this->DoctorSchedules->find()
                     ->where([
                         'staff_id' => $sourceStaffId,
-                        'is_active' => true
+                        'is_active' => true,
                     ])
                     ->toArray();
 
@@ -275,11 +276,11 @@ class DoctorSchedulesController extends AppController
                                     'max_appointments' => $sourceSchedule->max_appointments,
                                     'slot_duration' => $sourceSchedule->slot_duration,
                                     'buffer_minutes' => $sourceSchedule->buffer_minutes,
-                                    'is_active' => true
+                                    'is_active' => true,
                                 ];
 
                                 $newSchedule = $this->DoctorSchedules->newEntity($newScheduleData);
-                                
+
                                 if ($this->DoctorSchedules->save($newSchedule)) {
                                     $copiedCount++;
                                 } else {
@@ -288,7 +289,7 @@ class DoctorSchedulesController extends AppController
                                         __('Failed to copy schedule for %s on %s: %s'),
                                         $targetStaff->name,
                                         $this->getDayName($sourceSchedule->day_of_week),
-                                        $this->formatErrors($newSchedule->getErrors())
+                                        $this->formatErrors($newSchedule->getErrors()),
                                     );
                                 }
                             }
@@ -301,9 +302,10 @@ class DoctorSchedulesController extends AppController
                                     '{0} schedule has been copied.',
                                     '{0} schedules have been copied.',
                                     $copiedCount,
-                                    $copiedCount
-                                )
+                                    $copiedCount,
+                                ),
                             );
+
                             return $this->redirect(['action' => 'index']);
                         } else {
                             $connection->rollback();
@@ -311,7 +313,7 @@ class DoctorSchedulesController extends AppController
                                 $this->Flash->error($error);
                             }
                         }
-                    } catch (\Exception $e) {
+                    } catch (Exception $e) {
                         $connection->rollback();
                         $this->Flash->error(__('An error occurred while copying schedules: {0}', $e->getMessage()));
                     }
@@ -320,7 +322,7 @@ class DoctorSchedulesController extends AppController
         }
 
         $staff = $this->DoctorSchedules->Staff->find('list', [
-            'order' => ['first_name' => 'ASC', 'last_name' => 'ASC']
+            'order' => ['first_name' => 'ASC', 'last_name' => 'ASC'],
         ]);
 
         $this->set(compact('staff'));
@@ -333,29 +335,29 @@ class DoctorSchedulesController extends AppController
      * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function edit($id = null)
+    public function edit(?string $id = null)
     {
         $doctorSchedule = $this->DoctorSchedules->get($id, [
             'contain' => [],
         ]);
-        
+
         if ($this->request->is(['patch', 'post', 'put'])) {
             $doctorSchedule = $this->DoctorSchedules->patchEntity($doctorSchedule, $this->request->getData());
-            
+
             if ($this->DoctorSchedules->save($doctorSchedule)) {
                 $this->Flash->success(__('The doctor schedule has been saved.'));
-                
+
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('The doctor schedule could not be saved. Please, try again.'));
         }
-        
+
         $staff = $this->DoctorSchedules->Staff->find('list', [
-            'order' => ['first_name' => 'ASC', 'last_name' => 'ASC']
+            'order' => ['first_name' => 'ASC', 'last_name' => 'ASC'],
         ]);
-        
+
         $services = $this->DoctorSchedules->Services->find('list', [
-            'order' => ['name' => 'ASC']
+            'order' => ['name' => 'ASC'],
         ]);
 
         $daysOfWeek = [
@@ -365,9 +367,9 @@ class DoctorSchedulesController extends AppController
             4 => __('Thursday'),
             5 => __('Friday'),
             6 => __('Saturday'),
-            7 => __('Sunday')
+            7 => __('Sunday'),
         ];
-        
+
         $this->set(compact('doctorSchedule', 'staff', 'services', 'daysOfWeek'));
     }
 
@@ -378,17 +380,17 @@ class DoctorSchedulesController extends AppController
      * @return \Cake\Http\Response|null Redirects to index.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function delete($id = null)
+    public function delete(?string $id = null)
     {
         $this->request->allowMethod(['post', 'delete']);
         $doctorSchedule = $this->DoctorSchedules->get($id);
-        
+
         if ($this->DoctorSchedules->delete($doctorSchedule)) {
             $this->Flash->success(__('The doctor schedule has been deleted.'));
         } else {
             $this->Flash->error(__('The doctor schedule could not be deleted. Please, try again.'));
         }
-        
+
         return $this->redirect(['action' => 'index']);
     }
 
@@ -405,7 +407,7 @@ class DoctorSchedulesController extends AppController
             ->contain(['Staff', 'Services'])
             ->orderBy([
                 'DoctorSchedules.day_of_week' => 'ASC',
-                'DoctorSchedules.start_time' => 'ASC'
+                'DoctorSchedules.start_time' => 'ASC',
             ])
             ->toArray();
 
@@ -422,7 +424,7 @@ class DoctorSchedulesController extends AppController
             4 => __('Thursday'),
             5 => __('Friday'),
             6 => __('Saturday'),
-            7 => __('Sunday')
+            7 => __('Sunday'),
         ];
 
         $this->set(compact('schedulesByDay', 'daysOfWeek'));
@@ -435,16 +437,16 @@ class DoctorSchedulesController extends AppController
      * @return \Cake\Http\Response|null
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function toggle($id = null)
+    public function toggle(?string $id = null)
     {
         $this->request->allowMethod(['post']);
         $doctorSchedule = $this->DoctorSchedules->get($id);
-        
+
         $doctorSchedule->is_active = !$doctorSchedule->is_active;
-        
+
         if ($this->DoctorSchedules->save($doctorSchedule)) {
-            $message = $doctorSchedule->is_active 
-                ? __('The schedule has been activated.') 
+            $message = $doctorSchedule->is_active
+                ? __('The schedule has been activated.')
                 : __('The schedule has been deactivated.');
             $success = true;
         } else {
@@ -456,7 +458,7 @@ class DoctorSchedulesController extends AppController
             $this->set([
                 'success' => $success,
                 'message' => $message,
-                'is_active' => $doctorSchedule->is_active
+                'is_active' => $doctorSchedule->is_active,
             ]);
             $this->viewBuilder()->setOption('serialize', ['success', 'message', 'is_active']);
         } else {
@@ -465,6 +467,7 @@ class DoctorSchedulesController extends AppController
             } else {
                 $this->Flash->error($message);
             }
+
             return $this->redirect(['action' => 'index']);
         }
     }
@@ -484,7 +487,7 @@ class DoctorSchedulesController extends AppController
             4 => __('Thursday'),
             5 => __('Friday'),
             6 => __('Saturday'),
-            7 => __('Sunday')
+            7 => __('Sunday'),
         ];
 
         return $days[$dayOfWeek] ?? '';
@@ -504,6 +507,7 @@ class DoctorSchedulesController extends AppController
                 $messages[] = $error;
             }
         }
+
         return implode(', ', $messages);
     }
 
@@ -514,7 +518,7 @@ class DoctorSchedulesController extends AppController
      * @param int $minutes Minutes to adjust (positive or negative)
      * @return \Cake\I18n\Time
      */
-    private function adjustTime($time, int $minutes)
+    private function adjustTime(Time $time, int $minutes)
     {
         if ($minutes === 0) {
             return $time;

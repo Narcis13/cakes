@@ -3,16 +3,19 @@ declare(strict_types=1);
 
 namespace App\Model\Table;
 
+use App\Model\Entity\WorkflowHumanTask;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use DateTime;
+use InvalidArgumentException;
+use RuntimeException;
 
 /**
  * WorkflowHumanTasks Model
  *
  * @property \App\Model\Table\WorkflowExecutionsTable&\Cake\ORM\Association\BelongsTo $Executions
- *
  * @method \App\Model\Entity\WorkflowHumanTask newEmptyEntity()
  * @method \App\Model\Entity\WorkflowHumanTask newEntity(array $data, array $options = [])
  * @method array<\App\Model\Entity\WorkflowHumanTask> newEntities(array $data, array $options = [])
@@ -26,7 +29,6 @@ use Cake\Validation\Validator;
  * @method iterable<\App\Model\Entity\WorkflowHumanTask>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\WorkflowHumanTask> saveManyOrFail(iterable $entities, array $options = [])
  * @method iterable<\App\Model\Entity\WorkflowHumanTask>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\WorkflowHumanTask>|false deleteMany(iterable $entities, array $options = [])
  * @method iterable<\App\Model\Entity\WorkflowHumanTask>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\WorkflowHumanTask> deleteManyOrFail(iterable $entities, array $options = [])
- *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
 class WorkflowHumanTasksTable extends Table
@@ -52,13 +54,13 @@ class WorkflowHumanTasksTable extends Table
             'className' => 'WorkflowExecutions',
             'joinType' => 'INNER',
         ]);
-        
+
         $this->belongsTo('AssignedUsers', [
             'foreignKey' => 'assigned_to',
             'className' => 'Users',
             'propertyName' => 'assigned_user',
         ]);
-        
+
         $this->belongsTo('CompletedByUsers', [
             'foreignKey' => 'completed_by',
             'className' => 'Users',
@@ -212,7 +214,7 @@ class WorkflowHumanTasksTable extends Table
     public function findAssignedTo(SelectQuery $query, array $options): SelectQuery
     {
         if (empty($options['user_id'])) {
-            throw new \InvalidArgumentException('user_id is required');
+            throw new InvalidArgumentException('user_id is required');
         }
 
         return $query->where(['WorkflowHumanTasks.assigned_to' => $options['user_id']]);
@@ -228,7 +230,7 @@ class WorkflowHumanTasksTable extends Table
     public function findForRole(SelectQuery $query, array $options): SelectQuery
     {
         if (empty($options['role'])) {
-            throw new \InvalidArgumentException('role is required');
+            throw new InvalidArgumentException('role is required');
         }
 
         return $query->where(['WorkflowHumanTasks.assigned_role' => $options['role']]);
@@ -244,7 +246,7 @@ class WorkflowHumanTasksTable extends Table
     {
         return $query->where([
             'WorkflowHumanTasks.due_at IS NOT' => null,
-            'WorkflowHumanTasks.due_at <' => new \DateTime(),
+            'WorkflowHumanTasks.due_at <' => new DateTime(),
             'WorkflowHumanTasks.status NOT IN' => ['completed', 'cancelled'],
         ]);
     }
@@ -259,7 +261,7 @@ class WorkflowHumanTasksTable extends Table
     public function findByPriority(SelectQuery $query, array $options): SelectQuery
     {
         if (empty($options['priority'])) {
-            throw new \InvalidArgumentException('priority is required');
+            throw new InvalidArgumentException('priority is required');
         }
 
         return $query->where(['WorkflowHumanTasks.priority' => $options['priority']]);
@@ -286,7 +288,7 @@ class WorkflowHumanTasksTable extends Table
      * @param array $taskData Task data
      * @return \App\Model\Entity\WorkflowHumanTask
      */
-    public function createFromNode(int $executionId, string $nodeName, array $taskData): \App\Model\Entity\WorkflowHumanTask
+    public function createFromNode(int $executionId, string $nodeName, array $taskData): WorkflowHumanTask
     {
         $task = $this->newEntity([
             'execution_id' => $executionId,
@@ -302,7 +304,7 @@ class WorkflowHumanTasksTable extends Table
         ]);
 
         if (!$this->save($task)) {
-            throw new \RuntimeException('Failed to create human task');
+            throw new RuntimeException('Failed to create human task');
         }
 
         return $task;

@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Model\Table;
 
+use Cake\I18n\Time;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
@@ -82,7 +83,7 @@ class DoctorSchedulesTable extends Table
             ->notEmptyTime('start_time')
             ->add('start_time', 'reasonableTime', [
                 'rule' => function ($value) {
-                    if ($value instanceof \Cake\I18n\Time) {
+                    if ($value instanceof Time) {
                         $hour = (int)$value->format('H');
                     } else {
                         $hour = (int)date('H', strtotime($value));
@@ -103,13 +104,13 @@ class DoctorSchedulesTable extends Table
                         return true;
                     }
 
-                    if ($value instanceof \Cake\I18n\Time && $context['data']['start_time'] instanceof \Cake\I18n\Time) {
+                    if ($value instanceof Time && $context['data']['start_time'] instanceof Time) {
                         return $value->format('U') > $context['data']['start_time']->format('U');
                     }
-                    
-                    $endTime = $value instanceof \Cake\I18n\Time ? $value->format('U') : strtotime($value);
-                    $startTime = $context['data']['start_time'] instanceof \Cake\I18n\Time 
-                        ? $context['data']['start_time']->format('U') 
+
+                    $endTime = $value instanceof Time ? $value->format('U') : strtotime($value);
+                    $startTime = $context['data']['start_time'] instanceof Time
+                        ? $context['data']['start_time']->format('U')
                         : strtotime($context['data']['start_time']);
 
                     return $endTime > $startTime;
@@ -121,12 +122,12 @@ class DoctorSchedulesTable extends Table
                     if (!isset($context['data']['start_time'])) {
                         return true;
                     }
-                    
-                    $startTime = $context['data']['start_time'] instanceof \Cake\I18n\Time 
-                        ? $context['data']['start_time']->format('U') 
+
+                    $startTime = $context['data']['start_time'] instanceof Time
+                        ? $context['data']['start_time']->format('U')
                         : strtotime($context['data']['start_time']);
-                    $endTime = $value instanceof \Cake\I18n\Time 
-                        ? $value->format('U') 
+                    $endTime = $value instanceof Time
+                        ? $value->format('U')
                         : strtotime($value);
                     $duration = ($endTime - $startTime) / 3600; // Convert to hours
 

@@ -7,6 +7,7 @@ use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use DateTime;
 
 /**
  * HospitalHolidays Model
@@ -24,7 +25,6 @@ use Cake\Validation\Validator;
  * @method iterable<\App\Model\Entity\HospitalHoliday>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\HospitalHoliday> saveManyOrFail(iterable $entities, array $options = [])
  * @method iterable<\App\Model\Entity\HospitalHoliday>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\HospitalHoliday>|false deleteMany(iterable $entities, array $options = [])
  * @method iterable<\App\Model\Entity\HospitalHoliday>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\HospitalHoliday> deleteManyOrFail(iterable $entities, array $options = [])
- *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
 class HospitalHolidaysTable extends Table
@@ -89,7 +89,7 @@ class HospitalHolidaysTable extends Table
 
         return $rules;
     }
-    
+
     /**
      * Find upcoming holidays
      *
@@ -102,7 +102,7 @@ class HospitalHolidaysTable extends Table
             ->where(['date >=' => date('Y-m-d')])
             ->order(['date' => 'ASC']);
     }
-    
+
     /**
      * Get holidays for a specific year
      *
@@ -113,11 +113,11 @@ class HospitalHolidaysTable extends Table
     {
         return $this->find()
             ->where([
-                'YEAR(date)' => $year
+                'YEAR(date)' => $year,
             ])
             ->order(['date' => 'ASC']);
     }
-    
+
     /**
      * Check if a date is a holiday
      *
@@ -129,22 +129,22 @@ class HospitalHolidaysTable extends Table
         $count = $this->find()
             ->where(['date' => $date])
             ->count();
-            
+
         // Check recurring holidays (same month and day for any year)
         if ($count === 0) {
-            $dateObj = new \DateTime($date);
+            $dateObj = new DateTime($date);
             $month = $dateObj->format('m');
             $day = $dateObj->format('d');
-            
+
             $count = $this->find()
                 ->where([
                     'is_recurring' => true,
                     'MONTH(date)' => $month,
-                    'DAY(date)' => $day
+                    'DAY(date)' => $day,
                 ])
                 ->count();
         }
-        
+
         return $count > 0;
     }
 }

@@ -3,17 +3,19 @@ declare(strict_types=1);
 
 namespace App\Model\Table;
 
+use App\Model\Entity\WorkflowPermission;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use InvalidArgumentException;
+use RuntimeException;
 
 /**
  * WorkflowPermissions Model
  *
  * @property \App\Model\Table\WorkflowsTable&\Cake\ORM\Association\BelongsTo $Workflows
  * @property \App\Model\Table\UsersTable&\Cake\ORM\Association\BelongsTo $Users
- *
  * @method \App\Model\Entity\WorkflowPermission newEmptyEntity()
  * @method \App\Model\Entity\WorkflowPermission newEntity(array $data, array $options = [])
  * @method array<\App\Model\Entity\WorkflowPermission> newEntities(array $data, array $options = [])
@@ -27,7 +29,6 @@ use Cake\Validation\Validator;
  * @method iterable<\App\Model\Entity\WorkflowPermission>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\WorkflowPermission> saveManyOrFail(iterable $entities, array $options = [])
  * @method iterable<\App\Model\Entity\WorkflowPermission>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\WorkflowPermission>|false deleteMany(iterable $entities, array $options = [])
  * @method iterable<\App\Model\Entity\WorkflowPermission>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\WorkflowPermission> deleteManyOrFail(iterable $entities, array $options = [])
- *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
 class WorkflowPermissionsTable extends Table
@@ -82,7 +83,7 @@ class WorkflowPermissionsTable extends Table
                     // Either user_id or role must be set, but not both
                     $hasUserId = !empty($context['data']['user_id']);
                     $hasRole = !empty($value);
-                    
+
                     return ($hasUserId && !$hasRole) || (!$hasUserId && $hasRole);
                 },
                 'message' => 'Permission must be either user-based or role-based, not both',
@@ -138,7 +139,7 @@ class WorkflowPermissionsTable extends Table
     public function findForUser(SelectQuery $query, array $options): SelectQuery
     {
         if (empty($options['user_id'])) {
-            throw new \InvalidArgumentException('user_id is required');
+            throw new InvalidArgumentException('user_id is required');
         }
 
         return $query->where(['WorkflowPermissions.user_id' => $options['user_id']]);
@@ -154,7 +155,7 @@ class WorkflowPermissionsTable extends Table
     public function findForRole(SelectQuery $query, array $options): SelectQuery
     {
         if (empty($options['role'])) {
-            throw new \InvalidArgumentException('role is required');
+            throw new InvalidArgumentException('role is required');
         }
 
         return $query->where(['WorkflowPermissions.role' => $options['role']]);
@@ -170,7 +171,7 @@ class WorkflowPermissionsTable extends Table
     public function findForWorkflow(SelectQuery $query, array $options): SelectQuery
     {
         if (empty($options['workflow_id'])) {
-            throw new \InvalidArgumentException('workflow_id is required');
+            throw new InvalidArgumentException('workflow_id is required');
         }
 
         return $query
@@ -225,14 +226,14 @@ class WorkflowPermissionsTable extends Table
      * @param array $permissions Permission data
      * @return \App\Model\Entity\WorkflowPermission
      */
-    public function grantPermission(int $workflowId, array $permissions): \App\Model\Entity\WorkflowPermission
+    public function grantPermission(int $workflowId, array $permissions): WorkflowPermission
     {
         $permission = $this->newEntity(array_merge($permissions, [
             'workflow_id' => $workflowId,
         ]));
 
         if (!$this->save($permission)) {
-            throw new \RuntimeException('Failed to grant permission');
+            throw new RuntimeException('Failed to grant permission');
         }
 
         return $permission;
@@ -246,7 +247,7 @@ class WorkflowPermissionsTable extends Table
      * @param string|null $role Role
      * @return \App\Model\Entity\WorkflowPermission
      */
-    public function grantFullAccess(int $workflowId, ?int $userId = null, ?string $role = null): \App\Model\Entity\WorkflowPermission
+    public function grantFullAccess(int $workflowId, ?int $userId = null, ?string $role = null): WorkflowPermission
     {
         $permission = $this->newEntity([
             'workflow_id' => $workflowId,
@@ -260,7 +261,7 @@ class WorkflowPermissionsTable extends Table
         ]);
 
         if (!$this->save($permission)) {
-            throw new \RuntimeException('Failed to grant full access');
+            throw new RuntimeException('Failed to grant full access');
         }
 
         return $permission;

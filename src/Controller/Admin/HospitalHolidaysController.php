@@ -18,22 +18,22 @@ class HospitalHolidaysController extends AppController
     public function index()
     {
         $year = $this->request->getQuery('year', date('Y'));
-        
+
         $query = $this->HospitalHolidays->findByYear((int)$year);
         $hospitalHolidays = $this->paginate($query);
-        
+
         // Get list of years that have holidays
         $years = $this->HospitalHolidays->find()
             ->select(['year' => 'YEAR(date)'])
             ->distinct(['year'])
             ->order(['year' => 'DESC'])
             ->toArray();
-        
+
         $yearsList = [];
         foreach ($years as $y) {
             $yearsList[$y->year] = $y->year;
         }
-        
+
         // Add current year if not in list
         if (!isset($yearsList[$year])) {
             $yearsList[$year] = $year;
@@ -50,7 +50,7 @@ class HospitalHolidaysController extends AppController
      * @return \Cake\Http\Response|null|void Renders view
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function view($id = null)
+    public function view(?string $id = null)
     {
         $hospitalHoliday = $this->HospitalHolidays->get($id);
 
@@ -84,7 +84,7 @@ class HospitalHolidaysController extends AppController
      * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function edit($id = null)
+    public function edit(?string $id = null)
     {
         $hospitalHoliday = $this->HospitalHolidays->get($id);
         if ($this->request->is(['patch', 'post', 'put'])) {
@@ -106,7 +106,7 @@ class HospitalHolidaysController extends AppController
      * @return \Cake\Http\Response|null Redirects to index.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function delete($id = null)
+    public function delete(?string $id = null)
     {
         $this->request->allowMethod(['post', 'delete']);
         $hospitalHoliday = $this->HospitalHolidays->get($id);

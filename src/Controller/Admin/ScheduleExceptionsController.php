@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Controller\Admin\AppController;
+use DateTime;
 
 /**
  * ScheduleExceptions Controller
@@ -34,7 +34,7 @@ class ScheduleExceptionsController extends AppController
         if ($dateFrom && $dateTo) {
             $query->where([
                 'ScheduleExceptions.exception_date >=' => $dateFrom,
-                'ScheduleExceptions.exception_date <=' => $dateTo
+                'ScheduleExceptions.exception_date <=' => $dateTo,
             ]);
         }
 
@@ -47,14 +47,14 @@ class ScheduleExceptionsController extends AppController
         $query->orderBy([
             'ScheduleExceptions.exception_date' => 'DESC',
             'Staff.first_name' => 'ASC',
-            'Staff.last_name' => 'ASC'
+            'Staff.last_name' => 'ASC',
         ]);
 
         $scheduleExceptions = $this->paginate($query);
 
         // Get staff list for filter
         $staff = $this->ScheduleExceptions->Staff->find('list', [
-            'order' => ['first_name' => 'ASC', 'last_name' => 'ASC']
+            'order' => ['first_name' => 'ASC', 'last_name' => 'ASC'],
         ])->toArray();
 
         $this->set(compact('scheduleExceptions', 'staff'));
@@ -67,7 +67,7 @@ class ScheduleExceptionsController extends AppController
      * @return \Cake\Http\Response|null|void Renders view
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function view($id = null)
+    public function view(?string $id = null)
     {
         $scheduleException = $this->ScheduleExceptions->get($id, [
             'contain' => ['Staff'],
@@ -84,21 +84,22 @@ class ScheduleExceptionsController extends AppController
     public function add()
     {
         $scheduleException = $this->ScheduleExceptions->newEmptyEntity();
-        
+
         if ($this->request->is('post')) {
             $scheduleException = $this->ScheduleExceptions->patchEntity($scheduleException, $this->request->getData());
-            
+
             if ($this->ScheduleExceptions->save($scheduleException)) {
                 $this->Flash->success(__('Excepția a fost salvată.'));
+
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('Excepția nu a putut fi salvată. Vă rugăm să încercați din nou.'));
         }
-        
+
         $staff = $this->ScheduleExceptions->Staff->find('list', [
-            'order' => ['first_name' => 'ASC', 'last_name' => 'ASC']
+            'order' => ['first_name' => 'ASC', 'last_name' => 'ASC'],
         ])->toArray();
-        
+
         $this->set(compact('scheduleException', 'staff'));
     }
 
@@ -109,26 +110,27 @@ class ScheduleExceptionsController extends AppController
      * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function edit($id = null)
+    public function edit(?string $id = null)
     {
         $scheduleException = $this->ScheduleExceptions->get($id, [
             'contain' => [],
         ]);
-        
+
         if ($this->request->is(['patch', 'post', 'put'])) {
             $scheduleException = $this->ScheduleExceptions->patchEntity($scheduleException, $this->request->getData());
-            
+
             if ($this->ScheduleExceptions->save($scheduleException)) {
                 $this->Flash->success(__('Excepția a fost actualizată.'));
+
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('Excepția nu a putut fi actualizată. Vă rugăm să încercați din nou.'));
         }
-        
+
         $staff = $this->ScheduleExceptions->Staff->find('list', [
-            'order' => ['first_name' => 'ASC', 'last_name' => 'ASC']
+            'order' => ['first_name' => 'ASC', 'last_name' => 'ASC'],
         ])->toArray();
-        
+
         $this->set(compact('scheduleException', 'staff'));
     }
 
@@ -139,11 +141,11 @@ class ScheduleExceptionsController extends AppController
      * @return \Cake\Http\Response|null|void Redirects to index.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function delete($id = null)
+    public function delete(?string $id = null)
     {
         $this->request->allowMethod(['post', 'delete']);
         $scheduleException = $this->ScheduleExceptions->get($id);
-        
+
         if ($this->ScheduleExceptions->delete($scheduleException)) {
             $this->Flash->success(__('Excepția a fost ștearsă.'));
         } else {
@@ -170,28 +172,28 @@ class ScheduleExceptionsController extends AppController
             $endTime = $data['end_time'] ?? null;
             $reason = $data['reason'] ?? null;
             $skipWeekends = $data['skip_weekends'] ?? false;
-            
+
             $saved = 0;
             $errors = 0;
-            
-            $currentDate = new \DateTime($dateFrom);
-            $endDate = new \DateTime($dateTo);
-            
+
+            $currentDate = new DateTime($dateFrom);
+            $endDate = new DateTime($dateTo);
+
             while ($currentDate <= $endDate) {
                 // Skip weekends if requested
                 if ($skipWeekends && in_array($currentDate->format('w'), [0, 6])) {
                     $currentDate->modify('+1 day');
                     continue;
                 }
-                
+
                 // Check if exception already exists
                 $existing = $this->ScheduleExceptions->find()
                     ->where([
                         'staff_id' => $staffId,
-                        'exception_date' => $currentDate->format('Y-m-d')
+                        'exception_date' => $currentDate->format('Y-m-d'),
                     ])
                     ->first();
-                
+
                 if (!$existing) {
                     $exception = $this->ScheduleExceptions->newEntity([
                         'staff_id' => $staffId,
@@ -199,33 +201,33 @@ class ScheduleExceptionsController extends AppController
                         'is_working' => $isWorking,
                         'start_time' => $startTime,
                         'end_time' => $endTime,
-                        'reason' => $reason
+                        'reason' => $reason,
                     ]);
-                    
+
                     if ($this->ScheduleExceptions->save($exception)) {
                         $saved++;
                     } else {
                         $errors++;
                     }
                 }
-                
+
                 $currentDate->modify('+1 day');
             }
-            
+
             if ($saved > 0) {
                 $this->Flash->success(__('Au fost create {0} excepții.', $saved));
             }
             if ($errors > 0) {
                 $this->Flash->error(__('Nu s-au putut crea {0} excepții.', $errors));
             }
-            
+
             return $this->redirect(['action' => 'index']);
         }
-        
+
         $staff = $this->ScheduleExceptions->Staff->find('list', [
-            'order' => ['first_name' => 'ASC', 'last_name' => 'ASC']
+            'order' => ['first_name' => 'ASC', 'last_name' => 'ASC'],
         ])->toArray();
-        
+
         $this->set(compact('staff'));
     }
 }
