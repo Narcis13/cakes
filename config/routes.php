@@ -24,9 +24,15 @@ return static function (RouteBuilder $routes) {
         // Contact page - renders Pages/contact.php  
         $builder->connect('/contact', ['controller' => 'Pages', 'action' => 'display', 'contact']);
         
+        // Contact form page
+        $builder->connect('/formular-contact', ['controller' => 'Pages', 'action' => 'contactForm']);
+        
         // Handle contact form submission
-        $builder->connect('/contact', ['controller' => 'Pages', 'action' => 'contact'])
+        $builder->connect('/formular-contact', ['controller' => 'Pages', 'action' => 'contactForm'])
                 ->setMethods(['POST']);
+        
+        // Map/Contact page (Cum ajungeti) - renders Pages/harta.php
+        $builder->connect('/harta', ['controller' => 'Pages', 'action' => 'display', 'harta']);
         
         // Additional hospital pages
         $builder->connect('/about', ['controller' => 'Pages', 'action' => 'display', 'about']);

@@ -7,9 +7,7 @@
         <div class="content">
           <h3><?= h($title) ?></h3>
           <p><?= h($description) ?></p>
-          <div class="text-center">
-            <a href="#" class="more-btn">Learn More <i class="bx bx-chevron-right"></i></a>
-          </div>
+
         </div>
       </div>
       <div class="col-lg-8 d-flex align-items-stretch">

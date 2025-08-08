@@ -33,7 +33,7 @@
 <?= $this->cell('Doctors') ?>
 
 <!-- ======= Frequently Asked Questions Section ======= -->
-<?= $this->cell('Faq') ?>
+<?php // Temporarily commented out: $this->cell('Faq') ?>
 
 <!-- ======= Testimonials Section ======= -->
 <?= $this->cell('Testimonials') ?>

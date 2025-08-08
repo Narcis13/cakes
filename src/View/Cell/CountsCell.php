@@ -20,23 +20,23 @@ class CountsCell extends Cell
         $counts = [
             [
                 'icon' => 'fas fa-user-md',
-                'number' => 85,
-                'label' => 'Doctors',
+                'number' => 18521,
+                'label' => 'Pacienti anual',
             ],
             [
                 'icon' => 'far fa-hospital',
-                'number' => 18,
-                'label' => 'Departments',
+                'number' => 8210,
+                'label' => 'Ex. Paraclinice',
             ],
             [
                 'icon' => 'fas fa-flask',
-                'number' => 12,
-                'label' => 'Research Labs',
+                'number' => 9601,
+                'label' => 'Consultatii',
             ],
             [
                 'icon' => 'fas fa-award',
-                'number' => 150,
-                'label' => 'Awards',
+                'number' => 7158,
+                'label' => 'Vizite medicale',
             ],
         ];
 

@@ -14,10 +14,7 @@ use Cake\Event\EventInterface;
 use Cake\Http\Exception\ForbiddenException;
 use Cake\Http\Exception\NotFoundException;
 use Cake\Http\Response;
-use Cake\Mailer\Mailer;
-use Cake\Validation\Validator;
 use Cake\View\Exception\MissingTemplateException;
-use Exception;
 
 /**
  * Static content controller
@@ -86,126 +83,77 @@ class PagesController extends AppController
     }
 
     /**
+     * Contact form page
+     *
+     * @return \Cake\Http\Response|null
+     */
+    public function contactForm(): ?Response
+    {
+        if ($this->request->is('post')) {
+            return $this->handleContactForm();
+        }
+
+        // GET request - display contact form
+        $this->setPageVariables('contact_form');
+        $contactInfo = $this->getContactInfo();
+        $this->set(compact('contactInfo'));
+
+        return $this->render('contact_form');
+    }
+
+    /**
      * Handle contact form submission
      *
      * @return \Cake\Http\Response
      */
     private function handleContactForm(): Response
     {
+        $contactMessagesTable = $this->fetchTable('ContactMessages');
+        $contactMessage = $contactMessagesTable->newEmptyEntity();
+
         $data = $this->request->getData();
+        $contactMessage = $contactMessagesTable->patchEntity($contactMessage, $data);
 
-        // Validate form data
-        $validator = new Validator();
-        $validator
-            ->requirePresence('first_name', 'create')
-            ->notEmptyString('first_name', 'First name is required')
-            ->maxLength('first_name', 50, 'First name must be less than 50 characters')
+        if ($contactMessagesTable->save($contactMessage)) {
+            // Set success flag and redirect to show success message
+            $this->set([
+                'success' => true,
+                'message' => 'Mesajul dumneavoastră a fost salvat cu succes! Vă mulțumim că ne-ați contactat. Vă vom răspunde în cel mai scurt timp.'
+            ]);
+            $contactInfo = $this->getContactInfo();
+            $this->set(compact('contactInfo'));
+            return $this->render('contact_form');
+        } else {
+            $this->Flash->error('A apărut o eroare la trimiterea mesajului. Vă rugăm să încercați din nou.');
+            $contactInfo = $this->getContactInfo();
+            $this->set(compact('contactMessage', 'contactInfo'));
 
-            ->requirePresence('last_name', 'create')
-            ->notEmptyString('last_name', 'Last name is required')
-            ->maxLength('last_name', 50, 'Last name must be less than 50 characters')
-
-            ->requirePresence('email', 'create')
-            ->email('email', false, 'Please enter a valid email address')
-            ->notEmptyString('email', 'Email address is required')
-
-            ->allowEmptyString('phone')
-            ->add('phone', 'custom', [
-                'rule' => function ($value) {
-                    if (empty($value)) {
-                        return true;
-                    }
-
-                    return preg_match('/^[\+]?[1-9][\d]{0,15}$/', preg_replace('/[\s\-\(\)]/', '', $value));
-                },
-                'message' => 'Please enter a valid phone number',
-            ])
-
-            ->requirePresence('subject', 'create')
-            ->notEmptyString('subject', 'Please select a subject')
-            ->inList('subject', [
-                'general', 'appointment', 'billing', 'medical_records',
-                'insurance', 'complaint', 'compliment', 'other',
-            ], 'Invalid subject selected')
-
-            ->requirePresence('message', 'create')
-            ->notEmptyString('message', 'Message is required')
-            ->minLength('message', 10, 'Message must be at least 10 characters')
-            ->maxLength('message', 1000, 'Message must be less than 1000 characters')
-
-            ->requirePresence('privacy_consent', 'create')
-            ->boolean('privacy_consent', 'You must consent to our privacy policy');
-
-        $errors = $validator->validate($data);
-
-        if (!empty($errors)) {
-            $this->Flash->error('Please correct the errors below.');
-            $this->set(compact('data', 'errors'));
-
-            return $this->render('contact');
-        }
-
-        // Process the form - send email
-        try {
-            $this->sendContactEmail($data);
-            $this->Flash->success('Thank you for contacting us! We will get back to you within 24 hours.');
-
-            return $this->redirect(['action' => 'display', 'contact']);
-        } catch (Exception $e) {
-            $this->Flash->error('Sorry, there was an error sending your message. Please try again or call us directly.');
-            $this->set(compact('data'));
-
-            return $this->render('contact');
+            return $this->render('contact_form');
         }
     }
 
     /**
-     * Send contact form email
+     * Get contact information from settings
      *
-     * @param array $data Form data
-     * @return void
+     * @return array
      */
-    private function sendContactEmail(array $data): void
+    private function getContactInfo(): array
     {
-        $mailer = new Mailer('default');
-
-        // Email to hospital
-        $mailer
-            ->setTo('info@citygeneralhospital.com')
-            ->setFrom(['noreply@citygeneralhospital.com' => 'City General Hospital Website'])
-            ->setReplyTo($data['email'], $data['first_name'] . ' ' . $data['last_name'])
-            ->setSubject('Contact Form Submission: ' . ucfirst(str_replace('_', ' ', $data['subject'])))
-            ->setEmailFormat('both')
-            ->setViewVars([
-                'name' => $data['first_name'] . ' ' . $data['last_name'],
-                'email' => $data['email'],
-                'phone' => $data['phone'] ?? 'Not provided',
-                'subject' => ucfirst(str_replace('_', ' ', $data['subject'])),
-                'message' => $data['message'],
-                'submitted_at' => date('Y-m-d H:i:s'),
-            ])
-            ->viewBuilder()
-            ->setTemplate('contact_notification')
-            ->setLayout('email');
-
-        $mailer->deliver();
-
-        // Confirmation email to sender
-        $confirmationMailer = new Mailer('default');
-        $confirmationMailer
-            ->setTo($data['email'], $data['first_name'] . ' ' . $data['last_name'])
-            ->setFrom(['noreply@citygeneralhospital.com' => 'City General Hospital'])
-            ->setSubject('We received your message - City General Hospital')
-            ->setEmailFormat('both')
-            ->setViewVars([
-                'name' => $data['first_name'],
-                'subject' => ucfirst(str_replace('_', ' ', $data['subject'])),
-            ])
-            ->viewBuilder()
-            ->setTemplate('contact_confirmation')
-            ->setLayout('email');
-
-        $confirmationMailer->deliver();
+        $settingsTable = $this->fetchTable('Settings');
+        
+        $contactEmail = $settingsTable->find()
+            ->where(['key_name' => 'contact_email'])
+            ->first();
+            
+        $contactPhone = $settingsTable->find()
+            ->where(['key_name' => 'contact_phone'])
+            ->first();
+            
+        return [
+            'address' => 'Arges, Pitesti, Str. Negru Voda nr 47',
+            'email' => $contactEmail ? $contactEmail->value : 'info@example.com',
+            'phone' => $contactPhone ? $contactPhone->value : '+40 123 456 789',
+        ];
     }
 
     /**
@@ -230,6 +178,14 @@ class PagesController extends AppController
                     'title' => 'Contact Us - City General Hospital',
                     'description' => 'Get in touch with City General Hospital. Contact information, directions, and online contact form. 24/7 emergency services available.',
                     'keywords' => 'contact, hospital, emergency, phone, address, directions',
+                ]);
+                break;
+
+            case 'contact_form':
+                $this->set([
+                    'title' => 'Formular de Contact - City General Hospital',
+                    'description' => 'Completați formularul de contact pentru a ne trimite un mesaj. Vă vom răspunde în cel mai scurt timp.',
+                    'keywords' => 'formular, contact, mesaj, spital, comunicare',
                 ]);
                 break;
 

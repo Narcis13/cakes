@@ -184,6 +184,13 @@ $cakeDescription = 'Medilab Admin';
                                 ['class' => 'nav-link' . ($this->request->getParam('controller') === 'Appointments' ? ' active' : ''), 'escape' => false]
                             ) ?>
                         </li>
+                        <li class="nav-item">
+                            <?= $this->Html->link(
+                                '<i class="fas fa-envelope"></i> Mesaje',
+                                ['prefix' => 'Admin', 'controller' => 'ContactMessages', 'action' => 'index'],
+                                ['class' => 'nav-link' . ($this->request->getParam('controller') === 'ContactMessages' ? ' active' : ''), 'escape' => false]
+                            ) ?>
+                        </li>
                         
                         <li class="nav-item">
                             <span class="nav-link text-muted small text-uppercase">Content Management</span>

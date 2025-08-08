@@ -181,86 +181,40 @@
             <div class="col-lg-8">
                 <!-- Contact Form -->
                 <div class="contact-card">
-                    <h3 class="mb-4"><i class="fas fa-envelope me-2 text-primary"></i>Send Us a Message</h3>
+                    <h3 class="mb-4"><i class="fas fa-envelope me-2 text-primary"></i>Trimite-ne un mesaj</h3>
                     <?= $this->Form->create(null, ['class' => 'contact-form']) ?>
                     
                     <div class="row g-3">
-                        <div class="col-md-6">
-                            <?= $this->Form->control('first_name', [
-                                'label' => 'First Name *',
+                        <div class="col-12">
+                            <?= $this->Form->control('nume_prenume', [
+                                'label' => 'Nume și prenume *',
                                 'class' => 'form-control',
                                 'required' => true,
-                                'placeholder' => 'Enter your first name'
+                                'placeholder' => 'Introduceți numele și prenumele dumneavoastră'
                             ]) ?>
                         </div>
-                        <div class="col-md-6">
-                            <?= $this->Form->control('last_name', [
-                                'label' => 'Last Name *',
-                                'class' => 'form-control',
-                                'required' => true,
-                                'placeholder' => 'Enter your last name'
-                            ]) ?>
-                        </div>
-                        <div class="col-md-6">
+                        <div class="col-12">
                             <?= $this->Form->control('email', [
-                                'label' => 'Email Address *',
+                                'label' => 'Adresă e-mail *',
                                 'type' => 'email',
                                 'class' => 'form-control',
                                 'required' => true,
-                                'placeholder' => 'your.email@example.com'
-                            ]) ?>
-                        </div>
-                        <div class="col-md-6">
-                            <?= $this->Form->control('phone', [
-                                'label' => 'Phone Number',
-                                'class' => 'form-control',
-                                'placeholder' => '(555) 123-4567'
+                                'placeholder' => 'exemplu@email.com'
                             ]) ?>
                         </div>
                         <div class="col-12">
-                            <?= $this->Form->control('subject', [
-                                'label' => 'Subject *',
-                                'class' => 'form-control',
-                                'required' => true,
-                                'options' => [
-                                    'general' => 'General Inquiry',
-                                    'appointment' => 'Appointment Request',
-                                    'billing' => 'Billing Question',
-                                    'medical_records' => 'Medical Records',
-                                    'insurance' => 'Insurance Question',
-                                    'complaint' => 'Patient Complaint',
-                                    'compliment' => 'Compliment/Feedback',
-                                    'other' => 'Other'
-                                ],
-                                'empty' => 'Select a subject...',
-                                'type' => 'select'
-                            ]) ?>
-                        </div>
-                        <div class="col-12">
-                            <?= $this->Form->control('message', [
-                                'label' => 'Message *',
+                            <?= $this->Form->control('mesaj', [
+                                'label' => 'Mesaj *',
                                 'type' => 'textarea',
                                 'class' => 'form-control',
                                 'required' => true,
                                 'rows' => 5,
-                                'placeholder' => 'Please provide details about your inquiry...'
+                                'placeholder' => 'Scrieți mesajul dumneavoastră aici...'
                             ]) ?>
                         </div>
                         <div class="col-12">
-                            <div class="form-check mb-3">
-                                <?= $this->Form->checkbox('privacy_consent', [
-                                    'class' => 'form-check-input',
-                                    'required' => true
-                                ]) ?>
-                                <label class="form-check-label" for="privacy-consent">
-                                    I consent to the collection and use of my personal information as outlined in the 
-                                    <a href="/privacy-policy" target="_blank">Privacy Policy</a> *
-                                </label>
-                            </div>
-                        </div>
-                        <div class="col-12">
                             <?= $this->Form->button(
-                                '<i class="fas fa-paper-plane me-2"></i>Send Message',
+                                '<i class="fas fa-paper-plane me-2"></i>Trimite mesaj',
                                 [
                                     'type' => 'submit',
                                     'class' => 'btn btn-contact btn-lg text-white',

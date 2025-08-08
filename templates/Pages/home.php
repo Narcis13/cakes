@@ -24,7 +24,7 @@
 <?= $this->cell('Services') ?>
 
 <!-- ======= Appointment Section ======= -->
-<?= $this->cell('Appointment') ?>
+<?php //$this->cell('Appointment') ?>
 
 <!-- ======= Departments Section ======= -->
 <?= $this->cell('Departments') ?>
@@ -33,13 +33,10 @@
 <?= $this->cell('Doctors') ?>
 
 <!-- ======= Frequently Asked Questions Section ======= -->
-<?= $this->cell('Faq') ?>
+<?php // Temporarily commented out: $this->cell('Faq') ?>
 
 <!-- ======= Testimonials Section ======= -->
-<?= $this->cell('Testimonials') ?>
+<?php //$this->cell('Testimonials') ?>
 
 <!-- ======= Gallery Section ======= -->
 <?= $this->cell('Gallery') ?>
-
-<!-- ======= Contact Section ======= -->
-<?= $this->cell('Contact') ?>

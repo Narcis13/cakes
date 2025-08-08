@@ -24,18 +24,20 @@ class WhyUsCell extends Cell
         $features = [
             [
                 'icon' => 'bx bx-receipt',
-                'title' => 'Corporis voluptates sit',
-                'description' => 'Consequuntur sunt aut quasi enim aliquam quae harum pariatur laboris nisi ut aliquip',
+                'title' => 'Ambulatoriu integrat',
+                'description' => 'Pacientii pot beneficia de servicii medicale în ambulatoriu pe baza biletului de trimitere de la medicul de familie.',
             ],
             [
-                'icon' => 'bx bx-cube-alt',
-                'title' => 'Ullamco laboris ladore pan',
-                'description' => 'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt',
+                'icon' => 'bx bx-receipt',
+                'title' => 'Compartiment primiri urgente',
+                'description' => 'Echipa de medici specialisti cu competenta in medicina de urgenta, asistente medicale si personal special antrenat in acest domeniu este disponibila in permanenta oricui necesita ingrijire de urgenta, furnizand asistenta si servicii medicale de calitate
+
+',
             ],
             [
                 'icon' => 'bx bx-images',
-                'title' => 'Labore consequatur',
-                'description' => 'Aut suscipit aut cum nemo deleniti aut omnis. Doloribus ut maiores omnis facere',
+                'title' => 'Radiologie si imagistica',
+                'description' => 'Servicii de radiologie si imagistica medicala, inclusiv ecografie, tomografie computerizata si rezonanta magnetica, pentru diagnosticarea precisa a afectiunilor pacientilor.',
             ],
         ];
 
