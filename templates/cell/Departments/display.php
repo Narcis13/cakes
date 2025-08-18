@@ -28,7 +28,7 @@
                 <p><?= h($department['description']) ?></p>
               </div>
               <div class="col-lg-4 text-center order-1 order-lg-2">
-                <img src="<?= h($department['image']) ?>" alt="" class="img-fluid">
+                <img src="<?= $department['image'] ?>" alt="<?= h($department['name']) ?>" class="img-fluid">
               </div>
             </div>
           </div>

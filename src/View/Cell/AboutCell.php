@@ -18,8 +18,8 @@ class AboutCell extends Cell
     public function display(): void
     {
         $videoUrl = 'https://www.youtube.com/watch?v=jDDaplaOz7Q';
-        $title = 'Enim quis est voluptatibus aliquid consequatur fugiat';
-        $description = 'Esse voluptas cumque vel exercitationem. Reiciendis est hic accusamus. Non ipsam et sed minima temporibus laudantium. Soluta voluptate sed facere corporis dolores excepturi. Libero laboriosam sint et id nulla tenetur. Suscipit aut voluptate.';
+        $title = 'ULTIMELE NOUTATI';
+        $description = 'Află ultimele noutați din viața spitalului nostru';
 
         $features = [
             [

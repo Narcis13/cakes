@@ -17,39 +17,39 @@ class ServicesCell extends Cell
      */
     public function display(): void
     {
-        $sectionTitle = 'Services';
-        $sectionDescription = 'Magnam dolores commodi suscipit. Necessitatibus eius consequatur ex aliquid fuga eum quidem. Sit sint consectetur velit. Quisquam quos quisquam cupiditate. Et nemo qui impedit suscipit alias ea. Quia fugiat sit in iste officiis commodi quidem hic quas.';
+        $sectionTitle = 'Servicii medicale';
+        $sectionDescription = 'Unitatea noastră oferă o gamă largă de servicii medicale pentru a răspunde nevoilor pacienților.';
 
         $services = [
             [
                 'icon' => 'fas fa-heartbeat',
-                'title' => 'Lorem Ipsum',
-                'description' => 'Voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi',
+                'title' => 'SPITAL',
+                'description' => 'Servicii medicale spitalizare continuă și de zi pe secții medicale și chirurgicale',
             ],
             [
                 'icon' => 'fas fa-pills',
-                'title' => 'Sed ut perspiciatis',
-                'description' => 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore',
+                'title' => 'AMBULATORIU',
+                'description' => 'Servicii medicale clinice, consultații în ambulatoriu de specialitate',
             ],
             [
                 'icon' => 'fas fa-hospital-user',
-                'title' => 'Magni Dolores',
-                'description' => 'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia',
+                'title' => 'INVESTIGAȚII PARACLINICE',
+                'description' => 'Investigații paraclinice complete, inclusiv analize de laborator și imagistică medicală',
             ],
             [
                 'icon' => 'fas fa-dna',
-                'title' => 'Nemo Enim',
-                'description' => 'At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis',
+                'title' => 'STOMATOLOGIE',
+                'description' => 'Servicii stomatologice complete, inclusiv consultații, tratamente.',
             ],
             [
                 'icon' => 'fas fa-wheelchair',
-                'title' => 'Dele cardo',
-                'description' => 'Quis consequatur saepe eligendi voluptatem consequatur dolor consequuntur',
+                'title' => 'MEDICINA DE FAMILIE',
+                'description' => 'Servicii medicină primară prin cabinete de medicină de familie',
             ],
             [
                 'icon' => 'fas fa-notes-medical',
-                'title' => 'Divera don',
-                'description' => 'Modi nostrum vel laborum. Porro fugit error sit minus sapiente sit aspernatur',
+                'title' => 'ALTE SERVICII',
+                'description' => 'Servicii medicale la cerere, fișe medicale',
             ],
         ];
 

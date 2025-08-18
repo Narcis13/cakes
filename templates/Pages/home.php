@@ -14,8 +14,8 @@
 <!-- ======= Why Us Section ======= -->
 <?= $this->cell('WhyUs') ?>
 
-<!-- ======= About Section ======= -->
-<?= $this->cell('About') ?>
+<!-- ======= News Section ======= -->
+<?= $this->cell('News') ?>
 
 <!-- ======= Counts Section ======= -->
 <?= $this->cell('Counts') ?>
