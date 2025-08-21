@@ -20,9 +20,9 @@ class DepartmentsCell extends Cell
     public function display(): void
     {
         $departmentsTable = $this->getTableLocator()->get('Departments');
-        
-        $sectionTitle = 'Departments';
-        $sectionDescription = 'Our hospital provides comprehensive healthcare services through specialized departments staffed with expert medical professionals and equipped with state-of-the-art facilities.';
+
+        $sectionTitle = 'Sectii / compartimente';
+        $sectionDescription = 'Spitalul nostru ofera servicii medicale complete prin intermediul sectiilor specializate, dotate cu echipamente de ultima generatie si personal medical competent.';
 
         $departmentData = $departmentsTable->find()
             ->where(['is_active' => true])

@@ -35,15 +35,15 @@ class FooterCell extends Cell
         ];
 
         $usefulLinks = [
-            ['title' => 'Home', 'url' => '/'],
-            ['title' => 'About us', 'url' => '/about'],
-            ['title' => 'Services', 'url' => '/services'],
-            ['title' => 'Terms of service', 'url' => '/terms'],
-            ['title' => 'Privacy policy', 'url' => '/privacy'],
+            ['title' => 'Acasa', 'url' => '/'],
+            ['title' => 'Ministerul Sanatatii', 'url' => 'https://www.ms.ro'],
+            ['title' => 'Programari telefonice', 'url' => '/services'],
+            ['title' => 'TerTermeni si conditii', 'url' => '/terms'],
+            ['title' => 'Politica confidentialitate', 'url' => '/privacy'],
         ];
 
         $serviceLinks = [
-            ['title' => 'Web Design', 'url' => '#'],
+            ['title' => 'Asociatia SANIVITAL', 'url' => '#'],
             ['title' => 'Web Development', 'url' => '#'],
             ['title' => 'Product Management', 'url' => '#'],
             ['title' => 'Marketing', 'url' => '#'],

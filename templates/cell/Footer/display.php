@@ -4,13 +4,13 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-3 col-md-6 footer-contact">
-                    <h3><?= h($contactInfo['name']) ?></h3>
+                    <h4>Spitalul Militar de Urgenta Dr. Ion Jianu Pitesti</h4>
                     <p>
-                        <?= h($contactInfo['address']) ?> <br>
-                        <?= h($contactInfo['city']) ?><br>
-                        <?= h($contactInfo['country']) ?> <br><br>
-                        <strong>Phone:</strong> <?= h($contactInfo['phone']) ?><br>
-                        <strong>Email:</strong> <?= h($contactInfo['email']) ?><br>
+                        Str. Negru Voda nr. 47 <br>
+                        Pitesti<br>
+                        Arges <br><br>
+                        <strong>Telefon:</strong> 0248218090<br>
+                        <strong>Email:</strong> smupitesti@mapn.ro<br>
                     </p>
                 </div>
 
@@ -32,12 +32,13 @@
                     </ul>
                 </div>
 
-                <div class="col-lg-4 col-md-6 footer-newsletter">
-                    <h4>Join Our Newsletter</h4>
-                    <p><?= h($newsletterText) ?></p>
-                    <form action="" method="post">
-                        <input type="email" name="email"><input type="submit" value="Subscribe">
-                    </form>
+                <div class="col-lg-4 col-md-6 footer-logos">
+                    <h4>Parteneri</h4>
+                    <div class="partner-logos d-flex flex-column align-items-center gap-3">
+                        <img src="/img/logo-certmil.jpg" alt="CERTMIL Logo" class="img-fluid" style="max-height: 60px;">
+                        <img src="/img/logo-mapn.jpg" alt="MAPN Logo" class="img-fluid" style="max-height: 60px;">
+                        <img src="/img/logo-opnaj.jpg" alt="OPSNAJ Logo" class="img-fluid" style="max-height: 60px;">
+                    </div>
                 </div>
             </div>
         </div>
@@ -46,18 +47,17 @@
     <div class="container d-md-flex py-4">
         <div class="me-md-auto text-center text-md-start">
             <div class="copyright">
-                <?= $copyright ?>
+             © Copyright Spitalul Militar de Urgenta Dr. ion Jianu Pitesti. Toate drepturile rezervate.
             </div>
             <div class="credits">
-                <?= $credits ?>
+                <?= $this->Html->link('Politica de Confidențialitate', '/politica-de-confidentialitate') ?> | 
+                <?= $this->Html->link('Termeni și Condiții', '/termeni-si-conditii') ?>
             </div>
         </div>
         <div class="social-links text-center text-md-right pt-3 pt-md-0">
-            <a href="<?= h($socialLinks['twitter']) ?>" class="twitter"><i class="bx bxl-twitter"></i></a>
+
             <a href="<?= h($socialLinks['facebook']) ?>" class="facebook"><i class="bx bxl-facebook"></i></a>
-            <a href="<?= h($socialLinks['instagram']) ?>" class="instagram"><i class="bx bxl-instagram"></i></a>
-            <a href="<?= h($socialLinks['skype']) ?>" class="google-plus"><i class="bx bxl-skype"></i></a>
-            <a href="<?= h($socialLinks['linkedin']) ?>" class="linkedin"><i class="bx bxl-linkedin"></i></a>
+
         </div>
     </div>
 </footer><!-- End Footer -->
