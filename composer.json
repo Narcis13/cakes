@@ -11,6 +11,7 @@
         "cakephp/migrations": "^4.0.0",
         "cakephp/plugin-installer": "^2.0",
         "mobiledetect/mobiledetectlib": "^4.8.03",
+        "resend/resend-php": "^0.19.1",
         "softcreatr/jsonpath": "^0.8"
     },
     "require-dev": {

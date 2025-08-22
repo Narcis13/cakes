@@ -284,6 +284,105 @@ class StaffController extends AppController
     }
 
     /**
+     * Send email to staff member
+     *
+     * @return \Cake\Http\Response|null JSON response
+     */
+    public function sendEmail()
+    {
+        $this->request->allowMethod(['post']);
+        
+        if (!$this->request->is('ajax')) {
+            throw new \Cake\Http\Exception\BadRequestException('This action only accepts AJAX requests.');
+        }
+
+        $data = $this->request->getData();
+        $staffId = $data['staff_id'] ?? null;
+        $staffEmail = $data['staff_email'] ?? null;
+        $subject = trim($data['subject'] ?? '');
+        $content = trim($data['content'] ?? '');
+
+        // Validate required fields
+        if (!$staffId || !$staffEmail || !$subject || !$content) {
+            return $this->response
+                ->withType('application/json')
+                ->withStringBody(json_encode([
+                    'success' => false,
+                    'message' => 'All fields are required.'
+                ]));
+        }
+
+        // Get staff member to verify email and get name
+        try {
+            $staffMember = $this->Staff->get($staffId);
+        } catch (\Cake\Datasource\Exception\RecordNotFoundException $e) {
+            return $this->response
+                ->withType('application/json')
+                ->withStringBody(json_encode([
+                    'success' => false,
+                    'message' => 'Staff member not found.'
+                ]));
+        }
+
+        // Verify email matches
+        if ($staffMember->email !== $staffEmail) {
+            return $this->response
+                ->withType('application/json')
+                ->withStringBody(json_encode([
+                    'success' => false,
+                    'message' => 'Email address mismatch.'
+                ]));
+        }
+
+        try {
+            // Get Resend API key from configuration
+            $resendApiKey = \Cake\Core\Configure::read('ApiKeys.resend');
+            
+            if (!$resendApiKey || $resendApiKey === 'your-resend-api-key-here') {
+                throw new \Exception('Resend API key not configured or using default placeholder');
+            }
+
+            // Use verified domain for production
+            $senderEmail = 'office@eleventen.live';
+            $senderName = 'SMU Pitesti';
+
+            // Initialize Resend client
+            $resend = \Resend::client($resendApiKey);
+
+            // Send email using Resend SDK
+            $result = $resend->emails->send([
+                'from' => $senderName . ' <' . $senderEmail . '>',
+                'to' => [$staffMember->email],
+                'subject' => $subject,
+                'html' => nl2br(htmlspecialchars($content)),
+                'text' => $content
+            ]);
+
+            return $this->response
+                ->withType('application/json')
+                ->withStringBody(json_encode([
+                    'success' => true,
+                    'message' => 'Email sent successfully!',
+                    'email_id' => $result->id ?? 'unknown'
+                ]));
+        } catch (\Resend\Exceptions\ResendException $e) {
+            return $this->response
+                ->withType('application/json')
+                ->withStringBody(json_encode([
+                    'success' => false,
+                    'message' => 'Resend API Error: ' . $e->getMessage()
+                ]));
+        } catch (\Exception $e) {
+            return $this->response
+                ->withType('application/json')
+                ->withStringBody(json_encode([
+                    'success' => false,
+                    'message' => 'Failed to send email: ' . $e->getMessage()
+                ]));
+        }
+    }
+
+    /**
      * Upload photo file
      *
      * @param \Laminas\Diactoros\UploadedFile $file Uploaded file data

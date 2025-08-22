@@ -167,6 +167,16 @@
                                         ['action' => 'edit', $staffMember->id],
                                         ['class' => 'btn btn-sm btn-outline-secondary', 'escape' => false, 'title' => 'Edit']
                                     ) ?>
+                                    <?php if ($staffMember->email): ?>
+                                        <button type="button" 
+                                                class="btn btn-sm btn-outline-info mail-btn" 
+                                                data-staff-id="<?= $staffMember->id ?>"
+                                                data-staff-name="<?= h($staffMember->name) ?>"
+                                                data-staff-email="<?= h($staffMember->email) ?>"
+                                                title="Send Email">
+                                            <i class="fas fa-envelope"></i>
+                                        </button>
+                                    <?php endif; ?>
                                     <?= $this->Form->postLink(
                                         '<i class="fas fa-power-off"></i>',
                                         ['action' => 'toggleActive', $staffMember->id],
@@ -221,3 +231,112 @@
         </div>
     </div>
 </div>
+
+<!-- Mail Dialog Modal -->
+<div class="modal fade" id="mailModal" tabindex="-1" aria-labelledby="mailModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="mailModalLabel">
+                    <i class="fas fa-envelope"></i> Send Email to <span id="staffNameModal"></span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="mailForm">
+                    <input type="hidden" id="staffId" name="staff_id">
+                    <input type="hidden" id="staffEmail" name="staff_email">
+                    
+                    <div class="mb-3">
+                        <label for="mailSubject" class="form-label">Subject</label>
+                        <input type="text" class="form-control" id="mailSubject" name="subject" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="mailContent" class="form-label">Message Content</label>
+                        <textarea class="form-control" id="mailContent" name="content" rows="6" required></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="sendMailBtn">
+                    <i class="fas fa-paper-plane"></i> Send
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const mailModal = new bootstrap.Modal(document.getElementById('mailModal'));
+    const mailForm = document.getElementById('mailForm');
+    const sendMailBtn = document.getElementById('sendMailBtn');
+    
+    // Handle mail button clicks
+    document.querySelectorAll('.mail-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const staffId = this.dataset.staffId;
+            const staffName = this.dataset.staffName;
+            const staffEmail = this.dataset.staffEmail;
+            
+            // Populate modal with staff data
+            document.getElementById('staffId').value = staffId;
+            document.getElementById('staffEmail').value = staffEmail;
+            document.getElementById('staffNameModal').textContent = staffName;
+            
+            // Clear form fields
+            document.getElementById('mailSubject').value = '';
+            document.getElementById('mailContent').value = '';
+            
+            // Show modal
+            mailModal.show();
+        });
+    });
+    
+    // Handle send button click
+    sendMailBtn.addEventListener('click', function() {
+        const form = mailForm;
+        const formData = new FormData(form);
+        
+        // Basic validation
+        if (!formData.get('subject').trim() || !formData.get('content').trim()) {
+            alert('Please fill in both subject and content fields.');
+            return;
+        }
+        
+        // Disable send button while sending
+        sendMailBtn.disabled = true;
+        sendMailBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+        
+        // Send email via AJAX
+        fetch('<?= $this->Url->build(['action' => 'sendEmail']) ?>', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRF-Token': '<?= $this->request->getAttribute('csrfToken') ?>'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Email sent successfully!');
+                mailModal.hide();
+            } else {
+                alert('Failed to send email: ' + (data.message || 'Unknown error'));
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Failed to send email. Please try again.');
+        })
+        .finally(() => {
+            // Re-enable send button
+            sendMailBtn.disabled = false;
+            sendMailBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send';
+        });
+    });
+});
+</script>
