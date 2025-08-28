@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace App\View\Cell;
 
-use Cake\View\Cell;
 use Cake\ORM\Locator\LocatorAwareTrait;
+use Cake\View\Cell;
 
 /**
  * Departments cell
@@ -12,6 +12,7 @@ use Cake\ORM\Locator\LocatorAwareTrait;
 class DepartmentsCell extends Cell
 {
     use LocatorAwareTrait;
+
     /**
      * Default display method.
      *
@@ -31,7 +32,7 @@ class DepartmentsCell extends Cell
 
         $departments = [];
         $isFirst = true;
-        
+
         foreach ($departmentData as $index => $dept) {
             $departments[] = [
                 'id' => 'tab-' . ($index + 1),

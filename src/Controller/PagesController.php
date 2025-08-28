@@ -118,10 +118,11 @@ class PagesController extends AppController
             // Set success flag and redirect to show success message
             $this->set([
                 'success' => true,
-                'message' => 'Mesajul dumneavoastră a fost salvat cu succes! Vă mulțumim că ne-ați contactat. Vă vom răspunde în cel mai scurt timp.'
+                'message' => 'Mesajul dumneavoastră a fost salvat cu succes! Vă mulțumim că ne-ați contactat. Vă vom răspunde în cel mai scurt timp.',
             ]);
             $contactInfo = $this->getContactInfo();
             $this->set(compact('contactInfo'));
+
             return $this->render('contact_form');
         } else {
             $this->Flash->error('A apărut o eroare la trimiterea mesajului. Vă rugăm să încercați din nou.');
@@ -140,15 +141,15 @@ class PagesController extends AppController
     private function getContactInfo(): array
     {
         $settingsTable = $this->fetchTable('Settings');
-        
+
         $contactEmail = $settingsTable->find()
             ->where(['key_name' => 'contact_email'])
             ->first();
-            
+
         $contactPhone = $settingsTable->find()
             ->where(['key_name' => 'contact_phone'])
             ->first();
-            
+
         return [
             'address' => 'Arges, Pitesti, Str. Negru Voda nr 47',
             'email' => $contactEmail ? $contactEmail->value : 'info@example.com',

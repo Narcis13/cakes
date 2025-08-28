@@ -39,7 +39,7 @@
                                     <?php elseif ($component->type === 'link'): ?>
                                         <div class="text-center">
                                             <a href="<?= h($component->url) ?>" class="btn btn-primary btn-lg">
-                                                <?= h($component->title ?: $component->url) ?>
+                                                <?= h($component->button_caption ?: ($component->title ?: $component->url)) ?>
                                             </a>
                                         </div>
                                     <?php endif; ?>

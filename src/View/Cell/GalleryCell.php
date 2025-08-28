@@ -17,8 +17,8 @@ class GalleryCell extends Cell
      */
     public function display(): void
     {
-        $sectionTitle = 'Gallery';
-        $sectionDescription = 'Magnam dolores commodi suscipit. Necessitatibus eius consequatur ex aliquid fuga eum quidem. Sit sint consectetur velit. Quisquam quos quisquam cupiditate. Et nemo qui impedit suscipit alias ea. Quia fugiat sit in iste officiis commodi quidem hic quas.';
+        $sectionTitle = 'Galerie foto';
+        $sectionDescription = '';
 
         $galleryItems = [
             '/img/gallery/gallery-1.jpg',

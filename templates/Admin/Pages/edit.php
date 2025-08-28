@@ -146,7 +146,10 @@
                                                 </div>
                                             <?php elseif ($component->type === 'link'): ?>
                                                 <div class="component-content">
-                                                    <strong>URL:</strong> <?= h($component->url) ?>
+                                                    <strong>URL:</strong> <?= h($component->url) ?><br>
+                                                    <?php if ($component->button_caption): ?>
+                                                        <strong>Button Caption:</strong> <?= h($component->button_caption) ?>
+                                                    <?php endif; ?>
                                                 </div>
                                             <?php endif; ?>
                                         </div>
@@ -279,6 +282,13 @@
                                     'placeholder' => 'https://example.com'
                                 ]) ?>
                             </div>
+                            <div class="mb-3">
+                                <?= $this->Form->control('button_caption', [
+                                    'class' => 'form-control',
+                                    'label' => ['class' => 'form-label', 'text' => 'Button Caption'],
+                                    'placeholder' => 'Button text (optional - uses title if empty)'
+                                ]) ?>
+                            </div>
                         </div>
                         
                         <div class="mb-3">
@@ -308,7 +318,114 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <!-- Content will be loaded dynamically -->
+                <?= $this->Form->create(null, [
+                    'id' => 'edit-component-form',
+                    'url' => ['action' => 'editComponent', '__COMPONENT_ID__'],
+                    'type' => 'file'
+                ]) ?>
+                    <div class="mb-3">
+                        <?= $this->Form->control('title', [
+                            'class' => 'form-control',
+                            'label' => ['class' => 'form-label'],
+                            'id' => 'edit-title'
+                        ]) ?>
+                    </div>
+                    
+                    <!-- HTML Content -->
+                    <div class="edit-field mb-3" id="edit-html-fields" style="display:none;">
+                        <?= $this->Form->control('content', [
+                            'type' => 'textarea',
+                            'class' => 'form-control',
+                            'label' => ['class' => 'form-label', 'text' => 'HTML Content'],
+                            'rows' => 4,
+                            'id' => 'edit-content'
+                        ]) ?>
+                    </div>
+                    
+                    <!-- Image Fields -->
+                    <div class="edit-field" id="edit-image-fields" style="display:none;">
+                        <div class="mb-3">
+                            <label class="form-label">Choose Image Source</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="image_source" id="edit_image_url" value="url" checked>
+                                <label class="form-check-label" for="edit_image_url">
+                                    Image URL
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="image_source" id="edit_image_upload" value="upload">
+                                <label class="form-check-label" for="edit_image_upload">
+                                    Upload New Image
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3" id="edit-current-image">
+                            <label class="form-label">Current Image</label>
+                            <div id="current-image-preview"></div>
+                        </div>
+                        
+                        <div class="mb-3" id="edit-url-input">
+                            <?= $this->Form->control('url', [
+                                'class' => 'form-control',
+                                'label' => ['class' => 'form-label', 'text' => 'Image URL'],
+                                'id' => 'edit-url'
+                            ]) ?>
+                        </div>
+                        
+                        <div class="mb-3" id="edit-file-input" style="display:none;">
+                            <?= $this->Form->control('image_file', [
+                                'type' => 'file',
+                                'class' => 'form-control',
+                                'label' => ['class' => 'form-label', 'text' => 'Upload New Image'],
+                                'accept' => 'image/*'
+                            ]) ?>
+                            <div class="form-text">Maximum file size: 5MB. Supported formats: JPEG, PNG, GIF, WebP</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <?= $this->Form->control('alt_text', [
+                                'class' => 'form-control',
+                                'label' => ['class' => 'form-label'],
+                                'id' => 'edit-alt-text'
+                            ]) ?>
+                        </div>
+                    </div>
+                    
+                    <!-- Link Fields -->
+                    <div class="edit-field" id="edit-link-fields" style="display:none;">
+                        <div class="mb-3">
+                            <?= $this->Form->control('url', [
+                                'class' => 'form-control',
+                                'label' => ['class' => 'form-label', 'text' => 'Link URL'],
+                                'id' => 'edit-link-url'
+                            ]) ?>
+                        </div>
+                        <div class="mb-3">
+                            <?= $this->Form->control('button_caption', [
+                                'class' => 'form-control',
+                                'label' => ['class' => 'form-label', 'text' => 'Button Caption'],
+                                'placeholder' => 'Button text (optional - uses title if empty)',
+                                'id' => 'edit-button-caption'
+                            ]) ?>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <?= $this->Form->control('css_class', [
+                            'class' => 'form-control',
+                            'label' => ['class' => 'form-label'],
+                            'id' => 'edit-css-class'
+                        ]) ?>
+                    </div>
+                    
+                    <div class="d-flex justify-content-end">
+                        <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cancel</button>
+                        <?= $this->Form->button('Update Component', [
+                            'class' => 'btn btn-primary'
+                        ]) ?>
+                    </div>
+                <?= $this->Form->end() ?>
             </div>
         </div>
     </div>
@@ -389,10 +506,108 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.edit-component').forEach(button => {
         button.addEventListener('click', function() {
             const componentId = this.getAttribute('data-component-id');
-            // Here you would load the component data and populate the modal
-            // For now, we'll just show a placeholder
-            const modalBody = document.querySelector('#editComponentModal .modal-body');
-            modalBody.innerHTML = '<p>Edit component functionality coming soon...</p>';
+            const componentItem = this.closest('.component-item');
+            
+            // Get component data from the DOM
+            const componentType = componentItem.querySelector('.badge').textContent.toLowerCase();
+            const componentTitle = componentItem.querySelector('strong') ? 
+                componentItem.querySelector('strong').textContent : '';
+            
+            // Update form action
+            const form = document.getElementById('edit-component-form');
+            form.action = form.action.replace('__COMPONENT_ID__', componentId);
+            
+            // Populate common fields
+            document.getElementById('edit-title').value = componentTitle;
+            
+            // Hide all edit fields first
+            document.querySelectorAll('.edit-field').forEach(field => {
+                field.style.display = 'none';
+            });
+            
+            // Show and populate fields based on component type
+            if (componentType === 'html') {
+                document.getElementById('edit-html-fields').style.display = 'block';
+                // Get content from the component display
+                const contentDiv = componentItem.querySelector('.component-content');
+                if (contentDiv) {
+                    // Convert br tags back to newlines
+                    const content = contentDiv.innerHTML.replace(/<br\s*\/?>/gi, '\n').replace(/<[^>]*>/g, '');
+                    document.getElementById('edit-content').value = content;
+                }
+            } else if (componentType === 'image') {
+                document.getElementById('edit-image-fields').style.display = 'block';
+                // Get image data
+                const img = componentItem.querySelector('img');
+                const urlText = componentItem.querySelector('.component-content').textContent;
+                if (img) {
+                    document.getElementById('edit-url').value = img.src;
+                    document.getElementById('edit-alt-text').value = img.alt;
+                    document.getElementById('current-image-preview').innerHTML = 
+                        `<img src="${img.src}" alt="${img.alt}" style="max-width: 150px; max-height: 100px;" class="rounded">`;
+                }
+            } else if (componentType === 'link') {
+                document.getElementById('edit-link-fields').style.display = 'block';
+                // Get URL from component content
+                const contentDiv = componentItem.querySelector('.component-content');
+                if (contentDiv) {
+                    const urlMatch = contentDiv.textContent.match(/URL:\s*(.+)/);
+                    if (urlMatch) {
+                        document.getElementById('edit-link-url').value = urlMatch[1].trim();
+                    }
+                }
+                // Try to get button caption if it exists (we'll need to fetch this from server)
+                fetchComponentData(componentId);
+            }
+            
+            // Get CSS class (this would need to be stored somewhere accessible or fetched from server)
+            // For now, we'll fetch the full component data
+            if (componentType !== 'link') {
+                fetchComponentData(componentId);
+            }
+        });
+    });
+    
+    // Function to fetch full component data from server
+    function fetchComponentData(componentId) {
+        fetch(`<?= $this->Url->build(['action' => 'getComponent']) ?>/${componentId}`, {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRF-Token': '<?= $this->request->getAttribute('csrfToken') ?>'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success && data.component) {
+                const comp = data.component;
+                document.getElementById('edit-css-class').value = comp.css_class || '';
+                
+                if (comp.type === 'link' && comp.button_caption) {
+                    document.getElementById('edit-button-caption').value = comp.button_caption;
+                }
+            }
+        })
+        .catch(error => console.error('Error fetching component data:', error));
+    }
+    
+    // Handle edit modal image source switching
+    document.querySelectorAll('input[name="image_source"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+            const editUrlInput = document.getElementById('edit-url-input');
+            const editFileInput = document.getElementById('edit-file-input');
+            
+            if (this.value === 'url') {
+                editUrlInput.style.display = 'block';
+                editFileInput.style.display = 'none';
+                // Clear file input
+                const fileField = editFileInput.querySelector('input[type="file"]');
+                if (fileField) fileField.value = '';
+            } else {
+                editUrlInput.style.display = 'none';
+                editFileInput.style.display = 'block';
+                // Don't clear URL input in case user wants to switch back
+            }
         });
     });
 });

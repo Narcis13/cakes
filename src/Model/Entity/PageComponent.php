@@ -14,6 +14,7 @@ use Cake\ORM\Entity;
  * @property string|null $content
  * @property string|null $title
  * @property string|null $url
+ * @property string|null $button_caption
  * @property string|null $alt_text
  * @property string|null $css_class
  * @property string|null $image_type
@@ -41,6 +42,7 @@ class PageComponent extends Entity
         'content' => true,
         'title' => true,
         'url' => true,
+        'button_caption' => true,
         'alt_text' => true,
         'css_class' => true,
         'image_type' => true,

@@ -226,6 +226,44 @@ class PagesController extends AppController
     }
 
     /**
+     * Get component data as JSON
+     *
+     * @param string|null $id Component id.
+     * @return \Cake\Http\Response JSON response with component data.
+     */
+    public function getComponent(?string $id = null)
+    {
+        $this->request->allowMethod(['get']);
+        $this->autoRender = false;
+
+        try {
+            $component = $this->Pages->PageComponents->get($id);
+
+            return $this->response->withType('application/json')
+                ->withStringBody(json_encode([
+                    'success' => true,
+                    'component' => [
+                        'id' => $component->id,
+                        'type' => $component->type,
+                        'title' => $component->title,
+                        'content' => $component->content,
+                        'url' => $component->url,
+                        'button_caption' => $component->button_caption,
+                        'alt_text' => $component->alt_text,
+                        'css_class' => $component->css_class,
+                        'image_type' => $component->image_type,
+                    ],
+                ]));
+        } catch (Exception $e) {
+            return $this->response->withType('application/json')
+                ->withStringBody(json_encode([
+                    'success' => false,
+                    'message' => 'Component not found',
+                ]));
+        }
+    }
+
+    /**
      * Edit component method
      *
      * @param string|null $id Component id.
@@ -235,8 +273,34 @@ class PagesController extends AppController
     {
         $this->request->allowMethod(['post', 'put', 'patch']);
         $component = $this->Pages->PageComponents->get($id);
+        $data = $this->request->getData();
 
-        $component = $this->Pages->PageComponents->patchEntity($component, $this->request->getData());
+        // Handle image upload if file is provided
+        $uploadedFile = $this->request->getUploadedFile('image_file');
+        if ($component->type === 'image' && $uploadedFile && $uploadedFile->getError() === UPLOAD_ERR_OK) {
+            // Delete old uploaded file if it exists
+            if ($component->image_type === 'upload' && $component->url) {
+                $oldFilePath = WWW_ROOT . ltrim($component->url, '/');
+                if (file_exists($oldFilePath)) {
+                    unlink($oldFilePath);
+                }
+            }
+
+            $uploadResult = $this->handleImageUpload($uploadedFile);
+            if ($uploadResult['success']) {
+                $data['url'] = $uploadResult['url'];
+                $data['image_type'] = 'upload';
+            } else {
+                $this->Flash->error($uploadResult['error']);
+
+                return $this->redirect(['action' => 'edit', $component->page_id]);
+            }
+        } elseif ($component->type === 'image' && !empty($data['url'])) {
+            // If URL is provided, set image type to URL
+            $data['image_type'] = 'url';
+        }
+
+        $component = $this->Pages->PageComponents->patchEntity($component, $data);
 
         if ($this->Pages->PageComponents->save($component)) {
             $this->Flash->success(__('The component has been updated.'));

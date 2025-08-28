@@ -19,7 +19,7 @@ class NewsCell extends Cell
     public function display(): void
     {
         $newsTable = TableRegistry::getTableLocator()->get('News');
-        
+
         $news = $newsTable->find()
             ->where(['News.is_published' => true])
             ->orderBy(['News.publish_date' => 'DESC'])

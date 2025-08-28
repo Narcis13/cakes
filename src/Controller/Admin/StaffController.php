@@ -4,8 +4,13 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Controller\AppController;
+use Cake\Core\Configure;
+use Cake\Datasource\Exception\RecordNotFoundException;
+use Cake\Http\Exception\BadRequestException;
 use Exception;
 use Laminas\Diactoros\UploadedFile;
+use Resend;
+use Resend\Exceptions\ResendException;
 
 /**
  * Staff Controller
@@ -291,9 +296,9 @@ class StaffController extends AppController
     public function sendEmail()
     {
         $this->request->allowMethod(['post']);
-        
+
         if (!$this->request->is('ajax')) {
-            throw new \Cake\Http\Exception\BadRequestException('This action only accepts AJAX requests.');
+            throw new BadRequestException('This action only accepts AJAX requests.');
         }
 
         $data = $this->request->getData();
@@ -308,19 +313,19 @@ class StaffController extends AppController
                 ->withType('application/json')
                 ->withStringBody(json_encode([
                     'success' => false,
-                    'message' => 'All fields are required.'
+                    'message' => 'All fields are required.',
                 ]));
         }
 
         // Get staff member to verify email and get name
         try {
             $staffMember = $this->Staff->get($staffId);
-        } catch (\Cake\Datasource\Exception\RecordNotFoundException $e) {
+        } catch (RecordNotFoundException $e) {
             return $this->response
                 ->withType('application/json')
                 ->withStringBody(json_encode([
                     'success' => false,
-                    'message' => 'Staff member not found.'
+                    'message' => 'Staff member not found.',
                 ]));
         }
 
@@ -330,16 +335,16 @@ class StaffController extends AppController
                 ->withType('application/json')
                 ->withStringBody(json_encode([
                     'success' => false,
-                    'message' => 'Email address mismatch.'
+                    'message' => 'Email address mismatch.',
                 ]));
         }
 
         try {
             // Get Resend API key from configuration
-            $resendApiKey = \Cake\Core\Configure::read('ApiKeys.resend');
-            
+            $resendApiKey = Configure::read('ApiKeys.resend');
+
             if (!$resendApiKey || $resendApiKey === 'your-resend-api-key-here') {
-                throw new \Exception('Resend API key not configured or using default placeholder');
+                throw new Exception('Resend API key not configured or using default placeholder');
             }
 
             // Use verified domain for production
@@ -347,7 +352,7 @@ class StaffController extends AppController
             $senderName = 'SMU Pitesti';
 
             // Initialize Resend client
-            $resend = \Resend::client($resendApiKey);
+            $resend = Resend::client($resendApiKey);
 
             // Send email using Resend SDK
             $result = $resend->emails->send([
@@ -355,7 +360,7 @@ class StaffController extends AppController
                 'to' => [$staffMember->email],
                 'subject' => $subject,
                 'html' => nl2br(htmlspecialchars($content)),
-                'text' => $content
+                'text' => $content,
             ]);
 
             return $this->response
@@ -363,21 +368,21 @@ class StaffController extends AppController
                 ->withStringBody(json_encode([
                     'success' => true,
                     'message' => 'Email sent successfully!',
-                    'email_id' => $result->id ?? 'unknown'
+                    'email_id' => $result->id ?? 'unknown',
                 ]));
-        } catch (\Resend\Exceptions\ResendException $e) {
+        } catch (ResendException $e) {
             return $this->response
                 ->withType('application/json')
                 ->withStringBody(json_encode([
                     'success' => false,
-                    'message' => 'Resend API Error: ' . $e->getMessage()
+                    'message' => 'Resend API Error: ' . $e->getMessage(),
                 ]));
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->response
                 ->withType('application/json')
                 ->withStringBody(json_encode([
                     'success' => false,
-                    'message' => 'Failed to send email: ' . $e->getMessage()
+                    'message' => 'Failed to send email: ' . $e->getMessage(),
                 ]));
         }
     }
