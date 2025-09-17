@@ -66,6 +66,11 @@ class AppController extends Controller
 
         // Allow public access to all actions by default
         // Admin controllers will override this to require authentication
-        $this->Authentication->allowUnauthenticated(['index', 'view', 'display', 'login', 'logout']);
+        $this->Authentication->allowUnauthenticated([
+            'index', 'view', 'display', 'page', 'contact', 'contactForm', 
+            'login', 'logout', 'register', 'book', 'checkAvailability', 
+            'getAvailableSlots', 'success', 'emergency', 'cardiology', 
+            'pediatrics', 'radiology', 'category', 'search', 'submit'
+        ]);
     }
 }

@@ -39,6 +39,9 @@
     <!-- Template Main CSS File -->
     <?= $this->Html->css('style.css') ?>
     
+    <!-- Accessibility Widget CSS -->
+    <?= $this->Html->css('accessibility.css') ?>
+    
     <!-- Layout Fix for Header Overlap -->
     <style>
         /* Fix for header overlap issue */
@@ -110,6 +113,10 @@
 
     <!-- Template Main JS File -->
     <?= $this->Html->script('main.js') ?>
+    
+    <!-- Accessibility Widget JS -->
+    <?= $this->Html->script('accessibility-debug.js') ?>
+    
     <?= $this->fetch('scriptBottom') ?>
 </body>
 
