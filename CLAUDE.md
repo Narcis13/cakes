@@ -143,3 +143,56 @@ bin/cake migrations status
 - Form helper for generating forms
 - Flash messages for user feedback
 - Pagination helper for lists
+
+## Deployment
+
+### Deployment Resources
+This repository includes comprehensive deployment documentation:
+
+1. **UBUNTU_DEPLOYMENT_GUIDE.md** - Complete step-by-step deployment guide covering:
+   - Server requirements and initial setup
+   - Software installation (Apache/Nginx, PHP, MySQL)
+   - Database configuration
+   - Application deployment and configuration
+   - SSL/HTTPS setup with Let's Encrypt
+   - Security hardening
+   - Performance optimization
+   - Monitoring and logging
+   - Backup strategies
+   - Troubleshooting guide
+
+2. **deploy.sh** - Automated deployment script that:
+   - Installs all required software
+   - Configures database and creates credentials
+   - Sets up the application with proper permissions
+   - Configures web server (Apache or Nginx)
+   - Sets up automated backups
+   - Hardens PHP and system security
+   - Usage: `sudo bash deploy.sh` (edit configuration variables first)
+
+3. **DEPLOYMENT_CHECKLIST.md** - Comprehensive checklist covering:
+   - Pre-deployment preparation
+   - Installation steps
+   - Configuration verification
+   - Security measures
+   - Testing procedures
+   - Post-deployment tasks
+   - Maintenance schedule
+
+### Quick Deployment
+For Ubuntu VPS deployment:
+```bash
+# 1. Edit configuration variables in deploy.sh
+nano deploy.sh
+
+# 2. Run automated deployment
+sudo bash deploy.sh
+
+# 3. Install SSL certificate
+sudo certbot --apache -d yourdomain.com  # or --nginx
+
+# 4. Follow post-deployment checklist
+```
+
+### Manual Deployment
+For detailed manual deployment or troubleshooting, refer to `UBUNTU_DEPLOYMENT_GUIDE.md`.
