@@ -11,11 +11,11 @@
   <div class="container-fluid">
     <div class="row g-0">
 
-      <?php foreach ($galleryItems as $image): ?>
+      <?php foreach ($galleryItems as $item): ?>
       <div class="col-lg-3 col-md-4">
         <div class="gallery-item">
-          <a href="<?= h($image) ?>" class="galelry-lightbox">
-            <img src="<?= h($image) ?>" alt="" class="img-fluid">
+          <a href="<?= h($item['url']) ?>" class="galelry-lightbox" data-glightbox="title: <?= h($item['title'] ?? '') ?>">
+            <img src="<?= h($item['url']) ?>" alt="<?= h($item['alt'] ?? '') ?>" class="img-fluid">
           </a>
         </div>
       </div>

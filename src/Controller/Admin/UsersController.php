@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use Cake\Controller\Controller;
 use Cake\Event\EventInterface;
 
 /**
@@ -25,7 +26,7 @@ class UsersController extends AppController
         $action = $this->request->getParam('action');
         if (in_array($action, ['login', 'logout'])) {
             // Call Cake base controller beforeFilter
-            \Cake\Controller\Controller::beforeFilter($event);
+            Controller::beforeFilter($event);
 
             // Explicitly allow login/logout without authentication
             $this->Authentication->allowUnauthenticated(['login', 'logout']);

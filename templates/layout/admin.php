@@ -232,6 +232,13 @@ $cakeDescription = 'SMUP Admin';
                         </li>
                         <li class="nav-item">
                             <?= $this->Html->link(
+                                '<i class="fas fa-camera"></i> Galerie Foto',
+                                ['prefix' => 'Admin', 'controller' => 'Gallery', 'action' => 'index'],
+                                ['class' => 'nav-link' . ($this->request->getParam('controller') === 'Gallery' ? ' active' : ''), 'escape' => false]
+                            ) ?>
+                        </li>
+                        <li class="nav-item">
+                            <?= $this->Html->link(
                                 '<i class="fas fa-file-alt"></i> Manager Fișiere',
                                 ['prefix' => 'Admin', 'controller' => 'Files', 'action' => 'index'],
                                 ['class' => 'nav-link' . ($this->request->getParam('controller') === 'Files' ? ' active' : ''), 'escape' => false]

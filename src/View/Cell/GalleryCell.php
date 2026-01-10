@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\View\Cell;
 
+use Cake\ORM\TableRegistry;
 use Cake\View\Cell;
 
 /**
@@ -20,16 +21,19 @@ class GalleryCell extends Cell
         $sectionTitle = 'Galerie foto';
         $sectionDescription = '';
 
-        $galleryItems = [
-            '/img/gallery/gallery-1.jpg',
-            '/img/gallery/gallery-2.jpg',
-            '/img/gallery/gallery-3.jpg',
-            '/img/gallery/gallery-4.jpg',
-            '/img/gallery/gallery-5.jpg',
-            '/img/gallery/gallery-6.jpg',
-            '/img/gallery/gallery-7.jpg',
-            '/img/gallery/gallery-8.jpg',
-        ];
+        // Fetch active gallery items from database
+        $galleryItemsTable = TableRegistry::getTableLocator()->get('GalleryItems');
+        $galleryItemsData = $galleryItemsTable->find('active')->toArray();
+
+        // Transform to structured array for template
+        $galleryItems = [];
+        foreach ($galleryItemsData as $item) {
+            $galleryItems[] = [
+                'url' => $item->image_url,
+                'title' => $item->title,
+                'alt' => $item->alt_text ?: $item->title ?: '',
+            ];
+        }
 
         $this->set(compact('sectionTitle', 'sectionDescription', 'galleryItems'));
     }
