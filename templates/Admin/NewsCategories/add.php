@@ -4,13 +4,13 @@
  * @var \App\Model\Entity\NewsCategory $newsCategory
  */
 ?>
-<?php $this->assign('title', 'Add News Category'); ?>
+<?php $this->assign('title', 'Adaugă categorie știri'); ?>
 
 <div class="newsCategories add content">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3><?= __('Add News Category') ?></h3>
+        <h3><?= __('Adaugă categorie știri') ?></h3>
         <?= $this->Html->link(
-            '<i class="fas fa-arrow-left"></i> Back to List',
+            '<i class="fas fa-arrow-left"></i> Înapoi la listă',
             ['action' => 'index'],
             ['class' => 'btn btn-secondary', 'escape' => false]
         ) ?>
@@ -21,65 +21,65 @@
             <div class="card">
                 <div class="card-body">
                     <?= $this->Form->create($newsCategory) ?>
-                    
+
                     <fieldset>
-                        <legend><?= __('Category Information') ?></legend>
-                        
+                        <legend><?= __('Informații categorie') ?></legend>
+
                         <?= $this->Form->control('name', [
                             'class' => 'form-control',
-                            'label' => ['class' => 'form-label'],
+                            'label' => ['class' => 'form-label', 'text' => 'Nume'],
                             'required' => true,
-                            'placeholder' => 'e.g., Hospital Updates, Health Tips, Events'
+                            'placeholder' => 'ex: Noutăți spital, Sfaturi de sănătate, Evenimente'
                         ]) ?>
-                        
+
                         <?= $this->Form->control('slug', [
                             'class' => 'form-control',
-                            'label' => ['class' => 'form-label', 'text' => 'URL Slug (leave empty to auto-generate)'],
-                            'placeholder' => 'category-url-slug'
+                            'label' => ['class' => 'form-label', 'text' => 'Slug URL (lăsați gol pentru generare automată)'],
+                            'placeholder' => 'slug-url-categorie'
                         ]) ?>
-                        
+
                         <?= $this->Form->control('description', [
                             'type' => 'textarea',
                             'class' => 'form-control',
-                            'label' => ['class' => 'form-label'],
+                            'label' => ['class' => 'form-label', 'text' => 'Descriere'],
                             'rows' => 4,
-                            'placeholder' => 'Brief description of this category (optional)...'
+                            'placeholder' => 'Scurtă descriere a acestei categorii (opțional)...'
                         ]) ?>
                     </fieldset>
-                    
+
                     <div class="mt-4">
-                        <?= $this->Form->button(__('Save Category'), [
+                        <?= $this->Form->button(__('Salvează categoria'), [
                             'class' => 'btn btn-primary'
                         ]) ?>
-                        <?= $this->Html->link(__('Cancel'), 
-                            ['action' => 'index'], 
+                        <?= $this->Html->link(__('Anulează'),
+                            ['action' => 'index'],
                             ['class' => 'btn btn-outline-secondary ms-2']
                         ) ?>
                     </div>
-                    
+
                     <?= $this->Form->end() ?>
                 </div>
             </div>
         </div>
-        
+
         <div class="col-md-4">
             <div class="card">
                 <div class="card-header">
-                    <h5 class="mb-0"><i class="fas fa-info-circle"></i> Tips</h5>
+                    <h5 class="mb-0"><i class="fas fa-info-circle"></i> Sfaturi</h5>
                 </div>
                 <div class="card-body">
-                    <p class="mb-2"><strong>Category Name:</strong></p>
+                    <p class="mb-2"><strong>Numele categoriei:</strong></p>
                     <ul class="small">
-                        <li>Use clear, descriptive names</li>
-                        <li>Keep it short and memorable</li>
-                        <li>Examples: "Hospital News", "Health Tips", "Events"</li>
+                        <li>Folosiți nume clare și descriptive</li>
+                        <li>Păstrați-l scurt și memorabil</li>
+                        <li>Exemple: „Noutăți spital", „Sfaturi de sănătate", „Evenimente"</li>
                     </ul>
-                    
-                    <p class="mb-2 mt-3"><strong>URL Slug:</strong></p>
+
+                    <p class="mb-2 mt-3"><strong>Slug URL:</strong></p>
                     <ul class="small mb-0">
-                        <li>Will be auto-generated from the name</li>
-                        <li>Used in URLs for category pages</li>
-                        <li>Should be lowercase with hyphens</li>
+                        <li>Va fi generat automat din nume</li>
+                        <li>Folosit în URL-uri pentru paginile categoriei</li>
+                        <li>Ar trebui să fie cu litere mici și cu cratime</li>
                     </ul>
                 </div>
             </div>
@@ -92,7 +92,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Auto-generate slug from name
     const nameInput = document.getElementById('name');
     const slugInput = document.getElementById('slug');
-    
+
     if (nameInput && slugInput) {
         nameInput.addEventListener('blur', function() {
             if (!slugInput.value && nameInput.value) {

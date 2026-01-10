@@ -15,7 +15,7 @@
                 </div>
 
                 <div class="col-lg-2 col-md-6 footer-links">
-                    <h4>Useful Links</h4>
+                    <h4>Linkuri utile</h4>
                     <ul>
                         <?php foreach ($usefulLinks as $link): ?>
                             <li><i class="bx bx-chevron-right"></i> <?= $this->Html->link(h($link['title']), $link['url']) ?></li>
@@ -24,7 +24,7 @@
                 </div>
 
                 <div class="col-lg-3 col-md-6 footer-links">
-                    <h4>Our Services</h4>
+                    <h4>Serviciile noastre</h4>
                     <ul>
                         <?php foreach ($serviceLinks as $link): ?>
                             <li><i class="bx bx-chevron-right"></i> <a href="<?= h($link['url']) ?>"><?= h($link['title']) ?></a></li>
@@ -51,12 +51,12 @@
             </div>
             <div class="credits">
                 <?= $this->Html->link('Politica de Confidențialitate', '/politica-de-confidentialitate') ?> | 
-                <?= $this->Html->link('Termeni și Condiții', '/termeni-si-conditii') ?>
+                <?= $this->Html->link('Termeni și Condiții', '/terms') ?>
             </div>
         </div>
         <div class="social-links text-center text-md-right pt-3 pt-md-0">
 
-            <a href="<?= h($socialLinks['facebook']) ?>" class="facebook"><i class="bx bxl-facebook"></i></a>
+            <a href="<?= h($socialLinks['facebook']) ?>" target="_blank" class="facebook"><i class="bx bxl-facebook"></i></a>
 
         </div>
     </div>

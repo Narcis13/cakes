@@ -5,7 +5,17 @@
  * @var string $year
  * @var array $yearsList
  */
-$this->assign('title', 'Hospital Holidays');
+$this->assign('title', 'Sărbători Spital');
+
+$daysOfWeek = [
+    'Sunday' => 'Duminică',
+    'Monday' => 'Luni',
+    'Tuesday' => 'Marți',
+    'Wednesday' => 'Miercuri',
+    'Thursday' => 'Joi',
+    'Friday' => 'Vineri',
+    'Saturday' => 'Sâmbătă'
+];
 ?>
 
 <div class="row">
@@ -13,7 +23,7 @@ $this->assign('title', 'Hospital Holidays');
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1>
                 <i class="fas fa-calendar-alt"></i>
-                Hospital Holidays
+                Sărbători Spital
             </h1>
             <div class="d-flex gap-2">
                 <?= $this->Form->create(null, ['type' => 'get', 'class' => 'd-flex gap-2']) ?>
@@ -27,7 +37,7 @@ $this->assign('title', 'Hospital Holidays');
                 ]) ?>
                 <?= $this->Form->end() ?>
                 <?= $this->Html->link(
-                    '<i class="fas fa-plus"></i> Add Holiday',
+                    '<i class="fas fa-plus"></i> Adaugă Sărbătoare',
                     ['action' => 'add'],
                     ['class' => 'btn btn-primary', 'escape' => false]
                 ) ?>
@@ -40,13 +50,13 @@ $this->assign('title', 'Hospital Holidays');
                     <table class="table table-striped">
                         <thead>
                             <tr>
-                                <th><?= $this->Paginator->sort('name') ?></th>
-                                <th><?= $this->Paginator->sort('date') ?></th>
-                                <th>Day of Week</th>
-                                <th><?= $this->Paginator->sort('is_recurring', 'Recurring') ?></th>
-                                <th>Description</th>
-                                <th><?= $this->Paginator->sort('created') ?></th>
-                                <th class="actions text-center">Actions</th>
+                                <th><?= $this->Paginator->sort('name', 'Nume') ?></th>
+                                <th><?= $this->Paginator->sort('date', 'Data') ?></th>
+                                <th>Zi din săptămână</th>
+                                <th><?= $this->Paginator->sort('is_recurring', 'Recurent') ?></th>
+                                <th>Descriere</th>
+                                <th><?= $this->Paginator->sort('created', 'Creat') ?></th>
+                                <th class="actions text-center">Acțiuni</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -56,43 +66,43 @@ $this->assign('title', 'Hospital Holidays');
                                     <strong><?= h($hospitalHoliday->name) ?></strong>
                                 </td>
                                 <td>
-                                    <?= h($hospitalHoliday->date->format('F j, Y')) ?>
+                                    <?= h($hospitalHoliday->date->format('d.m.Y')) ?>
                                 </td>
                                 <td>
-                                    <?= h($hospitalHoliday->date->format('l')) ?>
+                                    <?= $daysOfWeek[$hospitalHoliday->date->format('l')] ?? $hospitalHoliday->date->format('l') ?>
                                 </td>
                                 <td>
                                     <?php if ($hospitalHoliday->is_recurring): ?>
                                         <span class="badge bg-info">
-                                            <i class="fas fa-redo"></i> Recurring Annually
+                                            <i class="fas fa-redo"></i> Recurent Anual
                                         </span>
                                     <?php else: ?>
-                                        <span class="badge bg-secondary">One-time</span>
+                                        <span class="badge bg-secondary">O singură dată</span>
                                     <?php endif; ?>
                                 </td>
                                 <td>
-                                    <?= h($hospitalHoliday->description) ?: '<em class="text-muted">No description</em>' ?>
+                                    <?= h($hospitalHoliday->description) ?: '<em class="text-muted">Fără descriere</em>' ?>
                                 </td>
-                                <td><?= h($hospitalHoliday->created->format('M j, Y')) ?></td>
+                                <td><?= h($hospitalHoliday->created->format('d.m.Y')) ?></td>
                                 <td class="actions text-center">
                                     <?= $this->Html->link(
                                         '<i class="fas fa-eye"></i>',
                                         ['action' => 'view', $hospitalHoliday->id],
-                                        ['escape' => false, 'class' => 'btn btn-sm btn-info', 'title' => 'View']
+                                        ['escape' => false, 'class' => 'btn btn-sm btn-info', 'title' => 'Vizualizare']
                                     ) ?>
                                     <?= $this->Html->link(
                                         '<i class="fas fa-edit"></i>',
                                         ['action' => 'edit', $hospitalHoliday->id],
-                                        ['escape' => false, 'class' => 'btn btn-sm btn-primary', 'title' => 'Edit']
+                                        ['escape' => false, 'class' => 'btn btn-sm btn-primary', 'title' => 'Editare']
                                     ) ?>
                                     <?= $this->Form->postLink(
                                         '<i class="fas fa-trash"></i>',
                                         ['action' => 'delete', $hospitalHoliday->id],
                                         [
-                                            'confirm' => __('Are you sure you want to delete the holiday "{0}"?', $hospitalHoliday->name),
+                                            'confirm' => __('Sigur doriți să ștergeți sărbătoarea "{0}"?', $hospitalHoliday->name),
                                             'escape' => false,
                                             'class' => 'btn btn-sm btn-danger',
-                                            'title' => 'Delete'
+                                            'title' => 'Ștergere'
                                         ]
                                     ) ?>
                                 </td>
@@ -101,32 +111,32 @@ $this->assign('title', 'Hospital Holidays');
                         </tbody>
                     </table>
                 </div>
-                
+
                 <?php if (count($hospitalHolidays) === 0): ?>
                 <div class="text-center py-4">
-                    <p class="text-muted">No holidays found for <?= h($year) ?>.</p>
+                    <p class="text-muted">Nu s-au găsit sărbători pentru <?= h($year) ?>.</p>
                 </div>
                 <?php endif; ?>
-                
+
                 <div class="paginator">
                     <ul class="pagination">
-                        <?= $this->Paginator->first('<< ' . __('first')) ?>
-                        <?= $this->Paginator->prev('< ' . __('previous')) ?>
+                        <?= $this->Paginator->first('<< ' . __('Prima')) ?>
+                        <?= $this->Paginator->prev('< ' . __('Anterioară')) ?>
                         <?= $this->Paginator->numbers() ?>
-                        <?= $this->Paginator->next(__('next') . ' >') ?>
-                        <?= $this->Paginator->last(__('last') . ' >>') ?>
+                        <?= $this->Paginator->next(__('Următoarea') . ' >') ?>
+                        <?= $this->Paginator->last(__('Ultima') . ' >>') ?>
                     </ul>
-                    <p><?= $this->Paginator->counter(__('Page {{page}} of {{pages}}, showing {{current}} record(s) out of {{count}} total')) ?></p>
+                    <p><?= $this->Paginator->counter(__('Pagina {{page}} din {{pages}}, afișând {{current}} înregistrări din totalul de {{count}}')) ?></p>
                 </div>
             </div>
         </div>
-        
+
         <div class="card mt-3">
             <div class="card-body">
-                <h5><i class="fas fa-info-circle"></i> Holiday Types</h5>
+                <h5><i class="fas fa-info-circle"></i> Tipuri de Sărbători</h5>
                 <ul>
-                    <li><strong>One-time Holiday:</strong> Applies only to the specific date in the given year</li>
-                    <li><strong>Recurring Holiday:</strong> Automatically applies to the same date (month and day) every year</li>
+                    <li><strong>Sărbătoare o singură dată:</strong> Se aplică doar la data specifică din anul dat</li>
+                    <li><strong>Sărbătoare recurentă:</strong> Se aplică automat la aceeași dată (lună și zi) în fiecare an</li>
                 </ul>
             </div>
         </div>

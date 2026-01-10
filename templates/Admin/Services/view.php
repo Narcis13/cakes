@@ -11,19 +11,19 @@
         <div>
             <h3><?= h($service->name) ?></h3>
             <?php if ($service->is_active): ?>
-                <span class="badge bg-success">Active</span>
+                <span class="badge bg-success">Activ</span>
             <?php else: ?>
-                <span class="badge bg-secondary">Inactive</span>
+                <span class="badge bg-secondary">Inactiv</span>
             <?php endif; ?>
         </div>
         <div>
             <?= $this->Html->link(
-                '<i class="fas fa-edit"></i> Edit',
+                '<i class="fas fa-edit"></i> Editează',
                 ['action' => 'edit', $service->id],
                 ['class' => 'btn btn-primary me-2', 'escape' => false]
             ) ?>
             <?= $this->Html->link(
-                '<i class="fas fa-list"></i> Back to List',
+                '<i class="fas fa-list"></i> Înapoi la listă',
                 ['action' => 'index'],
                 ['class' => 'btn btn-secondary', 'escape' => false]
             ) ?>
@@ -34,17 +34,17 @@
         <div class="col-md-6">
             <div class="card">
                 <div class="card-header">
-                    <h5><i class="fas fa-info-circle"></i> Service Information</h5>
+                    <h5><i class="fas fa-info-circle"></i> Informații serviciu</h5>
                 </div>
                 <div class="card-body">
                     <table class="table table-borderless">
                         <tr>
-                            <th class="text-muted" style="width: 35%;">Service Name:</th>
+                            <th class="text-muted" style="width: 35%;">Nume serviciu:</th>
                             <td><?= h($service->name) ?></td>
                         </tr>
                         <?php if ($service->department): ?>
                         <tr>
-                            <th class="text-muted">Department:</th>
+                            <th class="text-muted">Departament:</th>
                             <td>
                                 <?= $this->Html->link(
                                     '<i class="fas fa-building"></i> ' . h($service->department->name),
@@ -56,18 +56,18 @@
                         <?php endif; ?>
                         <?php if ($service->duration_minutes): ?>
                         <tr>
-                            <th class="text-muted">Duration:</th>
+                            <th class="text-muted">Durată:</th>
                             <td>
-                                <i class="fas fa-clock"></i> <?= h($service->duration_minutes) ?> minutes
-                                <small class="text-muted">(<?= h(intval($service->duration_minutes / 60)) ?> hours <?= h($service->duration_minutes % 60) ?> mins)</small>
+                                <i class="fas fa-clock"></i> <?= h($service->duration_minutes) ?> minute
+                                <small class="text-muted">(<?= h(intval($service->duration_minutes / 60)) ?> ore <?= h($service->duration_minutes % 60) ?> min)</small>
                             </td>
                         </tr>
                         <?php endif; ?>
                         <?php if ($service->price !== null): ?>
                         <tr>
-                            <th class="text-muted">Price:</th>
+                            <th class="text-muted">Preț:</th>
                             <td>
-                                <strong class="text-success">$<?= $this->Number->format($service->price, ['places' => 2]) ?></strong>
+                                <strong class="text-success"><?= $this->Number->format($service->price, ['places' => 2]) ?> RON</strong>
                             </td>
                         </tr>
                         <?php endif; ?>
@@ -75,28 +75,28 @@
                             <th class="text-muted">Status:</th>
                             <td>
                                 <?php if ($service->is_active): ?>
-                                    <span class="badge bg-success">Active</span>
+                                    <span class="badge bg-success">Activ</span>
                                 <?php else: ?>
-                                    <span class="badge bg-secondary">Inactive</span>
+                                    <span class="badge bg-secondary">Inactiv</span>
                                 <?php endif; ?>
                             </td>
                         </tr>
                         <tr>
-                            <th class="text-muted">Created:</th>
-                            <td><?= h($service->created->format('M j, Y g:i A')) ?></td>
+                            <th class="text-muted">Creat:</th>
+                            <td><?= h($service->created->format('j M Y H:i')) ?></td>
                         </tr>
                         <tr>
-                            <th class="text-muted">Modified:</th>
-                            <td><?= h($service->modified->format('M j, Y g:i A')) ?></td>
+                            <th class="text-muted">Modificat:</th>
+                            <td><?= h($service->modified->format('j M Y H:i')) ?></td>
                         </tr>
                     </table>
                 </div>
             </div>
-            
+
             <?php if ($service->requirements): ?>
             <div class="card mt-3">
                 <div class="card-header">
-                    <h5><i class="fas fa-clipboard-list"></i> Requirements</h5>
+                    <h5><i class="fas fa-clipboard-list"></i> Cerințe</h5>
                 </div>
                 <div class="card-body">
                     <?= $this->Text->autoParagraph(h($service->requirements)) ?>
@@ -104,45 +104,45 @@
             </div>
             <?php endif; ?>
         </div>
-        
+
         <div class="col-md-6">
             <?php if ($service->description): ?>
             <div class="card mb-3">
                 <div class="card-header">
-                    <h5><i class="fas fa-file-text"></i> Description</h5>
+                    <h5><i class="fas fa-file-text"></i> Descriere</h5>
                 </div>
                 <div class="card-body">
                     <?= $this->Text->autoParagraph(h($service->description)) ?>
                 </div>
             </div>
             <?php endif; ?>
-            
+
             <?php if (!empty($service->appointments)): ?>
             <div class="card">
                 <div class="card-header">
-                    <h5><i class="fas fa-calendar"></i> Upcoming Appointments</h5>
+                    <h5><i class="fas fa-calendar"></i> Programări viitoare</h5>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table table-sm">
                             <thead>
                                 <tr>
-                                    <th>Date</th>
-                                    <th>Time</th>
-                                    <th>Patient</th>
+                                    <th>Data</th>
+                                    <th>Ora</th>
+                                    <th>Pacient</th>
                                     <th>Status</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php foreach ($service->appointments as $appointment): ?>
                                 <tr>
-                                    <td><?= h($appointment->appointment_date->format('M j, Y')) ?></td>
-                                    <td><?= h($appointment->appointment_time ? $appointment->appointment_time->format('g:i A') : '-') ?></td>
+                                    <td><?= h($appointment->appointment_date->format('j M Y')) ?></td>
+                                    <td><?= h($appointment->appointment_time ? $appointment->appointment_time->format('H:i') : '-') ?></td>
                                     <td>
                                         <?php if ($appointment->patient_name): ?>
                                             <?= h($appointment->patient_name) ?>
                                         <?php else: ?>
-                                            <span class="text-muted">Not specified</span>
+                                            <span class="text-muted">Nespecificat</span>
                                         <?php endif; ?>
                                     </td>
                                     <td>
@@ -154,10 +154,18 @@
                                             'cancelled' => 'bg-danger',
                                             'no_show' => 'bg-warning'
                                         ];
+                                        $statusLabels = [
+                                            'scheduled' => 'Programat',
+                                            'confirmed' => 'Confirmat',
+                                            'completed' => 'Finalizat',
+                                            'cancelled' => 'Anulat',
+                                            'no_show' => 'Neprezentare'
+                                        ];
                                         $statusClass = $statusClasses[$appointment->status] ?? 'bg-secondary';
+                                        $statusLabel = $statusLabels[$appointment->status] ?? $appointment->status;
                                         ?>
                                         <span class="badge <?= $statusClass ?> text-uppercase" style="font-size: 0.7rem;">
-                                            <?= h($appointment->status) ?>
+                                            <?= h($statusLabel) ?>
                                         </span>
                                     </td>
                                 </tr>
@@ -166,7 +174,7 @@
                         </table>
                     </div>
                     <p class="text-muted mt-2 mb-0">
-                        <small>Showing next 10 upcoming appointments</small>
+                        <small>Afișând următoarele 10 programări viitoare</small>
                     </p>
                 </div>
             </div>
@@ -174,7 +182,7 @@
             <div class="card">
                 <div class="card-body text-center text-muted">
                     <i class="fas fa-calendar-times fa-3x mb-3"></i>
-                    <p>No upcoming appointments for this service</p>
+                    <p>Nu există programări viitoare pentru acest serviciu</p>
                 </div>
             </div>
             <?php endif; ?>

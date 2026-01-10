@@ -113,8 +113,9 @@ return static function (RouteBuilder $routes) {
 
         /*
          * Admin routes (for hospital staff)
+         * URL path obscured for security
          */
-        $builder->prefix('Admin', function (RouteBuilder $routes) {
+        $builder->prefix('Admin', ['path' => '/smupa1881'], function (RouteBuilder $routes) {
             $routes->connect('/', ['controller' => 'Dashboard', 'action' => 'index']);
             $routes->fallbacks(DashedRoute::class);
         });

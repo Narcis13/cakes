@@ -4,20 +4,20 @@
  * @var \App\Model\Entity\User $user
  * @var array $stats
  */
-$this->assign('title', 'Dashboard');
+$this->assign('title', 'Panou de control');
 ?>
 
 <div class="row mb-4">
     <div class="col-12">
         <h1 class="mb-3">
             <i class="fas fa-tachometer-alt"></i>
-            Admin Dashboard
+            Panou de control
         </h1>
-        <p class="lead">Welcome back, <?= h($user->email) ?>! Here's an overview of your hospital management system.</p>
+        <p class="lead">Bine ai revenit, <?= h($user->email) ?>! Iată o prezentare generală a sistemului de management spitalicesc.</p>
     </div>
 </div>
 
-<!-- Statistics Cards -->
+<!-- Carduri statistici -->
 <div class="row mb-4">
     <div class="col-md-3 mb-3">
         <div class="card bg-primary text-white">
@@ -26,13 +26,13 @@ $this->assign('title', 'Dashboard');
                     <i class="fas fa-calendar-check fa-2x me-3"></i>
                     <div>
                         <h5 class="card-title mb-0"><?= number_format($stats['total_appointments'] ?? 0) ?></h5>
-                        <p class="card-text">Total Appointments</p>
+                        <p class="card-text">Total programări</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    
+
     <div class="col-md-3 mb-3">
         <div class="card bg-success text-white">
             <div class="card-body">
@@ -40,13 +40,13 @@ $this->assign('title', 'Dashboard');
                     <i class="fas fa-calendar-day fa-2x me-3"></i>
                     <div>
                         <h5 class="card-title mb-0"><?= number_format($stats['today_appointments'] ?? 0) ?></h5>
-                        <p class="card-text">Today's Appointments</p>
+                        <p class="card-text">Programări de azi</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    
+
     <div class="col-md-3 mb-3">
         <div class="card bg-info text-white">
             <div class="card-body">
@@ -54,13 +54,13 @@ $this->assign('title', 'Dashboard');
                     <i class="fas fa-user-md fa-2x me-3"></i>
                     <div>
                         <h5 class="card-title mb-0"><?= number_format($stats['total_staff'] ?? 0) ?></h5>
-                        <p class="card-text">Staff Members</p>
+                        <p class="card-text">Membri personal</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    
+
     <div class="col-md-3 mb-3">
         <div class="card bg-warning text-white">
             <div class="card-body">
@@ -68,7 +68,7 @@ $this->assign('title', 'Dashboard');
                     <i class="fas fa-building fa-2x me-3"></i>
                     <div>
                         <h5 class="card-title mb-0"><?= number_format($stats['total_departments'] ?? 0) ?></h5>
-                        <p class="card-text">Departments</p>
+                        <p class="card-text">Departamente</p>
                     </div>
                 </div>
             </div>
@@ -76,56 +76,56 @@ $this->assign('title', 'Dashboard');
     </div>
 </div>
 
-<!-- Quick Actions -->
+<!-- Acțiuni rapide -->
 <div class="row mb-4">
     <div class="col-12">
         <div class="card">
             <div class="card-header">
                 <h5 class="mb-0">
                     <i class="fas fa-bolt"></i>
-                    Quick Actions
+                    Acțiuni rapide
                 </h5>
             </div>
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-2 mb-2">
                         <?= $this->Html->link(
-                            '<i class="fas fa-users"></i> Manage Users',
+                            '<i class="fas fa-users"></i> Gestionare utilizatori',
                             ['controller' => 'Users', 'action' => 'index'],
                             ['class' => 'btn btn-outline-primary btn-sm w-100', 'escape' => false]
                         ) ?>
                     </div>
                     <div class="col-md-2 mb-2">
                         <?= $this->Html->link(
-                            '<i class="fas fa-cog"></i> Settings',
+                            '<i class="fas fa-cog"></i> Setări',
                             ['controller' => 'Settings', 'action' => 'index'],
                             ['class' => 'btn btn-outline-secondary btn-sm w-100', 'escape' => false]
                         ) ?>
                     </div>
                     <div class="col-md-2 mb-2">
                         <?= $this->Html->link(
-                            '<i class="fas fa-user-md"></i> Staff',
+                            '<i class="fas fa-user-md"></i> Personal',
                             ['controller' => 'Staff', 'action' => 'index'],
                             ['class' => 'btn btn-outline-info btn-sm w-100', 'escape' => false]
                         ) ?>
                     </div>
                     <div class="col-md-2 mb-2">
                         <?= $this->Html->link(
-                            '<i class="fas fa-building"></i> Departments',
+                            '<i class="fas fa-building"></i> Departamente',
                             ['controller' => 'Departments', 'action' => 'index'],
                             ['class' => 'btn btn-outline-warning btn-sm w-100', 'escape' => false]
                         ) ?>
                     </div>
                     <div class="col-md-2 mb-2">
                         <?= $this->Html->link(
-                            '<i class="fas fa-newspaper"></i> News',
+                            '<i class="fas fa-newspaper"></i> Noutăți',
                             ['controller' => 'News', 'action' => 'index'],
                             ['class' => 'btn btn-outline-success btn-sm w-100', 'escape' => false]
                         ) ?>
                     </div>
                     <div class="col-md-2 mb-2">
                         <?= $this->Html->link(
-                            '<i class="fas fa-home"></i> View Site',
+                            '<i class="fas fa-home"></i> Vezi site-ul',
                             '/',
                             ['class' => 'btn btn-outline-dark btn-sm w-100', 'escape' => false, 'target' => '_blank']
                         ) ?>
@@ -136,7 +136,7 @@ $this->assign('title', 'Dashboard');
     </div>
 </div>
 
-<!-- Recent News -->
+<!-- Noutăți recente -->
 <?php if (!empty($stats['recent_news'])): ?>
 <div class="row">
     <div class="col-12">
@@ -144,7 +144,7 @@ $this->assign('title', 'Dashboard');
             <div class="card-header">
                 <h5 class="mb-0">
                     <i class="fas fa-newspaper"></i>
-                    Recent News
+                    Noutăți recente
                 </h5>
             </div>
             <div class="card-body">
@@ -152,26 +152,26 @@ $this->assign('title', 'Dashboard');
                     <table class="table table-hover">
                         <thead>
                             <tr>
-                                <th>Title</th>
-                                <th>Created</th>
-                                <th>Actions</th>
+                                <th>Titlu</th>
+                                <th>Creat</th>
+                                <th>Acțiuni</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php foreach ($stats['recent_news'] as $news): ?>
                             <tr>
                                 <td><?= h($news->title) ?></td>
-                                <td><?= $news->created->format('M d, Y') ?></td>
+                                <td><?= $news->created->format('d.m.Y') ?></td>
                                 <td>
                                     <?= $this->Html->link(
                                         '<i class="fas fa-eye"></i>',
                                         ['controller' => 'News', 'action' => 'view', $news->id],
-                                        ['class' => 'btn btn-sm btn-outline-primary', 'escape' => false, 'title' => 'View']
+                                        ['class' => 'btn btn-sm btn-outline-primary', 'escape' => false, 'title' => 'Vizualizează']
                                     ) ?>
                                     <?= $this->Html->link(
                                         '<i class="fas fa-edit"></i>',
                                         ['controller' => 'News', 'action' => 'edit', $news->id],
-                                        ['class' => 'btn btn-sm btn-outline-secondary', 'escape' => false, 'title' => 'Edit']
+                                        ['class' => 'btn btn-sm btn-outline-secondary', 'escape' => false, 'title' => 'Editează']
                                     ) ?>
                                 </td>
                             </tr>

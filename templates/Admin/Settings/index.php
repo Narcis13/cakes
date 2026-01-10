@@ -5,19 +5,19 @@
  */
 ?>
 <div class="settings index content">
-    <?= $this->Html->link(__('New Setting'), ['action' => 'add'], ['class' => 'btn btn-primary float-end mb-2']) ?>
-    <h3><?= __('Settings') ?></h3>
+    <?= $this->Html->link(__('Setare nouă'), ['action' => 'add'], ['class' => 'btn btn-primary float-end mb-2']) ?>
+    <h3><?= __('Setări') ?></h3>
     <div class="table-responsive">
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th><?= $this->Paginator->sort('id') ?></th>
-                    <th><?= $this->Paginator->sort('key_name') ?></th>
-                    <th><?= $this->Paginator->sort('value') ?></th>
-                    <th><?= $this->Paginator->sort('description') ?></th>
-                    <th><?= $this->Paginator->sort('type') ?></th>
-                    <th><?= $this->Paginator->sort('modified') ?></th>
-                    <th class="actions"><?= __('Actions') ?></th>
+                    <th><?= $this->Paginator->sort('id', 'ID') ?></th>
+                    <th><?= $this->Paginator->sort('key_name', 'Cheie') ?></th>
+                    <th><?= $this->Paginator->sort('value', 'Valoare') ?></th>
+                    <th><?= $this->Paginator->sort('description', 'Descriere') ?></th>
+                    <th><?= $this->Paginator->sort('type', 'Tip') ?></th>
+                    <th><?= $this->Paginator->sort('modified', 'Modificat') ?></th>
+                    <th class="actions"><?= __('Acțiuni') ?></th>
                 </tr>
             </thead>
             <tbody>
@@ -28,11 +28,11 @@
                     <td><?= h(mb_strimwidth((string)$setting->value, 0, 50, '...')) ?></td>
                     <td><?= h($setting->description) ?></td>
                     <td><?= h($setting->type) ?></td>
-                    <td><?= h($setting->modified->format('Y-m-d H:i:s')) ?></td>
+                    <td><?= h($setting->modified->format('d.m.Y H:i:s')) ?></td>
                     <td class="actions">
-                        <?= $this->Html->link(__('View'), ['action' => 'view', $setting->id], ['class' => 'btn btn-sm btn-info']) ?>
-                        <?= $this->Html->link(__('Edit'), ['action' => 'edit', $setting->id], ['class' => 'btn btn-sm btn-warning']) ?>
-                        <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $setting->id], ['confirm' => __('Are you sure you want to delete # {0}?', $setting->key_name), 'class' => 'btn btn-sm btn-danger']) ?>
+                        <?= $this->Html->link(__('Vizualizează'), ['action' => 'view', $setting->id], ['class' => 'btn btn-sm btn-info']) ?>
+                        <?= $this->Html->link(__('Editează'), ['action' => 'edit', $setting->id], ['class' => 'btn btn-sm btn-warning']) ?>
+                        <?= $this->Form->postLink(__('Șterge'), ['action' => 'delete', $setting->id], ['confirm' => __('Ești sigur că vrei să ștergi setarea {0}?', $setting->key_name), 'class' => 'btn btn-sm btn-danger']) ?>
                     </td>
                 </tr>
                 <?php endforeach; ?>
@@ -41,12 +41,12 @@
     </div>
     <div class="paginator">
         <ul class="pagination">
-            <?= $this->Paginator->first('<< ' . __('first')) ?>
-            <?= $this->Paginator->prev('< ' . __('previous')) ?>
+            <?= $this->Paginator->first('<< ' . __('prima')) ?>
+            <?= $this->Paginator->prev('< ' . __('anterioara')) ?>
             <?= $this->Paginator->numbers() ?>
-            <?= $this->Paginator->next(__('next') . ' >') ?>
-            <?= $this->Paginator->last(__('last') . ' >>') ?>
+            <?= $this->Paginator->next(__('următoarea') . ' >') ?>
+            <?= $this->Paginator->last(__('ultima') . ' >>') ?>
         </ul>
-        <p><?= $this->Paginator->counter(__('Page {{page}} of {{pages}}, showing {{current}} record(s) out of {{count}} total')) ?></p>
+        <p><?= $this->Paginator->counter(__('Pagina {{page}} din {{pages}}, afișând {{current}} înregistrare/înregistrări din {{count}} total')) ?></p>
     </div>
 </div>

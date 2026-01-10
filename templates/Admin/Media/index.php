@@ -3,14 +3,14 @@
  * @var \App\View\AppView $this
  */
 ?>
-<?php $this->assign('title', 'Media Library'); ?>
+<?php $this->assign('title', 'Bibliotecă media'); ?>
 
 <div class="media index content">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3><?= __('Media Library') ?></h3>
+        <h3><?= __('Bibliotecă media') ?></h3>
         <div>
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#uploadModal">
-                <i class="fas fa-upload"></i> Upload Files
+                <i class="fas fa-upload"></i> Încarcă fișiere
             </button>
         </div>
     </div>
@@ -19,36 +19,36 @@
         <div class="col-md-3">
             <div class="card">
                 <div class="card-header">
-                    <h5 class="card-title mb-0">Filter</h5>
+                    <h5 class="card-title mb-0">Filtrează</h5>
                 </div>
                 <div class="card-body">
                     <div class="mb-3">
-                        <label class="form-label">File Type</label>
+                        <label class="form-label">Tip fișier</label>
                         <select class="form-control" id="file-type-filter">
-                            <option value="">All Files</option>
-                            <option value="image">Images</option>
-                            <option value="document">Documents</option>
-                            <option value="video">Videos</option>
+                            <option value="">Toate fișierele</option>
+                            <option value="image">Imagini</option>
+                            <option value="document">Documente</option>
+                            <option value="video">Videoclipuri</option>
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Date Range</label>
+                        <label class="form-label">Interval dată</label>
                         <select class="form-control" id="date-filter">
-                            <option value="">All Dates</option>
-                            <option value="today">Today</option>
-                            <option value="week">This Week</option>
-                            <option value="month">This Month</option>
+                            <option value="">Toate datele</option>
+                            <option value="today">Astăzi</option>
+                            <option value="week">Săptămâna aceasta</option>
+                            <option value="month">Luna aceasta</option>
                         </select>
                     </div>
                 </div>
             </div>
         </div>
-        
+
         <div class="col-md-9">
             <div class="card">
                 <div class="card-header">
                     <div class="d-flex justify-content-between align-items-center">
-                        <h5 class="card-title mb-0">Files</h5>
+                        <h5 class="card-title mb-0">Fișiere</h5>
                         <div class="btn-group" role="group">
                             <button type="button" class="btn btn-outline-secondary active" id="grid-view">
                                 <i class="fas fa-th"></i>
@@ -88,17 +88,17 @@
                                             <div class="media-title"><?= h($fileInfo['filename']) ?></div>
                                             <div class="media-meta">
                                                 <small class="text-muted">
-                                                    <?= number_format($fileSize / 1024, 1) ?> KB • <?= date('M j, Y', filemtime($filePath)) ?>
+                                                    <?= number_format($fileSize / 1024, 1) ?> KB • <?= date('j M Y', filemtime($filePath)) ?>
                                                 </small>
                                             </div>
                                         </div>
                                         <div class="media-actions">
-                                            <button type="button" class="btn btn-sm btn-outline-primary copy-url" 
-                                                    data-url="/img/uploads/<?= h($file) ?>" title="Copy URL">
+                                            <button type="button" class="btn btn-sm btn-outline-primary copy-url"
+                                                    data-url="/img/uploads/<?= h($file) ?>" title="Copiază URL">
                                                 <i class="fas fa-copy"></i>
                                             </button>
-                                            <button type="button" class="btn btn-sm btn-outline-danger delete-file" 
-                                                    data-file="<?= h($file) ?>" title="Delete">
+                                            <button type="button" class="btn btn-sm btn-outline-danger delete-file"
+                                                    data-file="<?= h($file) ?>" title="Șterge">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </div>
@@ -107,7 +107,7 @@
                                 }
                             }
                         } else {
-                            echo '<div class="text-center py-4 text-muted">No files found in uploads directory.</div>';
+                            echo '<div class="text-center py-4 text-muted">Nu s-au găsit fișiere în directorul de încărcări.</div>';
                         }
                         ?>
                     </div>
@@ -122,14 +122,14 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Upload Files</h5>
+                <h5 class="modal-title">Încarcă fișiere</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
                 <div class="mb-3">
-                    <label class="form-label">Select files to upload</label>
+                    <label class="form-label">Selectează fișierele de încărcat</label>
                     <input type="file" class="form-control" id="file-upload" name="files[]" multiple>
-                    <div class="form-text">Maximum file size: 5MB per file. Supported formats: Images (JPEG, PNG, GIF, WebP), Documents (PDF, DOC, DOCX)</div>
+                    <div class="form-text">Dimensiune maximă: 5MB per fișier. Formate acceptate: Imagini (JPEG, PNG, GIF, WebP), Documente (PDF, DOC, DOCX)</div>
                 </div>
                 <div id="upload-progress" style="display: none;">
                     <div class="progress">
@@ -138,8 +138,8 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="upload-btn">Upload</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Închide</button>
+                <button type="button" class="btn btn-primary" id="upload-btn">Încarcă</button>
             </div>
         </div>
     </div>
@@ -226,7 +226,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('file-type-filter').addEventListener('change', function() {
         const filterType = this.value;
         const items = document.querySelectorAll('.media-item');
-        
+
         items.forEach(item => {
             if (!filterType || item.getAttribute('data-type') === filterType) {
                 item.style.display = 'block';
@@ -240,27 +240,27 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('upload-btn').addEventListener('click', function() {
         const fileInput = document.getElementById('file-upload');
         const files = fileInput.files;
-        
+
         if (files.length === 0) {
-            alert('Please select files to upload.');
+            alert('Vă rugăm să selectați fișierele de încărcat.');
             return;
         }
-        
+
         const progressDiv = document.getElementById('upload-progress');
         const progressBar = progressDiv.querySelector('.progress-bar');
         const uploadBtn = this;
-        
+
         // Show progress bar and disable button
         progressDiv.style.display = 'block';
         uploadBtn.disabled = true;
-        uploadBtn.textContent = 'Uploading...';
-        
+        uploadBtn.textContent = 'Se încarcă...';
+
         // Create form data
         const formData = new FormData();
         for (let i = 0; i < files.length; i++) {
             formData.append('files[]', files[i]);
         }
-        
+
         // Upload files
         fetch('<?= $this->Url->build(['action' => 'upload']) ?>', {
             method: 'POST',
@@ -273,39 +273,39 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => response.json())
         .then(data => {
             progressBar.style.width = '100%';
-            
+
             if (data.success) {
                 alert(data.message);
                 // Reload page to show new files
                 window.location.reload();
             } else {
-                alert('Upload failed: ' + data.message);
-                console.error('Upload errors:', data.results);
+                alert('Încărcarea a eșuat: ' + data.message);
+                console.error('Erori încărcare:', data.results);
             }
         })
         .catch(error => {
-            console.error('Upload error:', error);
-            alert('An error occurred during upload.');
+            console.error('Eroare încărcare:', error);
+            alert('A apărut o eroare în timpul încărcării.');
         })
         .finally(() => {
             // Reset UI
             progressDiv.style.display = 'none';
             progressBar.style.width = '0%';
             uploadBtn.disabled = false;
-            uploadBtn.textContent = 'Upload';
+            uploadBtn.textContent = 'Încarcă';
             fileInput.value = '';
         });
     });
-    
+
     // Delete file functionality
     document.querySelectorAll('.delete-file').forEach(button => {
         button.addEventListener('click', function() {
             const filename = this.getAttribute('data-file');
-            
-            if (!confirm('Are you sure you want to delete this file?')) {
+
+            if (!confirm('Sigur doriți să ștergeți acest fișier?')) {
                 return;
             }
-            
+
             fetch('<?= $this->Url->build(['action' => 'deleteFile']) ?>', {
                 method: 'POST',
                 headers: {
@@ -322,18 +322,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (data.success) {
                     // Remove the file item from the DOM
                     this.closest('.media-item').remove();
-                    alert('File deleted successfully.');
+                    alert('Fișier șters cu succes.');
                 } else {
-                    alert('Delete failed: ' + data.message);
+                    alert('Ștergerea a eșuat: ' + data.message);
                 }
             })
             .catch(error => {
-                console.error('Delete error:', error);
-                alert('An error occurred while deleting the file.');
+                console.error('Eroare ștergere:', error);
+                alert('A apărut o eroare în timpul ștergerii fișierului.');
             });
         });
     });
-    
+
     // Upload progress simulation for better UX
     function simulateProgress(progressBar) {
         let progress = 0;

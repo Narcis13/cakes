@@ -11,19 +11,19 @@
         <div>
             <h3><?= h($department->name) ?></h3>
             <?php if ($department->is_active): ?>
-                <span class="badge bg-success">Active</span>
+                <span class="badge bg-success">Activ</span>
             <?php else: ?>
-                <span class="badge bg-secondary">Inactive</span>
+                <span class="badge bg-secondary">Inactiv</span>
             <?php endif; ?>
         </div>
         <div>
             <?= $this->Html->link(
-                '<i class="fas fa-edit"></i> Edit',
+                '<i class="fas fa-edit"></i> Editează',
                 ['action' => 'edit', $department->id],
                 ['class' => 'btn btn-primary me-2', 'escape' => false]
             ) ?>
             <?= $this->Html->link(
-                '<i class="fas fa-list"></i> Back to List',
+                '<i class="fas fa-list"></i> Înapoi la listă',
                 ['action' => 'index'],
                 ['class' => 'btn btn-secondary', 'escape' => false]
             ) ?>
@@ -34,26 +34,26 @@
         <div class="col-md-4">
             <div class="card">
                 <div class="card-header">
-                    <h5><i class="fas fa-info-circle"></i> Department Information</h5>
+                    <h5><i class="fas fa-info-circle"></i> Informații departament</h5>
                 </div>
                 <div class="card-body">
                     <?php if ($department->picture): ?>
                         <div class="text-center mb-3">
-                            <img src="<?= $this->Url->build('/img/departments/' . $department->picture) ?>" 
-                                 class="img-fluid rounded" 
+                            <img src="<?= $this->Url->build('/img/departments/' . $department->picture) ?>"
+                                 class="img-fluid rounded"
                                  alt="<?= h($department->name) ?>"
                                  style="max-height: 200px; object-fit: cover;">
                         </div>
                     <?php endif; ?>
-                    
+
                     <table class="table table-borderless table-sm">
                         <tr>
-                            <th class="text-muted" style="width: 40%;">Name:</th>
+                            <th class="text-muted" style="width: 40%;">Nume:</th>
                             <td><?= h($department->name) ?></td>
                         </tr>
                         <?php if ($department->head_doctor): ?>
                         <tr>
-                            <th class="text-muted">Head Doctor:</th>
+                            <th class="text-muted">Medic șef:</th>
                             <td>
                                 <i class="fas fa-user-md"></i> <?= h($department->head_doctor->first_name . ' ' . $department->head_doctor->last_name) ?>
                                 <?php if ($department->head_doctor->title): ?>
@@ -66,7 +66,7 @@
                         <?php endif; ?>
                         <?php if ($department->phone): ?>
                         <tr>
-                            <th class="text-muted">Phone:</th>
+                            <th class="text-muted">Telefon:</th>
                             <td>
                                 <a href="tel:<?= h($department->phone) ?>" class="text-decoration-none">
                                     <i class="fas fa-phone"></i> <?= h($department->phone) ?>
@@ -86,50 +86,50 @@
                         <?php endif; ?>
                         <?php if ($department->floor_location): ?>
                         <tr>
-                            <th class="text-muted">Location:</th>
+                            <th class="text-muted">Locație:</th>
                             <td><i class="fas fa-map-marker-alt"></i> <?= h($department->floor_location) ?></td>
                         </tr>
                         <?php endif; ?>
                         <tr>
-                            <th class="text-muted">Created:</th>
-                            <td><?= h($department->created->format('M j, Y g:i A')) ?></td>
+                            <th class="text-muted">Creat:</th>
+                            <td><?= h($department->created->format('j M Y H:i')) ?></td>
                         </tr>
                         <tr>
-                            <th class="text-muted">Modified:</th>
-                            <td><?= h($department->modified->format('M j, Y g:i A')) ?></td>
+                            <th class="text-muted">Modificat:</th>
+                            <td><?= h($department->modified->format('j M Y H:i')) ?></td>
                         </tr>
                     </table>
                 </div>
             </div>
         </div>
-        
+
         <div class="col-md-8">
             <?php if ($department->description): ?>
             <div class="card mb-4">
                 <div class="card-header">
-                    <h5><i class="fas fa-file-text"></i> Description</h5>
+                    <h5><i class="fas fa-file-text"></i> Descriere</h5>
                 </div>
                 <div class="card-body">
                     <?= $this->Text->autoParagraph(h($department->description)) ?>
                 </div>
             </div>
             <?php endif; ?>
-            
+
             <?php if ($department->services_html): ?>
             <div class="card mb-4">
                 <div class="card-header">
-                    <h5><i class="fas fa-stethoscope"></i> Services</h5>
+                    <h5><i class="fas fa-stethoscope"></i> Servicii</h5>
                 </div>
                 <div class="card-body">
                     <?= $department->services_html ?>
                 </div>
             </div>
             <?php endif; ?>
-            
+
             <?php if (!empty($department->services)): ?>
             <div class="card mb-4">
                 <div class="card-header">
-                    <h5><i class="fas fa-list"></i> Related Services</h5>
+                    <h5><i class="fas fa-list"></i> Servicii asociate</h5>
                 </div>
                 <div class="card-body">
                     <div class="row">
@@ -147,11 +147,11 @@
                 </div>
             </div>
             <?php endif; ?>
-            
+
             <?php if (!empty($department->staff)): ?>
             <div class="card">
                 <div class="card-header">
-                    <h5><i class="fas fa-users"></i> Staff Members</h5>
+                    <h5><i class="fas fa-users"></i> Membrii personalului</h5>
                 </div>
                 <div class="card-body">
                     <div class="row">

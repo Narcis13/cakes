@@ -11,19 +11,19 @@
         <div>
             <h3><?= h($specialization->name) ?></h3>
             <?php if ($specialization->is_active): ?>
-                <span class="badge bg-success">Active</span>
+                <span class="badge bg-success">Activ</span>
             <?php else: ?>
-                <span class="badge bg-secondary">Inactive</span>
+                <span class="badge bg-secondary">Inactiv</span>
             <?php endif; ?>
         </div>
         <div>
             <?= $this->Html->link(
-                '<i class="fas fa-edit"></i> Edit',
+                '<i class="fas fa-edit"></i> Editează',
                 ['action' => 'edit', $specialization->id],
                 ['class' => 'btn btn-primary me-2', 'escape' => false]
             ) ?>
             <?= $this->Html->link(
-                '<i class="fas fa-list"></i> Back to List',
+                '<i class="fas fa-list"></i> Înapoi la listă',
                 ['action' => 'index'],
                 ['class' => 'btn btn-secondary', 'escape' => false]
             ) ?>
@@ -34,31 +34,31 @@
         <div class="col-md-6">
             <div class="card">
                 <div class="card-header">
-                    <h5><i class="fas fa-info-circle"></i> Specialization Details</h5>
+                    <h5><i class="fas fa-info-circle"></i> Detalii specializare</h5>
                 </div>
                 <div class="card-body">
                     <table class="table table-borderless">
                         <tr>
-                            <th class="text-muted" style="width: 30%;">Name:</th>
+                            <th class="text-muted" style="width: 30%;">Nume:</th>
                             <td><?= h($specialization->name) ?></td>
                         </tr>
                         <tr>
                             <th class="text-muted">Status:</th>
                             <td>
                                 <?php if ($specialization->is_active): ?>
-                                    <span class="badge bg-success">Active</span>
+                                    <span class="badge bg-success">Activ</span>
                                 <?php else: ?>
-                                    <span class="badge bg-secondary">Inactive</span>
+                                    <span class="badge bg-secondary">Inactiv</span>
                                 <?php endif; ?>
                             </td>
                         </tr>
                         <tr>
-                            <th class="text-muted">Created:</th>
-                            <td><?= h($specialization->created->format('M j, Y g:i A')) ?></td>
+                            <th class="text-muted">Creat:</th>
+                            <td><?= h($specialization->created->format('j M Y H:i')) ?></td>
                         </tr>
                         <tr>
-                            <th class="text-muted">Modified:</th>
-                            <td><?= h($specialization->modified->format('M j, Y g:i A')) ?></td>
+                            <th class="text-muted">Modificat:</th>
+                            <td><?= h($specialization->modified->format('j M Y H:i')) ?></td>
                         </tr>
                     </table>
                 </div>
@@ -67,7 +67,7 @@
             <?php if ($specialization->description): ?>
             <div class="card mt-3">
                 <div class="card-header">
-                    <h5><i class="fas fa-file-text"></i> Description</h5>
+                    <h5><i class="fas fa-file-text"></i> Descriere</h5>
                 </div>
                 <div class="card-body">
                     <?= $this->Text->autoParagraph(h($specialization->description)) ?>
@@ -79,7 +79,7 @@
         <div class="col-md-6">
             <div class="card">
                 <div class="card-header">
-                    <h5><i class="fas fa-user-md"></i> Associated Staff</h5>
+                    <h5><i class="fas fa-user-md"></i> Personal asociat</h5>
                 </div>
                 <div class="card-body">
                     <?php if (!empty($specialization->staff)): ?>
@@ -87,10 +87,10 @@
                             <table class="table table-sm">
                                 <thead>
                                     <tr>
-                                        <th>Name</th>
-                                        <th>Department</th>
+                                        <th>Nume</th>
+                                        <th>Departament</th>
                                         <th>Status</th>
-                                        <th>Action</th>
+                                        <th>Acțiune</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -112,16 +112,16 @@
                                         </td>
                                         <td>
                                             <?php if ($staffMember->is_active): ?>
-                                                <span class="badge bg-success">Active</span>
+                                                <span class="badge bg-success">Activ</span>
                                             <?php else: ?>
-                                                <span class="badge bg-secondary">Inactive</span>
+                                                <span class="badge bg-secondary">Inactiv</span>
                                             <?php endif; ?>
                                         </td>
                                         <td>
                                             <?= $this->Html->link(
                                                 '<i class="fas fa-eye"></i>',
                                                 ['controller' => 'Staff', 'action' => 'view', $staffMember->id],
-                                                ['class' => 'btn btn-sm btn-outline-info', 'escape' => false, 'title' => 'View']
+                                                ['class' => 'btn btn-sm btn-outline-info', 'escape' => false, 'title' => 'Vizualizează']
                                             ) ?>
                                         </td>
                                     </tr>
@@ -131,10 +131,10 @@
                         </div>
                     <?php else: ?>
                         <p class="text-center text-muted">
-                            <i class="fas fa-info-circle"></i> No staff members assigned to this specialization yet.
+                            <i class="fas fa-info-circle"></i> Niciun membru al personalului nu este asociat cu această specializare încă.
                         </p>
                         <?= $this->Html->link(
-                            '<i class="fas fa-plus"></i> Add Staff',
+                            '<i class="fas fa-plus"></i> Adaugă personal',
                             ['controller' => 'Staff', 'action' => 'add'],
                             ['class' => 'btn btn-sm btn-primary d-block mx-auto', 'style' => 'width: fit-content;', 'escape' => false]
                         ) ?>
@@ -144,23 +144,23 @@
 
             <div class="card mt-3">
                 <div class="card-header">
-                    <h5><i class="fas fa-chart-bar"></i> Statistics</h5>
+                    <h5><i class="fas fa-chart-bar"></i> Statistici</h5>
                 </div>
                 <div class="card-body">
                     <table class="table table-borderless table-sm">
                         <tr>
-                            <th class="text-muted">Total Staff:</th>
+                            <th class="text-muted">Total personal:</th>
                             <td>
                                 <span class="badge bg-info text-dark">
-                                    <?= isset($specialization->staff) ? count($specialization->staff) : 0 ?> doctors
+                                    <?= isset($specialization->staff) ? count($specialization->staff) : 0 ?> medici
                                 </span>
                             </td>
                         </tr>
                         <tr>
-                            <th class="text-muted">Active Staff:</th>
+                            <th class="text-muted">Personal activ:</th>
                             <td>
                                 <span class="badge bg-success">
-                                    <?php 
+                                    <?php
                                     $activeCount = 0;
                                     if (isset($specialization->staff)) {
                                         foreach ($specialization->staff as $staff) {
@@ -168,7 +168,7 @@
                                         }
                                     }
                                     echo $activeCount;
-                                    ?> doctors
+                                    ?> medici
                                 </span>
                             </td>
                         </tr>

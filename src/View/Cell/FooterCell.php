@@ -26,41 +26,41 @@ class FooterCell extends Cell
 
         // For now, using static data as in the original template
         $contactInfo = [
-            'name' => 'Medilab',
-            'address' => 'A109 Adam Street',
-            'city' => 'New York, NY 535022',
-            'country' => 'United States',
-            'phone' => '+1 5589 55488 55',
-            'email' => 'info@example.com',
+            'name' => 'SMUPitesti',
+            'address' => 'Str. Negru Voda nr. 47',
+            'city' => 'Pitesti, Arges',
+            'country' => 'Romania',
+            'phone' => '+40 248218090',
+            'email' => 'smupitesti@mapn.ro',
         ];
 
         $usefulLinks = [
             ['title' => 'Acasa', 'url' => '/'],
             ['title' => 'Ministerul Sanatatii', 'url' => 'https://www.ms.ro'],
-            ['title' => 'Programari telefonice', 'url' => '/services'],
-            ['title' => 'TerTermeni si conditii', 'url' => '/terms'],
-            ['title' => 'Politica confidentialitate', 'url' => '/privacy'],
+            ['title' => 'Programari telefonice', 'url' => '/programari-telefonice'],
+            ['title' => 'Termeni si conditii', 'url' => '/terms'],
+            ['title' => 'Politica confidentialitate', 'url' => '/politica-de-confidentialitate'],
         ];
 
         $serviceLinks = [
             ['title' => 'Asociatia SANIVITAL', 'url' => '#'],
-            ['title' => 'Web Development', 'url' => '#'],
-            ['title' => 'Product Management', 'url' => '#'],
-            ['title' => 'Marketing', 'url' => '#'],
-            ['title' => 'Graphic Design', 'url' => '#'],
+            ['title' => 'Servicii contra cost', 'url' => '#'],
+            ['title' => 'Relatii cu publicul', 'url' => '#'],
+            ['title' => 'Comunitate', 'url' => '#'],
+            ['title' => 'CSM Tirgoviste', 'url' => '#'],
         ];
 
         $socialLinks = [
             'twitter' => '#',
-            'facebook' => '#',
+            'facebook' => 'https://www.facebook.com/spitalulmilitarpitesti',
             'instagram' => '#',
             'skype' => '#',
             'linkedin' => '#',
         ];
 
         $newsletterText = 'Tamen quem nulla quae legam multos aute sint culpa legam noster magna';
-        $copyright = '&copy; Copyright <strong><span>Medilab</span></strong>. All Rights Reserved';
-        $credits = 'Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>';
+        $copyright = '&copy; Copyright <strong><span>Spitalul Militar de Urgenta Dr. Ion Jianu Pitesti</span></strong>. All Rights Reserved';
+        $credits = 'Designed by <a href="#">SMUP</a>';
 
         $this->set(compact('contactInfo', 'usefulLinks', 'serviceLinks', 'socialLinks', 'newsletterText', 'copyright', 'credits'));
     }

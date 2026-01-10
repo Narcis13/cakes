@@ -3,7 +3,17 @@
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\HospitalHoliday $hospitalHoliday
  */
-$this->assign('title', 'View Hospital Holiday');
+$this->assign('title', 'Vizualizare Sărbătoare Spital');
+
+$daysOfWeek = [
+    'Sunday' => 'Duminică',
+    'Monday' => 'Luni',
+    'Tuesday' => 'Marți',
+    'Wednesday' => 'Miercuri',
+    'Thursday' => 'Joi',
+    'Friday' => 'Vineri',
+    'Saturday' => 'Sâmbătă'
+];
 ?>
 
 <div class="row">
@@ -11,16 +21,16 @@ $this->assign('title', 'View Hospital Holiday');
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1>
                 <i class="fas fa-calendar-alt"></i>
-                View Hospital Holiday
+                Vizualizare Sărbătoare Spital
             </h1>
             <div>
                 <?= $this->Html->link(
-                    '<i class="fas fa-edit"></i> Edit',
+                    '<i class="fas fa-edit"></i> Editare',
                     ['action' => 'edit', $hospitalHoliday->id],
                     ['class' => 'btn btn-primary', 'escape' => false]
                 ) ?>
                 <?= $this->Html->link(
-                    '<i class="fas fa-arrow-left"></i> Back to List',
+                    '<i class="fas fa-arrow-left"></i> Înapoi la Listă',
                     ['action' => 'index'],
                     ['class' => 'btn btn-secondary', 'escape' => false]
                 ) ?>
@@ -36,73 +46,73 @@ $this->assign('title', 'View Hospital Holiday');
                             <td><?= h($hospitalHoliday->id) ?></td>
                         </tr>
                         <tr>
-                            <th>Holiday Name</th>
+                            <th>Nume Sărbătoare</th>
                             <td><strong><?= h($hospitalHoliday->name) ?></strong></td>
                         </tr>
                         <tr>
-                            <th>Date</th>
+                            <th>Data</th>
                             <td>
-                                <?= h($hospitalHoliday->date->format('F j, Y')) ?>
-                                <span class="text-muted">(<?= h($hospitalHoliday->date->format('l')) ?>)</span>
+                                <?= h($hospitalHoliday->date->format('d.m.Y')) ?>
+                                <span class="text-muted">(<?= $daysOfWeek[$hospitalHoliday->date->format('l')] ?? $hospitalHoliday->date->format('l') ?>)</span>
                             </td>
                         </tr>
                         <tr>
-                            <th>Type</th>
+                            <th>Tip</th>
                             <td>
                                 <?php if ($hospitalHoliday->is_recurring): ?>
                                     <span class="badge bg-info">
-                                        <i class="fas fa-redo"></i> Recurring Annually
+                                        <i class="fas fa-redo"></i> Recurent Anual
                                     </span>
                                     <br>
-                                    <small class="text-muted">This holiday will occur on <?= $hospitalHoliday->date->format('F j') ?> every year</small>
+                                    <small class="text-muted">Această sărbătoare va avea loc pe <?= $hospitalHoliday->date->format('d F') ?> în fiecare an</small>
                                 <?php else: ?>
-                                    <span class="badge bg-secondary">One-time Holiday</span>
+                                    <span class="badge bg-secondary">Sărbătoare o singură dată</span>
                                     <br>
-                                    <small class="text-muted">This holiday only applies to <?= $hospitalHoliday->date->format('Y') ?></small>
+                                    <small class="text-muted">Această sărbătoare se aplică doar pentru <?= $hospitalHoliday->date->format('Y') ?></small>
                                 <?php endif; ?>
                             </td>
                         </tr>
                         <tr>
-                            <th>Description</th>
-                            <td><?= $hospitalHoliday->description ? nl2br(h($hospitalHoliday->description)) : '<em class="text-muted">No description provided</em>' ?></td>
+                            <th>Descriere</th>
+                            <td><?= $hospitalHoliday->description ? nl2br(h($hospitalHoliday->description)) : '<em class="text-muted">Nicio descriere furnizată</em>' ?></td>
                         </tr>
                         <tr>
-                            <th>Created</th>
-                            <td><?= $hospitalHoliday->created ? $hospitalHoliday->created->format('F j, Y, g:i a') : 'N/A' ?></td>
+                            <th>Creat</th>
+                            <td><?= $hospitalHoliday->created ? $hospitalHoliday->created->format('d.m.Y, H:i') : 'N/A' ?></td>
                         </tr>
                         <tr>
-                            <th>Last Modified</th>
-                            <td><?= $hospitalHoliday->modified ? $hospitalHoliday->modified->format('F j, Y, g:i a') : 'N/A' ?></td>
+                            <th>Ultima Modificare</th>
+                            <td><?= $hospitalHoliday->modified ? $hospitalHoliday->modified->format('d.m.Y, H:i') : 'N/A' ?></td>
                         </tr>
                     </tbody>
                 </table>
 
                 <div class="mt-4">
-                    <h3>Holiday Impact</h3>
+                    <h3>Impactul Sărbătorii</h3>
                     <div class="alert alert-warning">
                         <i class="fas fa-exclamation-triangle"></i>
-                        <strong>When this holiday is active:</strong>
+                        <strong>Când această sărbătoare este activă:</strong>
                         <ul class="mb-0 mt-2">
-                            <li>The hospital will be marked as closed on <?= $hospitalHoliday->date->format('F j') ?><?= $hospitalHoliday->is_recurring ? ' every year' : ', ' . $hospitalHoliday->date->format('Y') ?></li>
-                            <li>Patients will not be able to book appointments on this date</li>
-                            <li>Any existing appointments should be rescheduled</li>
-                            <li>The date will be shown as unavailable in the appointment booking calendar</li>
+                            <li>Spitalul va fi marcat ca închis pe <?= $hospitalHoliday->date->format('d F') ?><?= $hospitalHoliday->is_recurring ? ' în fiecare an' : ', ' . $hospitalHoliday->date->format('Y') ?></li>
+                            <li>Pacienții nu vor putea face programări în această dată</li>
+                            <li>Orice programări existente ar trebui reprogramate</li>
+                            <li>Data va fi afișată ca indisponibilă în calendarul de programări</li>
                         </ul>
                     </div>
                 </div>
 
                 <div class="d-flex gap-2 mt-4">
                     <?= $this->Html->link(
-                        '<i class="fas fa-edit"></i> Edit Holiday',
+                        '<i class="fas fa-edit"></i> Editare Sărbătoare',
                         ['action' => 'edit', $hospitalHoliday->id],
                         ['class' => 'btn btn-primary', 'escape' => false]
                     ) ?>
                     <?= $this->Form->postLink(
-                        '<i class="fas fa-trash"></i> Delete Holiday',
+                        '<i class="fas fa-trash"></i> Ștergere Sărbătoare',
                         ['action' => 'delete', $hospitalHoliday->id],
                         [
                             'class' => 'btn btn-danger',
-                            'confirm' => 'Are you sure you want to delete this holiday?',
+                            'confirm' => 'Sigur doriți să ștergeți această sărbătoare?',
                             'escape' => false
                         ]
                     ) ?>

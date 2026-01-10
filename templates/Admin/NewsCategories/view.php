@@ -12,12 +12,12 @@
         <h3><?= h($newsCategory->name) ?></h3>
         <div>
             <?= $this->Html->link(
-                '<i class="fas fa-edit"></i> Edit',
+                '<i class="fas fa-edit"></i> Editează',
                 ['action' => 'edit', $newsCategory->id],
                 ['class' => 'btn btn-primary me-2', 'escape' => false]
             ) ?>
             <?= $this->Html->link(
-                '<i class="fas fa-list"></i> Back to List',
+                '<i class="fas fa-list"></i> Înapoi la listă',
                 ['action' => 'index'],
                 ['class' => 'btn btn-secondary', 'escape' => false]
             ) ?>
@@ -28,12 +28,12 @@
         <div class="col-md-4">
             <div class="card">
                 <div class="card-header">
-                    <h5><i class="fas fa-info-circle"></i> Category Information</h5>
+                    <h5><i class="fas fa-info-circle"></i> Informații categorie</h5>
                 </div>
                 <div class="card-body">
                     <table class="table table-borderless">
                         <tr>
-                            <th class="text-muted" style="width: 35%;">Name:</th>
+                            <th class="text-muted" style="width: 35%;">Nume:</th>
                             <td><?= h($newsCategory->name) ?></td>
                         </tr>
                         <tr>
@@ -41,20 +41,20 @@
                             <td><code><?= h($newsCategory->slug) ?></code></td>
                         </tr>
                         <tr>
-                            <th class="text-muted">Articles:</th>
+                            <th class="text-muted">Articole:</th>
                             <td>
                                 <span class="badge bg-secondary">
-                                    <?= $newsCount ?> articles
+                                    <?= $newsCount ?> articole
                                 </span>
                             </td>
                         </tr>
                         <tr>
-                            <th class="text-muted">Created:</th>
-                            <td><?= h($newsCategory->created->format('M j, Y g:i A')) ?></td>
+                            <th class="text-muted">Creat:</th>
+                            <td><?= h($newsCategory->created->format('j M Y H:i')) ?></td>
                         </tr>
                         <tr>
-                            <th class="text-muted">Modified:</th>
-                            <td><?= h($newsCategory->modified->format('M j, Y g:i A')) ?></td>
+                            <th class="text-muted">Modificat:</th>
+                            <td><?= h($newsCategory->modified->format('j M Y H:i')) ?></td>
                         </tr>
                     </table>
                 </div>
@@ -63,7 +63,7 @@
             <?php if ($newsCategory->description): ?>
             <div class="card mt-3">
                 <div class="card-header">
-                    <h5><i class="fas fa-align-left"></i> Description</h5>
+                    <h5><i class="fas fa-align-left"></i> Descriere</h5>
                 </div>
                 <div class="card-body">
                     <?= $this->Text->autoParagraph(h($newsCategory->description)) ?>
@@ -71,13 +71,13 @@
             </div>
             <?php endif; ?>
         </div>
-        
+
         <div class="col-md-8">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0"><i class="fas fa-newspaper"></i> Recent Articles in this Category</h5>
+                    <h5 class="mb-0"><i class="fas fa-newspaper"></i> Articole recente din această categorie</h5>
                     <?= $this->Html->link(
-                        'View All',
+                        'Vezi toate',
                         ['controller' => 'News', 'action' => 'index', '?' => ['category_id' => $newsCategory->id]],
                         ['class' => 'btn btn-sm btn-outline-primary']
                     ) ?>
@@ -99,19 +99,19 @@
                                         <?php endif; ?>
                                         <small class="text-muted">
                                             <?php if ($article->publish_date): ?>
-                                                <i class="fas fa-calendar"></i> <?= h($article->publish_date->format('M j, Y')) ?>
+                                                <i class="fas fa-calendar"></i> <?= h($article->publish_date->format('j M Y')) ?>
                                             <?php else: ?>
-                                                <i class="fas fa-calendar"></i> <?= h($article->created->format('M j, Y')) ?>
+                                                <i class="fas fa-calendar"></i> <?= h($article->created->format('j M Y')) ?>
                                             <?php endif; ?>
                                             &nbsp;|&nbsp;
-                                            <i class="fas fa-eye"></i> <?= $this->Number->format($article->views_count) ?> views
+                                            <i class="fas fa-eye"></i> <?= $this->Number->format($article->views_count) ?> vizualizări
                                         </small>
                                     </div>
                                     <div class="ms-3">
                                         <?php if ($article->is_published): ?>
-                                            <span class="badge bg-success">Published</span>
+                                            <span class="badge bg-success">Publicat</span>
                                         <?php else: ?>
-                                            <span class="badge bg-warning text-dark">Draft</span>
+                                            <span class="badge bg-warning text-dark">Ciornă</span>
                                         <?php endif; ?>
                                     </div>
                                 </div>
@@ -119,14 +119,14 @@
                             <?php endforeach; ?>
                         </div>
                         <p class="text-muted mt-3 mb-0">
-                            <small>Showing up to 10 most recent articles</small>
+                            <small>Se afișează până la 10 cele mai recente articole</small>
                         </p>
                     <?php else: ?>
                         <div class="text-center py-4 text-muted">
                             <i class="fas fa-inbox fa-2x mb-3"></i>
-                            <p>No articles in this category yet</p>
+                            <p>Nu există articole în această categorie încă</p>
                             <?= $this->Html->link(
-                                'Create First Article',
+                                'Creează primul articol',
                                 ['controller' => 'News', 'action' => 'add', '?' => ['category_id' => $newsCategory->id]],
                                 ['class' => 'btn btn-sm btn-primary']
                             ) ?>

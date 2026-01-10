@@ -5,15 +5,15 @@
  */
 ?>
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2><i class="fas fa-file-alt"></i> File Details</h2>
+    <h2><i class="fas fa-file-alt"></i> Detalii fișier</h2>
     <div>
         <?= $this->Html->link(
-            '<i class="fas fa-arrow-left"></i> Back to Files',
+            '<i class="fas fa-arrow-left"></i> Înapoi la fișiere',
             ['action' => 'index'],
             ['class' => 'btn btn-secondary me-2', 'escape' => false]
         ) ?>
         <?= $this->Html->link(
-            '<i class="fas fa-edit"></i> Edit',
+            '<i class="fas fa-edit"></i> Editează',
             ['action' => 'edit', $file->id],
             ['class' => 'btn btn-primary', 'escape' => false]
         ) ?>
@@ -31,16 +31,16 @@
             </div>
             <div class="card-body">
                 <?php if ($file->description): ?>
-                    <h6>Description</h6>
+                    <h6>Descriere</h6>
                     <p class="text-muted"><?= h($file->description) ?></p>
                 <?php endif; ?>
-                
+
                 <div class="row">
                     <div class="col-md-6">
-                        <h6>File Information</h6>
+                        <h6>Informații fișier</h6>
                         <table class="table table-sm">
                             <tr>
-                                <th>File Type:</th>
+                                <th>Tip fișier:</th>
                                 <td>
                                     <span class="badge bg-<?= $this->element('file_type_color', ['file_type' => $file->file_type]) ?>">
                                         <?= h(ucfirst($file->file_type)) ?>
@@ -48,93 +48,93 @@
                                 </td>
                             </tr>
                             <tr>
-                                <th>Size:</th>
+                                <th>Dimensiune:</th>
                                 <td><?= $this->Number->toReadableSize($file->file_size) ?></td>
                             </tr>
                             <tr>
-                                <th>MIME Type:</th>
+                                <th>Tip MIME:</th>
                                 <td><code><?= h($file->mime_type) ?></code></td>
                             </tr>
                             <?php if ($file->category): ?>
                             <tr>
-                                <th>Category:</th>
+                                <th>Categorie:</th>
                                 <td><span class="badge bg-secondary"><?= h($file->category) ?></span></td>
                             </tr>
                             <?php endif; ?>
                         </table>
                     </div>
                     <div class="col-md-6">
-                        <h6>Statistics</h6>
+                        <h6>Statistici</h6>
                         <table class="table table-sm">
                             <tr>
-                                <th>Downloads:</th>
+                                <th>Descărcări:</th>
                                 <td><span class="badge bg-info"><?= $this->Number->format($file->download_count) ?></span></td>
                             </tr>
                             <tr>
-                                <th>Visibility:</th>
+                                <th>Vizibilitate:</th>
                                 <td>
                                     <?php if ($file->is_public): ?>
                                         <span class="badge bg-success">Public</span>
                                     <?php else: ?>
-                                        <span class="badge bg-warning">Private</span>
+                                        <span class="badge bg-warning">Privat</span>
                                     <?php endif; ?>
                                 </td>
                             </tr>
                             <tr>
-                                <th>Uploaded:</th>
-                                <td><?= h($file->created->format('M j, Y g:i A')) ?></td>
+                                <th>Încărcat:</th>
+                                <td><?= h($file->created->format('j M Y H:i')) ?></td>
                             </tr>
                             <tr>
-                                <th>Modified:</th>
-                                <td><?= h($file->modified->format('M j, Y g:i A')) ?></td>
+                                <th>Modificat:</th>
+                                <td><?= h($file->modified->format('j M Y H:i')) ?></td>
                             </tr>
                             <?php if ($file->user): ?>
                             <tr>
-                                <th>Uploaded by:</th>
+                                <th>Încărcat de:</th>
                                 <td><?= h($file->user->email) ?></td>
                             </tr>
                             <?php endif; ?>
                         </table>
                     </div>
                 </div>
-                
+
                 <div class="mt-4">
-                    <h6>File URL</h6>
+                    <h6>URL fișier</h6>
                     <div class="input-group">
-                        <input type="text" class="form-control" id="fileUrl" 
+                        <input type="text" class="form-control" id="fileUrl"
                                value="<?= $this->Url->build($file->file_url, ['fullBase' => true]) ?>" readonly>
                         <button class="btn btn-outline-secondary" type="button" id="copyUrlBtn">
-                            <i class="fas fa-copy"></i> Copy
+                            <i class="fas fa-copy"></i> Copiază
                         </button>
                     </div>
-                    <div class="form-text">Direct link to the file</div>
+                    <div class="form-text">Link direct către fișier</div>
                 </div>
             </div>
         </div>
     </div>
-    
+
     <div class="col-md-4">
         <div class="card">
             <div class="card-header">
-                <h5 class="mb-0">Actions</h5>
+                <h5 class="mb-0">Acțiuni</h5>
             </div>
             <div class="card-body">
                 <div class="d-grid gap-2">
                     <?= $this->Html->link(
-                        '<i class="fas fa-download"></i> Download File',
+                        '<i class="fas fa-download"></i> Descarcă fișier',
                         ['action' => 'download', $file->id],
                         ['class' => 'btn btn-success', 'escape' => false]
                     ) ?>
                     <?= $this->Html->link(
-                        '<i class="fas fa-edit"></i> Edit Details',
+                        '<i class="fas fa-edit"></i> Editează detalii',
                         ['action' => 'edit', $file->id],
                         ['class' => 'btn btn-primary', 'escape' => false]
                     ) ?>
                     <?= $this->Form->postLink(
-                        '<i class="fas fa-trash"></i> Delete File',
+                        '<i class="fas fa-trash"></i> Șterge fișier',
                         ['action' => 'delete', $file->id],
                         [
-                            'confirm' => __('Are you sure you want to delete "{0}"?', $file->original_name),
+                            'confirm' => __('Sigur doriți să ștergeți "{0}"?', $file->original_name),
                             'class' => 'btn btn-outline-danger',
                             'escape' => false
                         ]
@@ -142,16 +142,16 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Preview for images -->
         <?php if ($file->file_type === 'image'): ?>
         <div class="card mt-3">
             <div class="card-header">
-                <h5 class="mb-0">Preview</h5>
+                <h5 class="mb-0">Previzualizare</h5>
             </div>
             <div class="card-body text-center">
-                <img src="<?= h($file->file_url) ?>" 
-                     alt="<?= h($file->original_name) ?>" 
+                <img src="<?= h($file->file_url) ?>"
+                     alt="<?= h($file->original_name) ?>"
                      class="img-fluid rounded"
                      style="max-height: 300px;">
             </div>
@@ -173,10 +173,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div class="toast show" role="alert">
                     <div class="toast-header">
                         <i class="fas fa-check text-success me-2"></i>
-                        <strong class="me-auto">Success</strong>
+                        <strong class="me-auto">Succes</strong>
                     </div>
                     <div class="toast-body">
-                        URL copied to clipboard!
+                        URL copiat în clipboard!
                     </div>
                 </div>
             `;

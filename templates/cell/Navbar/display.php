@@ -10,7 +10,7 @@
 <nav class="navbar navbar-expand-lg hospital-navbar">
     <div class="container">
         <?= $this->Html->link(
-            '<i class="fas fa-hospital me-2"></i>City General Hospital',
+            '<i class="fas fa-hospital me-2"></i>Spitalul Militar Pitesti',
             '/',
             ['class' => 'navbar-brand', 'escape' => false]
         ) ?>

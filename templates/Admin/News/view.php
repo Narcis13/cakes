@@ -11,9 +11,9 @@
         <div>
             <h3><?= h($newsItem->title) ?></h3>
             <?php if ($newsItem->is_published): ?>
-                <span class="badge bg-success">Published</span>
+                <span class="badge bg-success">Publicat</span>
             <?php else: ?>
-                <span class="badge bg-warning text-dark">Draft</span>
+                <span class="badge bg-warning text-dark">Ciornă</span>
             <?php endif; ?>
             <?php if ($newsItem->news_category): ?>
                 <span class="badge bg-info text-dark ms-1"><?= h($newsItem->news_category->name) ?></span>
@@ -21,19 +21,19 @@
         </div>
         <div>
             <?= $this->Html->link(
-                '<i class="fas fa-edit"></i> Edit',
+                '<i class="fas fa-edit"></i> Editează',
                 ['action' => 'edit', $newsItem->id],
                 ['class' => 'btn btn-primary me-2', 'escape' => false]
             ) ?>
             <?php if ($newsItem->is_published): ?>
                 <?= $this->Html->link(
-                    '<i class="fas fa-external-link-alt"></i> View Live',
+                    '<i class="fas fa-external-link-alt"></i> Vezi live',
                     ['prefix' => false, 'controller' => 'News', 'action' => 'view', $newsItem->slug],
                     ['class' => 'btn btn-info me-2', 'escape' => false, 'target' => '_blank']
                 ) ?>
             <?php endif; ?>
             <?= $this->Html->link(
-                '<i class="fas fa-list"></i> Back to List',
+                '<i class="fas fa-list"></i> Înapoi la listă',
                 ['action' => 'index'],
                 ['class' => 'btn btn-secondary', 'escape' => false]
             ) ?>
@@ -45,9 +45,9 @@
             <?php if ($newsItem->featured_image): ?>
             <div class="card mb-3">
                 <div class="card-body">
-                    <h5 class="card-title">Featured Image</h5>
-                    <img src="<?= $this->Url->build('/img/news/' . $newsItem->featured_image) ?>" 
-                         class="img-fluid rounded" 
+                    <h5 class="card-title">Imagine principală</h5>
+                    <img src="<?= $this->Url->build('/img/news/' . $newsItem->featured_image) ?>"
+                         class="img-fluid rounded"
                          alt="<?= h($newsItem->title) ?>">
                 </div>
             </div>
@@ -56,7 +56,7 @@
             <?php if ($newsItem->excerpt): ?>
             <div class="card mb-3">
                 <div class="card-header">
-                    <h5 class="mb-0"><i class="fas fa-quote-left"></i> Excerpt</h5>
+                    <h5 class="mb-0"><i class="fas fa-quote-left"></i> Rezumat</h5>
                 </div>
                 <div class="card-body">
                     <p class="lead"><?= h($newsItem->excerpt) ?></p>
@@ -66,18 +66,18 @@
 
             <div class="card">
                 <div class="card-header">
-                    <h5 class="mb-0"><i class="fas fa-file-alt"></i> Content</h5>
+                    <h5 class="mb-0"><i class="fas fa-file-alt"></i> Conținut</h5>
                 </div>
                 <div class="card-body">
                     <?= $newsItem->content ?>
                 </div>
             </div>
         </div>
-        
+
         <div class="col-md-4">
             <div class="card mb-3">
                 <div class="card-header">
-                    <h5 class="mb-0"><i class="fas fa-info-circle"></i> Article Information</h5>
+                    <h5 class="mb-0"><i class="fas fa-info-circle"></i> Informații articol</h5>
                 </div>
                 <div class="card-body">
                     <table class="table table-borderless table-sm">
@@ -85,14 +85,14 @@
                             <th class="text-muted" style="width: 40%;">Status:</th>
                             <td>
                                 <?php if ($newsItem->is_published): ?>
-                                    <span class="badge bg-success">Published</span>
+                                    <span class="badge bg-success">Publicat</span>
                                 <?php else: ?>
-                                    <span class="badge bg-warning text-dark">Draft</span>
+                                    <span class="badge bg-warning text-dark">Ciornă</span>
                                 <?php endif; ?>
                             </td>
                         </tr>
                         <tr>
-                            <th class="text-muted">Category:</th>
+                            <th class="text-muted">Categorie:</th>
                             <td>
                                 <?php if ($newsItem->news_category): ?>
                                     <?= $this->Html->link(
@@ -101,12 +101,12 @@
                                         ['class' => 'text-decoration-none']
                                     ) ?>
                                 <?php else: ?>
-                                    <span class="text-muted">None</span>
+                                    <span class="text-muted">Niciuna</span>
                                 <?php endif; ?>
                             </td>
                         </tr>
                         <tr>
-                            <th class="text-muted">Author:</th>
+                            <th class="text-muted">Autor:</th>
                             <td>
                                 <?php if ($newsItem->staff): ?>
                                     <?= $this->Html->link(
@@ -118,12 +118,12 @@
                                         <br><small class="text-muted"><?= h($newsItem->staff->title) ?></small>
                                     <?php endif; ?>
                                 <?php else: ?>
-                                    <span class="text-muted">Not assigned</span>
+                                    <span class="text-muted">Neatribuit</span>
                                 <?php endif; ?>
                             </td>
                         </tr>
                         <tr>
-                            <th class="text-muted">Views:</th>
+                            <th class="text-muted">Vizualizări:</th>
                             <td>
                                 <span class="badge bg-secondary">
                                     <i class="fas fa-eye"></i> <?= $this->Number->format($newsItem->views_count) ?>
@@ -140,27 +140,27 @@
 
             <div class="card mb-3">
                 <div class="card-header">
-                    <h5 class="mb-0"><i class="fas fa-calendar"></i> Publishing Details</h5>
+                    <h5 class="mb-0"><i class="fas fa-calendar"></i> Detalii publicare</h5>
                 </div>
                 <div class="card-body">
                     <table class="table table-borderless table-sm">
                         <tr>
-                            <th class="text-muted" style="width: 40%;">Published:</th>
+                            <th class="text-muted" style="width: 40%;">Publicat:</th>
                             <td>
                                 <?php if ($newsItem->publish_date): ?>
-                                    <?= h($newsItem->publish_date->format('M j, Y g:i A')) ?>
+                                    <?= h($newsItem->publish_date->format('j M Y H:i')) ?>
                                 <?php else: ?>
-                                    <span class="text-muted">Not published</span>
+                                    <span class="text-muted">Nepublicat</span>
                                 <?php endif; ?>
                             </td>
                         </tr>
                         <tr>
-                            <th class="text-muted">Created:</th>
-                            <td><?= h($newsItem->created->format('M j, Y g:i A')) ?></td>
+                            <th class="text-muted">Creat:</th>
+                            <td><?= h($newsItem->created->format('j M Y H:i')) ?></td>
                         </tr>
                         <tr>
-                            <th class="text-muted">Modified:</th>
-                            <td><?= h($newsItem->modified->format('M j, Y g:i A')) ?></td>
+                            <th class="text-muted">Modificat:</th>
+                            <td><?= h($newsItem->modified->format('j M Y H:i')) ?></td>
                         </tr>
                     </table>
                 </div>
@@ -169,23 +169,23 @@
             <div class="card">
                 <div class="card-body text-center">
                     <?= $this->Form->postLink(
-                        $newsItem->is_published ? '<i class="fas fa-eye-slash"></i> Unpublish' : '<i class="fas fa-check-circle"></i> Publish',
+                        $newsItem->is_published ? '<i class="fas fa-eye-slash"></i> Anulează publicarea' : '<i class="fas fa-check-circle"></i> Publică',
                         ['action' => 'togglePublished', $newsItem->id],
                         [
                             'class' => 'btn btn-warning w-100 mb-2',
                             'escape' => false,
-                            'confirm' => $newsItem->is_published 
-                                ? __('Are you sure you want to unpublish this article?')
-                                : __('Are you sure you want to publish this article?')
+                            'confirm' => $newsItem->is_published
+                                ? __('Sigur doriți să anulați publicarea acestui articol?')
+                                : __('Sigur doriți să publicați acest articol?')
                         ]
                     ) ?>
                     <?= $this->Form->postLink(
-                        '<i class="fas fa-trash"></i> Delete Article',
+                        '<i class="fas fa-trash"></i> Șterge articolul',
                         ['action' => 'delete', $newsItem->id],
                         [
                             'class' => 'btn btn-danger w-100',
                             'escape' => false,
-                            'confirm' => __('Are you sure you want to delete this article? This action cannot be undone.')
+                            'confirm' => __('Sigur doriți să ștergeți acest articol? Această acțiune nu poate fi anulată.')
                         ]
                     ) ?>
                 </div>

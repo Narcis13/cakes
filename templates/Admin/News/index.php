@@ -6,19 +6,19 @@
  * @var array $authors
  */
 ?>
-<?php $this->assign('title', 'News Management'); ?>
+<?php $this->assign('title', 'Gestionare știri'); ?>
 
 <div class="news index content">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3><?= __('News Management') ?></h3>
+        <h3><?= __('Gestionare știri') ?></h3>
         <div>
             <?= $this->Html->link(
-                '<i class="fas fa-folder-plus"></i> Categories',
+                '<i class="fas fa-folder-plus"></i> Categorii',
                 ['controller' => 'NewsCategories', 'action' => 'index'],
                 ['class' => 'btn btn-secondary me-2', 'escape' => false]
             ) ?>
             <?= $this->Html->link(
-                '<i class="fas fa-plus"></i> New Article',
+                '<i class="fas fa-plus"></i> Articol nou',
                 ['action' => 'add'],
                 ['class' => 'btn btn-primary', 'escape' => false]
             ) ?>
@@ -31,24 +31,24 @@
             <?= $this->Form->create(null, ['type' => 'get', 'class' => 'row g-3 align-items-end']) ?>
                 <div class="col-md-3">
                     <?= $this->Form->control('search', [
-                        'label' => 'Search by Title',
+                        'label' => 'Caută după titlu',
                         'value' => $this->request->getQuery('search'),
                         'class' => 'form-control',
-                        'placeholder' => 'Enter title...'
+                        'placeholder' => 'Introduceți titlul...'
                     ]) ?>
                 </div>
                 <div class="col-md-2">
                     <?= $this->Form->control('category_id', [
-                        'label' => 'Category',
-                        'options' => ['' => 'All Categories'] + $categories,
+                        'label' => 'Categorie',
+                        'options' => ['' => 'Toate categoriile'] + $categories,
                         'value' => $this->request->getQuery('category_id'),
                         'class' => 'form-select'
                     ]) ?>
                 </div>
                 <div class="col-md-2">
                     <?= $this->Form->control('author_id', [
-                        'label' => 'Author',
-                        'options' => ['' => 'All Authors'] + $authors,
+                        'label' => 'Autor',
+                        'options' => ['' => 'Toți autorii'] + $authors,
                         'value' => $this->request->getQuery('author_id'),
                         'class' => 'form-select'
                     ]) ?>
@@ -56,20 +56,20 @@
                 <div class="col-md-2">
                     <?= $this->Form->control('is_published', [
                         'label' => 'Status',
-                        'options' => ['' => 'All', '1' => 'Published', '0' => 'Draft'],
+                        'options' => ['' => 'Toate', '1' => 'Publicat', '0' => 'Ciornă'],
                         'value' => $this->request->getQuery('is_published'),
                         'class' => 'form-select'
                     ]) ?>
                 </div>
                 <div class="col-md-3">
                     <div class="d-flex gap-2">
-                        <?= $this->Form->button('<i class="fas fa-filter"></i> Filter', [
+                        <?= $this->Form->button('<i class="fas fa-filter"></i> Filtrează', [
                             'type' => 'submit',
                             'class' => 'btn btn-secondary',
                             'escape' => false
                         ]) ?>
-                        <?= $this->Html->link('<i class="fas fa-times"></i> Clear', 
-                            ['action' => 'index'], 
+                        <?= $this->Html->link('<i class="fas fa-times"></i> Resetează',
+                            ['action' => 'index'],
                             ['class' => 'btn btn-outline-secondary', 'escape' => false]
                         ) ?>
                     </div>
@@ -85,13 +85,13 @@
                     <table class="table table-striped">
                         <thead>
                             <tr>
-                                <th>Article</th>
-                                <th><?= $this->Paginator->sort('category_id', 'Category') ?></th>
-                                <th><?= $this->Paginator->sort('author_id', 'Author') ?></th>
-                                <th><?= $this->Paginator->sort('publish_date', 'Published') ?></th>
-                                <th><?= $this->Paginator->sort('views_count', 'Views') ?></th>
+                                <th>Articol</th>
+                                <th><?= $this->Paginator->sort('category_id', 'Categorie') ?></th>
+                                <th><?= $this->Paginator->sort('author_id', 'Autor') ?></th>
+                                <th><?= $this->Paginator->sort('publish_date', 'Publicat') ?></th>
+                                <th><?= $this->Paginator->sort('views_count', 'Vizualizări') ?></th>
                                 <th><?= $this->Paginator->sort('is_published', 'Status') ?></th>
-                                <th class="actions"><?= __('Actions') ?></th>
+                                <th class="actions"><?= __('Acțiuni') ?></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -100,12 +100,12 @@
                                 <td>
                                     <div class="d-flex align-items-center">
                                         <?php if ($newsItem->featured_image): ?>
-                                            <img src="<?= $this->Url->build('/img/news/' . $newsItem->featured_image) ?>" 
-                                                 class="rounded me-2" 
-                                                 style="width: 60px; height: 40px; object-fit: cover;" 
+                                            <img src="<?= $this->Url->build('/img/news/' . $newsItem->featured_image) ?>"
+                                                 class="rounded me-2"
+                                                 style="width: 60px; height: 40px; object-fit: cover;"
                                                  alt="<?= h($newsItem->title) ?>">
                                         <?php else: ?>
-                                            <div class="bg-secondary rounded me-2 d-flex align-items-center justify-content-center text-white" 
+                                            <div class="bg-secondary rounded me-2 d-flex align-items-center justify-content-center text-white"
                                                  style="width: 60px; height: 40px; font-size: 12px;">
                                                 <i class="fas fa-newspaper"></i>
                                             </div>
@@ -134,7 +134,7 @@
                                 <td>
                                     <?php if ($newsItem->staff): ?>
                                         <small>
-                                            <i class="fas fa-user"></i> 
+                                            <i class="fas fa-user"></i>
                                             <?= h($newsItem->staff->first_name . ' ' . $newsItem->staff->last_name) ?>
                                         </small>
                                     <?php else: ?>
@@ -143,11 +143,11 @@
                                 </td>
                                 <td>
                                     <?php if ($newsItem->publish_date): ?>
-                                        <small><?= h($newsItem->publish_date->format('M j, Y')) ?></small>
+                                        <small><?= h($newsItem->publish_date->format('j M Y')) ?></small>
                                         <br>
-                                        <small class="text-muted"><?= h($newsItem->publish_date->format('g:i A')) ?></small>
+                                        <small class="text-muted"><?= h($newsItem->publish_date->format('H:i')) ?></small>
                                     <?php else: ?>
-                                        <span class="text-muted">Not set</span>
+                                        <span class="text-muted">Nesetat</span>
                                     <?php endif; ?>
                                 </td>
                                 <td>
@@ -157,9 +157,9 @@
                                 </td>
                                 <td>
                                     <?php if ($newsItem->is_published): ?>
-                                        <span class="badge bg-success">Published</span>
+                                        <span class="badge bg-success">Publicat</span>
                                     <?php else: ?>
-                                        <span class="badge bg-warning text-dark">Draft</span>
+                                        <span class="badge bg-warning text-dark">Ciornă</span>
                                     <?php endif; ?>
                                 </td>
                                 <td class="actions">
@@ -167,40 +167,40 @@
                                         <?= $this->Html->link(
                                             '<i class="fas fa-eye"></i>',
                                             ['prefix' => false, 'controller' => 'News', 'action' => 'view', $newsItem->slug],
-                                            ['class' => 'btn btn-sm btn-outline-info', 'escape' => false, 'title' => 'Preview', 'target' => '_blank']
+                                            ['class' => 'btn btn-sm btn-outline-info', 'escape' => false, 'title' => 'Previzualizează', 'target' => '_blank']
                                         ) ?>
                                     <?php else: ?>
                                         <?= $this->Html->link(
                                             '<i class="fas fa-external-link-alt"></i>',
                                             ['prefix' => false, 'controller' => 'News', 'action' => 'view', $newsItem->slug],
-                                            ['class' => 'btn btn-sm btn-outline-info', 'escape' => false, 'title' => 'View Live', 'target' => '_blank']
+                                            ['class' => 'btn btn-sm btn-outline-info', 'escape' => false, 'title' => 'Vezi live', 'target' => '_blank']
                                         ) ?>
                                     <?php endif; ?>
                                     <?= $this->Html->link(
                                         '<i class="fas fa-edit"></i>',
                                         ['action' => 'edit', $newsItem->id],
-                                        ['class' => 'btn btn-sm btn-outline-secondary', 'escape' => false, 'title' => 'Edit']
+                                        ['class' => 'btn btn-sm btn-outline-secondary', 'escape' => false, 'title' => 'Editează']
                                     ) ?>
                                     <?= $this->Form->postLink(
                                         '<i class="fas fa-check-circle"></i>',
                                         ['action' => 'togglePublished', $newsItem->id],
                                         [
-                                            'confirm' => $newsItem->is_published 
-                                                ? __('Are you sure you want to unpublish "{0}"?', $newsItem->title)
-                                                : __('Are you sure you want to publish "{0}"?', $newsItem->title),
+                                            'confirm' => $newsItem->is_published
+                                                ? __('Sigur doriți să anulați publicarea „{0}"?', $newsItem->title)
+                                                : __('Sigur doriți să publicați „{0}"?', $newsItem->title),
                                             'class' => 'btn btn-sm btn-outline-primary',
                                             'escape' => false,
-                                            'title' => $newsItem->is_published ? 'Unpublish' : 'Publish'
+                                            'title' => $newsItem->is_published ? 'Anulează publicarea' : 'Publică'
                                         ]
                                     ) ?>
                                     <?= $this->Form->postLink(
                                         '<i class="fas fa-trash"></i>',
                                         ['action' => 'delete', $newsItem->id],
                                         [
-                                            'confirm' => __('Are you sure you want to delete "{0}"?', $newsItem->title),
+                                            'confirm' => __('Sigur doriți să ștergeți „{0}"?', $newsItem->title),
                                             'class' => 'btn btn-sm btn-outline-danger',
                                             'escape' => false,
-                                            'title' => 'Delete'
+                                            'title' => 'Șterge'
                                         ]
                                     ) ?>
                                 </td>
@@ -212,21 +212,21 @@
 
                 <div class="paginator mt-3">
                     <ul class="pagination">
-                        <?= $this->Paginator->first('<< ' . __('first')) ?>
-                        <?= $this->Paginator->prev('< ' . __('previous')) ?>
+                        <?= $this->Paginator->first('<< ' . __('prima')) ?>
+                        <?= $this->Paginator->prev('< ' . __('anterioară')) ?>
                         <?= $this->Paginator->numbers() ?>
-                        <?= $this->Paginator->next(__('next') . ' >') ?>
-                        <?= $this->Paginator->last(__('last') . ' >>') ?>
+                        <?= $this->Paginator->next(__('următoarea') . ' >') ?>
+                        <?= $this->Paginator->last(__('ultima') . ' >>') ?>
                     </ul>
-                    <p class="text-muted"><?= $this->Paginator->counter(__('Page {{page}} of {{pages}}, showing {{current}} record(s) out of {{count}} total')) ?></p>
+                    <p class="text-muted"><?= $this->Paginator->counter(__('Pagina {{page}} din {{pages}}, afișând {{current}} înregistrare(ări) din {{count}} total')) ?></p>
                 </div>
             <?php else: ?>
                 <div class="text-center py-5">
                     <i class="fas fa-newspaper fa-3x text-muted mb-3"></i>
-                    <h5 class="text-muted">No news articles found</h5>
-                    <p class="text-muted">Create your first news article to get started.</p>
+                    <h5 class="text-muted">Nu s-au găsit articole de știri</h5>
+                    <p class="text-muted">Creați primul articol de știri pentru a începe.</p>
                     <?= $this->Html->link(
-                        'Create Article',
+                        'Creează articol',
                         ['action' => 'add'],
                         ['class' => 'btn btn-primary']
                     ) ?>

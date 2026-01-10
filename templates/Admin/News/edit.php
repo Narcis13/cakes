@@ -6,22 +6,22 @@
  * @var array $authors
  */
 ?>
-<?php $this->assign('title', 'Edit News Article'); ?>
+<?php $this->assign('title', 'Editează articol știri'); ?>
 
 <!-- Include TinyMCE for rich text editing -->
 <?= $this->element('admin/tinymce', ['selector' => '#content-editor']) ?>
 
 <div class="news edit content">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3><?= __('Edit News Article') ?></h3>
+        <h3><?= __('Editează articol știri') ?></h3>
         <div>
             <?= $this->Html->link(
-                '<i class="fas fa-eye"></i> View',
+                '<i class="fas fa-eye"></i> Vizualizează',
                 ['action' => 'view', $newsItem->id],
                 ['class' => 'btn btn-outline-primary me-2', 'escape' => false]
             ) ?>
             <?= $this->Html->link(
-                '<i class="fas fa-arrow-left"></i> Back to List',
+                '<i class="fas fa-arrow-left"></i> Înapoi la listă',
                 ['action' => 'index'],
                 ['class' => 'btn btn-secondary', 'escape' => false]
             ) ?>
@@ -30,7 +30,7 @@
 
     <?php if ($newsItem->getErrors()): ?>
     <div class="alert alert-danger">
-        <h5>Please correct the following errors:</h5>
+        <h5>Vă rugăm să corectați următoarele erori:</h5>
         <ul class="mb-0">
             <?php foreach ($newsItem->getErrors() as $field => $errors): ?>
                 <?php foreach ($errors as $error): ?>
@@ -46,35 +46,35 @@
         <div class="col-md-8">
             <div class="card mb-3">
                 <div class="card-header">
-                    <h5 class="mb-0">Article Details</h5>
+                    <h5 class="mb-0">Detalii articol</h5>
                 </div>
                 <div class="card-body">
                     <?= $this->Form->control('title', [
                         'class' => 'form-control form-control-lg',
-                        'label' => ['class' => 'form-label'],
+                        'label' => ['class' => 'form-label', 'text' => 'Titlu'],
                         'required' => true,
-                        'placeholder' => 'Enter article title...'
+                        'placeholder' => 'Introduceți titlul articolului...'
                     ]) ?>
-                    
+
                     <?= $this->Form->control('slug', [
                         'class' => 'form-control',
-                        'label' => ['class' => 'form-label', 'text' => 'URL Slug'],
-                        'placeholder' => 'article-url-slug'
+                        'label' => ['class' => 'form-label', 'text' => 'Slug URL'],
+                        'placeholder' => 'slug-url-articol'
                     ]) ?>
-                    
+
                     <?= $this->Form->control('excerpt', [
                         'type' => 'textarea',
                         'class' => 'form-control',
-                        'label' => ['class' => 'form-label', 'text' => 'Excerpt / Summary'],
+                        'label' => ['class' => 'form-label', 'text' => 'Rezumat'],
                         'rows' => 3,
-                        'placeholder' => 'Brief summary of the article (optional)...'
+                        'placeholder' => 'Scurt rezumat al articolului (opțional)...'
                     ]) ?>
                 </div>
             </div>
 
             <div class="card">
                 <div class="card-header">
-                    <h5 class="mb-0">Content</h5>
+                    <h5 class="mb-0">Conținut</h5>
                 </div>
                 <div class="card-body">
                     <?= $this->Form->control('content', [
@@ -88,11 +88,11 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="col-md-4">
             <div class="card mb-3">
                 <div class="card-header">
-                    <h5 class="mb-0">Publishing</h5>
+                    <h5 class="mb-0">Publicare</h5>
                 </div>
                 <div class="card-body">
                     <?= $this->Form->control('is_published', [
@@ -100,24 +100,24 @@
                         'class' => 'form-check-input',
                         'label' => [
                             'class' => 'form-check-label',
-                            'text' => 'Publish this article'
+                            'text' => 'Publică acest articol'
                         ],
                         'templates' => [
                             'checkboxWrapper' => '<div class="form-check mb-3">{{label}}</div>',
                             'nestingLabel' => '{{hidden}}<label{{attrs}}>{{input}}{{text}}</label>',
                         ]
                     ]) ?>
-                    
+
                     <?= $this->Form->control('publish_date', [
                         'type' => 'datetime-local',
                         'class' => 'form-control',
-                        'label' => ['class' => 'form-label', 'text' => 'Publish Date'],
+                        'label' => ['class' => 'form-label', 'text' => 'Data publicării'],
                         'value' => $newsItem->publish_date ? $newsItem->publish_date->format('Y-m-d\TH:i') : null
                     ]) ?>
-                    
+
                     <div class="mt-3">
                         <small class="text-muted">
-                            <i class="fas fa-eye"></i> Views: <?= $this->Number->format($newsItem->views_count) ?>
+                            <i class="fas fa-eye"></i> Vizualizări: <?= $this->Number->format($newsItem->views_count) ?>
                         </small>
                     </div>
                 </div>
@@ -125,56 +125,56 @@
 
             <div class="card mb-3">
                 <div class="card-header">
-                    <h5 class="mb-0">Categorization</h5>
+                    <h5 class="mb-0">Categorizare</h5>
                 </div>
                 <div class="card-body">
                     <?= $this->Form->control('category_id', [
                         'type' => 'select',
                         'options' => $categories,
-                        'empty' => 'Select Category',
+                        'empty' => 'Selectați categoria',
                         'class' => 'form-select mb-3',
-                        'label' => ['class' => 'form-label', 'text' => 'Category']
+                        'label' => ['class' => 'form-label', 'text' => 'Categorie']
                     ]) ?>
-                    
+
                     <?= $this->Form->control('author_id', [
                         'type' => 'select',
                         'options' => $authors,
-                        'empty' => 'Select Author',
+                        'empty' => 'Selectați autorul',
                         'class' => 'form-select',
-                        'label' => ['class' => 'form-label', 'text' => 'Author']
+                        'label' => ['class' => 'form-label', 'text' => 'Autor']
                     ]) ?>
                 </div>
             </div>
 
             <div class="card mb-3">
                 <div class="card-header">
-                    <h5 class="mb-0">Featured Image</h5>
+                    <h5 class="mb-0">Imagine principală</h5>
                 </div>
                 <div class="card-body">
                     <?php if ($newsItem->featured_image): ?>
                     <div class="current-image mb-3">
-                        <label class="form-label">Current Image:</label>
-                        <img src="<?= $this->Url->build('/img/news/' . $newsItem->featured_image) ?>" 
-                             class="img-fluid rounded" 
+                        <label class="form-label">Imaginea curentă:</label>
+                        <img src="<?= $this->Url->build('/img/news/' . $newsItem->featured_image) ?>"
+                             class="img-fluid rounded"
                              alt="<?= h($newsItem->title) ?>">
                     </div>
                     <?php endif; ?>
-                    
+
                     <?= $this->Form->control('featured_image_file', [
                         'type' => 'file',
                         'class' => 'form-control',
-                        'label' => ['class' => 'form-label', 'text' => $newsItem->featured_image ? 'Change Image' : 'Upload Image'],
+                        'label' => ['class' => 'form-label', 'text' => $newsItem->featured_image ? 'Schimbă imaginea' : 'Încarcă imagine'],
                         'accept' => 'image/*'
                     ]) ?>
                     <div class="form-text">
                         <small class="text-muted">
-                            <i class="fas fa-info-circle"></i> 
-                            Recommended size: 1200x630px. Max size: 10MB.
+                            <i class="fas fa-info-circle"></i>
+                            Dimensiune recomandată: 1200x630px. Dimensiune maximă: 10MB.
                         </small>
                     </div>
-                    
+
                     <div id="imagePreview" style="display: none;" class="mt-3">
-                        <label class="form-label">New Image Preview:</label>
+                        <label class="form-label">Previzualizare imagine nouă:</label>
                         <img id="previewImg" class="img-fluid rounded">
                     </div>
                 </div>
@@ -182,24 +182,24 @@
 
             <div class="card mb-3">
                 <div class="card-body text-muted small">
-                    <p class="mb-1"><strong>Article Details:</strong></p>
-                    Created: <?= h($newsItem->created->format('M j, Y g:i A')) ?><br>
-                    Modified: <?= h($newsItem->modified->format('M j, Y g:i A')) ?>
+                    <p class="mb-1"><strong>Detalii articol:</strong></p>
+                    Creat: <?= h($newsItem->created->format('j M Y H:i')) ?><br>
+                    Modificat: <?= h($newsItem->modified->format('j M Y H:i')) ?>
                 </div>
             </div>
 
             <div class="d-grid gap-2">
-                <?= $this->Form->button(__('Update Article'), [
+                <?= $this->Form->button(__('Actualizează articolul'), [
                     'class' => 'btn btn-primary'
                 ]) ?>
-                <?= $this->Html->link(__('Cancel'), 
-                    ['action' => 'view', $newsItem->id], 
+                <?= $this->Html->link(__('Anulează'),
+                    ['action' => 'view', $newsItem->id],
                     ['class' => 'btn btn-outline-secondary']
                 ) ?>
-                <?= $this->Form->postLink(__('Delete'), 
-                    ['action' => 'delete', $newsItem->id], 
+                <?= $this->Form->postLink(__('Șterge'),
+                    ['action' => 'delete', $newsItem->id],
                     [
-                        'confirm' => __('Are you sure you want to delete this article? This action cannot be undone.'),
+                        'confirm' => __('Sigur doriți să ștergeți acest articol? Această acțiune nu poate fi anulată.'),
                         'class' => 'btn btn-outline-danger'
                     ]
                 ) ?>
@@ -215,7 +215,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const fileInput = document.querySelector('input[name="featured_image_file"]');
     const previewDiv = document.getElementById('imagePreview');
     const previewImg = document.getElementById('previewImg');
-    
+
     if (fileInput) {
         fileInput.addEventListener('change', function(e) {
             const file = e.target.files[0];

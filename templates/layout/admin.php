@@ -2,10 +2,10 @@
 /**
  * CakePHP Admin Layout
  */
-$cakeDescription = 'Medilab Admin';
+$cakeDescription = 'SMUP Admin';
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ro">
 <head>
     <?= $this->Html->charset() ?>
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -53,7 +53,7 @@ $cakeDescription = 'Medilab Admin';
         <div class="container-fluid">
             <a class="navbar-brand" href="<?= $this->Url->build(['prefix' => 'Admin', 'controller' => 'Dashboard', 'action' => 'index']) ?>">
                 <i class="fas fa-hospital"></i>
-                Medilab Admin
+                SMUP Admin
             </a>
             
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNavbar">
@@ -67,13 +67,13 @@ $cakeDescription = 'Medilab Admin';
                             <i class="fas fa-user"></i>
                             <?php
                             $user = $this->request->getAttribute('identity');
-                            echo $user ? h($user->email) : 'User';
+                            echo $user ? h($user->email) : 'Utilizator';
                             ?>
                         </a>
                         <ul class="dropdown-menu">
                             <li>
                                 <?= $this->Html->link(
-                                    '<i class="fas fa-home"></i> View Site',
+                                    '<i class="fas fa-home"></i> Vizualizează Site',
                                     '/',
                                     ['class' => 'dropdown-item', 'escape' => false, 'target' => '_blank']
                                 ) ?>
@@ -81,7 +81,7 @@ $cakeDescription = 'Medilab Admin';
                             <li><hr class="dropdown-divider"></li>
                             <li>
                                 <?= $this->Html->link(
-                                    '<i class="fas fa-sign-out-alt"></i> Logout',
+                                    '<i class="fas fa-sign-out-alt"></i> Deconectare',
                                     ['prefix' => 'Admin', 'controller' => 'Users', 'action' => 'logout'],
                                     ['class' => 'dropdown-item', 'escape' => false]
                                 ) ?>
@@ -101,64 +101,64 @@ $cakeDescription = 'Medilab Admin';
                     <ul class="nav flex-column">
                         <li class="nav-item">
                             <?= $this->Html->link(
-                                '<i class="fas fa-tachometer-alt"></i> Dashboard',
+                                '<i class="fas fa-tachometer-alt"></i> Panou de control',
                                 ['prefix' => 'Admin', 'controller' => 'Dashboard', 'action' => 'index'],
                                 ['class' => 'nav-link' . ($this->request->getParam('controller') === 'Dashboard' ? ' active' : ''), 'escape' => false]
                             ) ?>
                         </li>
                         
                         <li class="nav-item">
-                            <span class="nav-link text-muted small text-uppercase">User Management</span>
+                            <span class="nav-link text-muted small text-uppercase">Gestionare Utilizatori</span>
                         </li>
                         <li class="nav-item">
                             <?= $this->Html->link(
-                                '<i class="fas fa-users"></i> Users',
+                                '<i class="fas fa-users"></i> Utilizatori',
                                 ['prefix' => 'Admin', 'controller' => 'Users', 'action' => 'index'],
                                 ['class' => 'nav-link' . ($this->request->getParam('controller') === 'Users' ? ' active' : ''), 'escape' => false]
                             ) ?>
                         </li>
                         
                         <li class="nav-item">
-                            <span class="nav-link text-muted small text-uppercase">Hospital Management</span>
+                            <span class="nav-link text-muted small text-uppercase">Gestionare Spital</span>
                         </li>
                         <li class="nav-item">
                             <?= $this->Html->link(
-                                '<i class="fas fa-building"></i> Departments',
+                                '<i class="fas fa-building"></i> Departamente',
                                 ['prefix' => 'Admin', 'controller' => 'Departments', 'action' => 'index'],
                                 ['class' => 'nav-link' . ($this->request->getParam('controller') === 'Departments' ? ' active' : ''), 'escape' => false]
                             ) ?>
                         </li>
                         <li class="nav-item">
                             <?= $this->Html->link(
-                                '<i class="fas fa-user-md"></i> Staff',
+                                '<i class="fas fa-user-md"></i> Personal',
                                 ['prefix' => 'Admin', 'controller' => 'Staff', 'action' => 'index'],
                                 ['class' => 'nav-link' . ($this->request->getParam('controller') === 'Staff' ? ' active' : ''), 'escape' => false]
                             ) ?>
                         </li>
                         <li class="nav-item">
                             <?= $this->Html->link(
-                                '<i class="fas fa-stethoscope"></i> Specializations',
+                                '<i class="fas fa-stethoscope"></i> Specializări',
                                 ['prefix' => 'Admin', 'controller' => 'Specializations', 'action' => 'index'],
                                 ['class' => 'nav-link' . ($this->request->getParam('controller') === 'Specializations' ? ' active' : ''), 'escape' => false]
                             ) ?>
                         </li>
                         <li class="nav-item">
                             <?= $this->Html->link(
-                                '<i class="fas fa-calendar-times"></i> Staff Unavailabilities',
+                                '<i class="fas fa-calendar-times"></i> Indisponibilități Personal',
                                 ['prefix' => 'Admin', 'controller' => 'StaffUnavailabilities', 'action' => 'index'],
                                 ['class' => 'nav-link' . ($this->request->getParam('controller') === 'StaffUnavailabilities' ? ' active' : ''), 'escape' => false]
                             ) ?>
                         </li>
                         <li class="nav-item">
                             <?= $this->Html->link(
-                                '<i class="fas fa-calendar-alt"></i> Hospital Holidays',
+                                '<i class="fas fa-calendar-alt"></i> Sărbători Spital',
                                 ['prefix' => 'Admin', 'controller' => 'HospitalHolidays', 'action' => 'index'],
                                 ['class' => 'nav-link' . ($this->request->getParam('controller') === 'HospitalHolidays' ? ' active' : ''), 'escape' => false]
                             ) ?>
                         </li>
                         <li class="nav-item">
                             <?= $this->Html->link(
-                                '<i class="fas fa-stethoscope"></i> Services',
+                                '<i class="fas fa-stethoscope"></i> Servicii',
                                 ['prefix' => 'Admin', 'controller' => 'Services', 'action' => 'index'],
                                 ['class' => 'nav-link' . ($this->request->getParam('controller') === 'Services' ? ' active' : ''), 'escape' => false]
                             ) ?>
@@ -193,32 +193,32 @@ $cakeDescription = 'Medilab Admin';
                         </li>
                         
                         <li class="nav-item">
-                            <span class="nav-link text-muted small text-uppercase">Content Management</span>
+                            <span class="nav-link text-muted small text-uppercase">Gestionare Conținut</span>
                         </li>
                         <li class="nav-item">
                             <?= $this->Html->link(
-                                '<i class="fas fa-newspaper"></i> News',
+                                '<i class="fas fa-newspaper"></i> Știri',
                                 ['prefix' => 'Admin', 'controller' => 'News', 'action' => 'index'],
                                 ['class' => 'nav-link' . ($this->request->getParam('controller') === 'News' ? ' active' : ''), 'escape' => false]
                             ) ?>
                         </li>
                         <li class="nav-item">
                             <?= $this->Html->link(
-                                '<i class="fas fa-folder-open"></i> News Categories',
+                                '<i class="fas fa-folder-open"></i> Categorii Știri',
                                 ['prefix' => 'Admin', 'controller' => 'NewsCategories', 'action' => 'index'],
                                 ['class' => 'nav-link' . ($this->request->getParam('controller') === 'NewsCategories' ? ' active' : ''), 'escape' => false]
                             ) ?>
                         </li>
                         <li class="nav-item">
                             <?= $this->Html->link(
-                                '<i class="fas fa-file-alt"></i> Pages',
+                                '<i class="fas fa-file-alt"></i> Pagini',
                                 ['prefix' => 'Admin', 'controller' => 'Pages', 'action' => 'index'],
                                 ['class' => 'nav-link' . ($this->request->getParam('controller') === 'Pages' ? ' active' : ''), 'escape' => false]
                             ) ?>
                         </li>
                         <li class="nav-item">
                             <?= $this->Html->link(
-                                '<i class="fas fa-bars"></i> Navbar',
+                                '<i class="fas fa-bars"></i> Meniu Navigare',
                                 ['prefix' => 'Admin', 'controller' => 'NavbarItems', 'action' => 'index'],
                                 ['class' => 'nav-link' . ($this->request->getParam('controller') === 'NavbarItems' ? ' active' : ''), 'escape' => false]
                             ) ?>
@@ -232,43 +232,43 @@ $cakeDescription = 'Medilab Admin';
                         </li>
                         <li class="nav-item">
                             <?= $this->Html->link(
-                                '<i class="fas fa-file-alt"></i> File Manager',
+                                '<i class="fas fa-file-alt"></i> Manager Fișiere',
                                 ['prefix' => 'Admin', 'controller' => 'Files', 'action' => 'index'],
                                 ['class' => 'nav-link' . ($this->request->getParam('controller') === 'Files' ? ' active' : ''), 'escape' => false]
                             ) ?>
                         </li>
                         
                         <li class="nav-item">
-                            <span class="nav-link text-muted small text-uppercase">Automation</span>
+                            <span class="nav-link text-muted small text-uppercase">Automatizare</span>
                         </li>
                         <li class="nav-item">
                             <?= $this->Html->link(
-                                '<i class="fas fa-project-diagram"></i> Workflows',
+                                '<i class="fas fa-project-diagram"></i> Fluxuri de lucru',
                                 ['prefix' => 'Admin', 'controller' => 'Workflows', 'action' => 'index'],
                                 ['class' => 'nav-link' . ($this->request->getParam('controller') === 'Workflows' ? ' active' : ''), 'escape' => false]
                             ) ?>
                         </li>
                         <li class="nav-item">
                             <?= $this->Html->link(
-                                '<i class="fas fa-play-circle"></i> Executions',
+                                '<i class="fas fa-play-circle"></i> Execuții',
                                 ['prefix' => 'Admin', 'controller' => 'WorkflowExecutions', 'action' => 'index'],
                                 ['class' => 'nav-link' . ($this->request->getParam('controller') === 'WorkflowExecutions' ? ' active' : ''), 'escape' => false]
                             ) ?>
                         </li>
                         <li class="nav-item">
                             <?= $this->Html->link(
-                                '<i class="fas fa-tasks"></i> Human Tasks',
+                                '<i class="fas fa-tasks"></i> Sarcini Manuale',
                                 ['prefix' => 'Admin', 'controller' => 'WorkflowHumanTasks', 'action' => 'index'],
                                 ['class' => 'nav-link' . ($this->request->getParam('controller') === 'WorkflowHumanTasks' ? ' active' : ''), 'escape' => false]
                             ) ?>
                         </li>
                         
                         <li class="nav-item">
-                            <span class="nav-link text-muted small text-uppercase">System</span>
+                            <span class="nav-link text-muted small text-uppercase">Sistem</span>
                         </li>
                         <li class="nav-item">
                             <?= $this->Html->link(
-                                '<i class="fas fa-cog"></i> Settings',
+                                '<i class="fas fa-cog"></i> Setări',
                                 ['prefix' => 'Admin', 'controller' => 'Settings', 'action' => 'index'],
                                 ['class' => 'nav-link' . ($this->request->getParam('controller') === 'Settings' ? ' active' : ''), 'escape' => false]
                             ) ?>

@@ -6,13 +6,13 @@
  * @var array $categories
  */
 ?>
-<?php $this->assign('title', 'Create Workflow'); ?>
+<?php $this->assign('title', 'Creează flux de lucru'); ?>
 
 <div class="workflows form content">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3><i class="fas fa-plus-circle"></i> <?= __('Create Workflow') ?></h3>
+        <h3><i class="fas fa-plus-circle"></i> <?= __('Creează flux de lucru') ?></h3>
         <?= $this->Html->link(
-            '<i class="fas fa-arrow-left"></i> ' . __('Back to List'),
+            '<i class="fas fa-arrow-left"></i> ' . __('Înapoi la listă'),
             ['action' => 'index'],
             ['class' => 'btn btn-secondary', 'escape' => false]
         ) ?>
@@ -23,38 +23,38 @@
         <div class="col-md-8">
             <div class="card mb-3">
                 <div class="card-header">
-                    <h5 class="mb-0">Workflow Details</h5>
+                    <h5 class="mb-0">Detalii flux de lucru</h5>
                 </div>
                 <div class="card-body">
                     <?= $this->Form->control('name', [
                         'class' => 'form-control',
-                        'label' => ['class' => 'form-label'],
-                        'placeholder' => 'Enter workflow name',
+                        'label' => ['class' => 'form-label', 'text' => 'Nume'],
+                        'placeholder' => 'Introduceți numele fluxului de lucru',
                         'required' => true,
                     ]) ?>
-                    
+
                     <?= $this->Form->control('description', [
                         'type' => 'textarea',
                         'class' => 'form-control',
-                        'label' => ['class' => 'form-label'],
+                        'label' => ['class' => 'form-label', 'text' => 'Descriere'],
                         'rows' => 3,
-                        'placeholder' => 'Describe what this workflow does',
+                        'placeholder' => 'Descrieți ce face acest flux de lucru',
                     ]) ?>
-                    
+
                     <div class="row">
                         <div class="col-md-6">
                             <?= $this->Form->control('category', [
                                 'type' => 'select',
                                 'options' => $categories,
-                                'empty' => '-- Select Category --',
+                                'empty' => '-- Selectează categorie --',
                                 'class' => 'form-select',
-                                'label' => ['class' => 'form-label'],
+                                'label' => ['class' => 'form-label', 'text' => 'Categorie'],
                             ]) ?>
                         </div>
                         <div class="col-md-6">
                             <?= $this->Form->control('icon', [
                                 'class' => 'form-control',
-                                'label' => ['class' => 'form-label', 'text' => 'Icon (Font Awesome class)'],
+                                'label' => ['class' => 'form-label', 'text' => 'Pictogramă (clasă Font Awesome)'],
                                 'placeholder' => 'fas fa-cog',
                             ]) ?>
                         </div>
@@ -64,18 +64,18 @@
 
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">Workflow Definition</h5>
+                    <h5 class="mb-0">Definiție flux de lucru</h5>
                     <button type="button" class="btn btn-sm btn-info" onclick="formatJSON()">
-                        <i class="fas fa-code"></i> Format JSON
+                        <i class="fas fa-code"></i> Formatează JSON
                     </button>
                 </div>
                 <div class="card-body">
                     <div class="alert alert-info">
                         <i class="fas fa-info-circle"></i>
-                        Define your workflow using the FlowScript JSON format. 
-                        <a href="#" data-bs-toggle="modal" data-bs-target="#helpModal">View syntax help</a>
+                        Definiți fluxul de lucru folosind formatul JSON FlowScript.
+                        <a href="#" data-bs-toggle="modal" data-bs-target="#helpModal">Vezi ajutor sintaxă</a>
                     </div>
-                    
+
                     <?= $this->Form->control('definition_json', [
                         'type' => 'textarea',
                         'class' => 'form-control font-monospace',
@@ -101,7 +101,7 @@
 }',
                         'required' => true,
                     ]) ?>
-                    
+
                     <div id="json-error" class="alert alert-danger mt-2 d-none">
                         <i class="fas fa-exclamation-triangle"></i>
                         <span id="json-error-message"></span>
@@ -113,43 +113,43 @@
         <div class="col-md-4">
             <div class="card mb-3">
                 <div class="card-header">
-                    <h5 class="mb-0">Settings</h5>
+                    <h5 class="mb-0">Setări</h5>
                 </div>
                 <div class="card-body">
                     <?= $this->Form->control('status', [
                         'type' => 'select',
                         'options' => [
-                            'draft' => 'Draft',
-                            'active' => 'Active',
-                            'inactive' => 'Inactive',
+                            'draft' => 'Ciornă',
+                            'active' => 'Activ',
+                            'inactive' => 'Inactiv',
                         ],
                         'class' => 'form-select',
-                        'label' => ['class' => 'form-label'],
+                        'label' => ['class' => 'form-label', 'text' => 'Status'],
                     ]) ?>
-                    
+
                     <?= $this->Form->control('is_template', [
                         'type' => 'checkbox',
                         'class' => 'form-check-input',
                         'label' => [
                             'class' => 'form-check-label',
-                            'text' => 'Save as template',
+                            'text' => 'Salvează ca șablon',
                         ],
                         'templates' => [
                             'checkboxWrapper' => '<div class="form-check">{{label}}</div>',
                             'nestingLabel' => '{{hidden}}<label{{attrs}}>{{input}}{{text}}</label>',
                         ],
                     ]) ?>
-                    
+
                     <div class="form-text">
                         <i class="fas fa-info-circle"></i>
-                        Templates can be used as starting points for new workflows
+                        Șabloanele pot fi folosite ca punct de plecare pentru fluxuri noi
                     </div>
                 </div>
             </div>
 
             <div class="card mb-3">
                 <div class="card-header">
-                    <h5 class="mb-0">Available Nodes</h5>
+                    <h5 class="mb-0">Noduri disponibile</h5>
                 </div>
                 <div class="card-body">
                     <div class="accordion" id="nodesAccordion">
@@ -160,20 +160,20 @@
                             $nodesByType[$type][$name] = $metadata;
                         }
                         ?>
-                        
+
                         <?php foreach ($nodesByType as $type => $nodes): ?>
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="heading-<?= h($type) ?>">
-                                <button class="accordion-button collapsed" type="button" 
-                                        data-bs-toggle="collapse" 
-                                        data-bs-target="#collapse-<?= h($type) ?>" 
+                                <button class="accordion-button collapsed" type="button"
+                                        data-bs-toggle="collapse"
+                                        data-bs-target="#collapse-<?= h($type) ?>"
                                         aria-expanded="false">
                                     <i class="fas fa-folder me-2"></i>
-                                    <?= h(ucfirst($type)) ?> Nodes
+                                    Noduri <?= h(ucfirst($type)) ?>
                                 </button>
                             </h2>
-                            <div id="collapse-<?= h($type) ?>" 
-                                 class="accordion-collapse collapse" 
+                            <div id="collapse-<?= h($type) ?>"
+                                 class="accordion-collapse collapse"
                                  data-bs-parent="#nodesAccordion">
                                 <div class="accordion-body">
                                     <?php foreach ($nodes as $nodeName => $nodeData): ?>
@@ -184,15 +184,15 @@
                                         <p class="mb-1 small"><?= h($nodeData['description']) ?></p>
                                         <?php if (!empty($nodeData['ai_hints']['expected_edges'])): ?>
                                         <p class="mb-1 small">
-                                            <strong>Edges:</strong> 
+                                            <strong>Muchii:</strong>
                                             <?= h(implode(', ', $nodeData['ai_hints']['expected_edges'])) ?>
                                         </p>
                                         <?php endif; ?>
                                         <?php if (!empty($nodeData['ai_hints']['example_usage'])): ?>
-                                        <button type="button" 
+                                        <button type="button"
                                                 class="btn btn-sm btn-outline-secondary"
                                                 onclick="insertExample('<?= h(addslashes($nodeData['ai_hints']['example_usage'])) ?>')">
-                                            <i class="fas fa-code"></i> Insert Example
+                                            <i class="fas fa-code"></i> Inserează exemplu
                                         </button>
                                         <?php endif; ?>
                                     </div>
@@ -206,11 +206,11 @@
             </div>
 
             <div class="d-grid gap-2">
-                <?= $this->Form->button(__('Create Workflow'), [
+                <?= $this->Form->button(__('Creează flux de lucru'), [
                     'class' => 'btn btn-primary btn-lg',
                 ]) ?>
-                <?= $this->Html->link(__('Cancel'), 
-                    ['action' => 'index'], 
+                <?= $this->Html->link(__('Anulează'),
+                    ['action' => 'index'],
                     ['class' => 'btn btn-outline-secondary']
                 ) ?>
             </div>
@@ -224,24 +224,24 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">FlowScript Syntax Help</h5>
+                <h5 class="modal-title">Ajutor sintaxă FlowScript</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <h6>Basic Structure</h6>
+                <h6>Structură de bază</h6>
                 <pre class="bg-light p-3"><code>{
-  "initialState": { /* Initial state values */ },
-  "nodes": [ /* Array of flow elements */ ]
+  "initialState": { /* Valori stare inițială */ },
+  "nodes": [ /* Array de elemente flux */ ]
 }</code></pre>
 
-                <h6>Node Types</h6>
+                <h6>Tipuri de noduri</h6>
                 <ul>
-                    <li><strong>Simple node:</strong> <code>"nodeName"</code></li>
-                    <li><strong>Node with config:</strong> <code>{ "nodeName": { "param": "value" } }</code></li>
+                    <li><strong>Nod simplu:</strong> <code>"nodeName"</code></li>
+                    <li><strong>Nod cu configurare:</strong> <code>{ "nodeName": { "param": "value" } }</code></li>
                 </ul>
 
-                <h6>Control Structures</h6>
-                <p><strong>Branching:</strong></p>
+                <h6>Structuri de control</h6>
+                <p><strong>Ramificare:</strong></p>
                 <pre class="bg-light p-3"><code>[
   "conditionNode",
   {
@@ -251,7 +251,7 @@
   }
 ]</code></pre>
 
-                <p><strong>Looping:</strong></p>
+                <p><strong>Buclă:</strong></p>
                 <pre class="bg-light p-3"><code>[
   { "whileCondition": { "condition": "state.count < 10" } },
   [
@@ -260,12 +260,12 @@
   ]
 ]</code></pre>
 
-                <h6>Special Edges</h6>
+                <h6>Muchii speciale</h6>
                 <ul>
-                    <li><code>exit</code> - Exit the current flow</li>
-                    <li><code>loopTo:nodeName</code> - Jump to a specific node</li>
-                    <li><code>next_iteration</code> - Continue loop (loop controllers)</li>
-                    <li><code>exit_loop</code> - Exit loop (loop controllers)</li>
+                    <li><code>exit</code> - Ieșire din fluxul curent</li>
+                    <li><code>loopTo:nodeName</code> - Salt la un nod specific</li>
+                    <li><code>next_iteration</code> - Continuă bucla (controlere buclă)</li>
+                    <li><code>exit_loop</code> - Ieșire din buclă (controlere buclă)</li>
                 </ul>
             </div>
         </div>
@@ -287,13 +287,13 @@ function formatJSON() {
 function insertExample(example) {
     const textarea = document.getElementById('definition-json');
     const currentValue = textarea.value.trim();
-    
+
     if (currentValue) {
-        if (!confirm('This will replace the current definition. Continue?')) {
+        if (!confirm('Aceasta va înlocui definiția curentă. Continuați?')) {
             return;
         }
     }
-    
+
     textarea.value = example;
     formatJSON();
 }
@@ -315,7 +315,7 @@ document.getElementById('definition-json').addEventListener('blur', function() {
             hideJsonError();
         }
     } catch (e) {
-        showJsonError('Invalid JSON: ' + e.message);
+        showJsonError('JSON invalid: ' + e.message);
     }
 });
 </script>

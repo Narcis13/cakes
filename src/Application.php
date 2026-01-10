@@ -129,6 +129,7 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
         $service->setConfig([
             'unauthenticatedRedirect' => Router::url([
                 'prefix' => 'Admin',
+                'plugin' => null,
                 'controller' => 'Users',
                 'action' => 'login',
             ]),
@@ -146,6 +147,7 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
             'fields' => $fields,
             'loginUrl' => Router::url([
                 'prefix' => 'Admin',
+                'plugin' => null,
                 'controller' => 'Users',
                 'action' => 'login',
             ]),

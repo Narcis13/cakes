@@ -4,19 +4,19 @@
  * @var \App\Model\Entity\Page $page
  */
 ?>
-<?php $this->assign('title', 'Edit Page: ' . $page->title); ?>
+<?php $this->assign('title', 'Editează pagină: ' . $page->title); ?>
 
 <div class="pages form content">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3><?= __('Edit Page: {0}', h($page->title)) ?></h3>
+        <h3><?= __('Editează pagină: {0}', h($page->title)) ?></h3>
         <div>
             <?= $this->Html->link(
-                '<i class="fas fa-eye"></i> View Page',
+                '<i class="fas fa-eye"></i> Vezi pagina',
                 '/' . $page->slug,
                 ['class' => 'btn btn-outline-info', 'escape' => false, 'target' => '_blank']
             ) ?>
             <?= $this->Html->link(
-                '<i class="fas fa-arrow-left"></i> Back to Pages',
+                '<i class="fas fa-arrow-left"></i> Înapoi la pagini',
                 ['action' => 'index'],
                 ['class' => 'btn btn-outline-secondary ms-2', 'escape' => false]
             ) ?>
@@ -28,43 +28,43 @@
             <!-- Page Details -->
             <div class="card mb-4">
                 <div class="card-header">
-                    <h5 class="card-title mb-0">Page Details</h5>
+                    <h5 class="card-title mb-0">Detalii pagină</h5>
                 </div>
                 <div class="card-body">
                     <?= $this->Form->create($page) ?>
                         <div class="mb-3">
                             <?= $this->Form->control('title', [
                                 'class' => 'form-control',
-                                'label' => ['class' => 'form-label'],
+                                'label' => ['class' => 'form-label', 'text' => 'Titlu'],
                                 'required' => true
                             ]) ?>
                         </div>
-                        
+
                         <div class="mb-3">
                             <?= $this->Form->control('slug', [
                                 'class' => 'form-control',
-                                'label' => ['class' => 'form-label'],
+                                'label' => ['class' => 'form-label', 'text' => 'Slug'],
                                 'required' => true
                             ]) ?>
                         </div>
-                        
+
                         <div class="mb-3">
                             <?= $this->Form->control('content', [
                                 'type' => 'textarea',
                                 'class' => 'form-control',
-                                'label' => ['class' => 'form-label', 'text' => 'Page Content (Optional)'],
+                                'label' => ['class' => 'form-label', 'text' => 'Conținut pagină (opțional)'],
                                 'rows' => 4,
-                                'help' => 'This content appears before the components'
+                                'help' => 'Acest conținut apare înainte de componente'
                             ]) ?>
                         </div>
-                        
+
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <?= $this->Form->control('meta_description', [
                                         'class' => 'form-control',
-                                        'label' => ['class' => 'form-label'],
-                                        'help' => 'SEO meta description'
+                                        'label' => ['class' => 'form-label', 'text' => 'Descriere meta'],
+                                        'help' => 'Descriere meta SEO'
                                     ]) ?>
                                 </div>
                             </div>
@@ -72,26 +72,26 @@
                                 <div class="mb-3">
                                     <?= $this->Form->control('template', [
                                         'class' => 'form-control',
-                                        'label' => ['class' => 'form-label'],
-                                        'empty' => 'Default Template'
+                                        'label' => ['class' => 'form-label', 'text' => 'Șablon'],
+                                        'empty' => 'Șablon implicit'
                                     ]) ?>
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="mb-3">
                             <div class="form-check">
                                 <?= $this->Form->checkbox('is_published', [
                                     'class' => 'form-check-input'
                                 ]) ?>
-                                <?= $this->Form->label('is_published', 'Published', [
+                                <?= $this->Form->label('is_published', 'Publicat', [
                                     'class' => 'form-check-label'
                                 ]) ?>
                             </div>
                         </div>
-                        
+
                         <div class="mt-4">
-                            <?= $this->Form->button('Update Page', [
+                            <?= $this->Form->button('Actualizează pagina', [
                                 'class' => 'btn btn-primary'
                             ]) ?>
                         </div>
@@ -102,7 +102,7 @@
             <!-- Page Components -->
             <div class="card">
                 <div class="card-header">
-                    <h5 class="card-title mb-0">Page Components</h5>
+                    <h5 class="card-title mb-0">Componente pagină</h5>
                 </div>
                 <div class="card-body">
                     <div id="components-container" class="sortable-components">
@@ -120,20 +120,20 @@
                                                     <strong class="ms-2"><?= h($component->title) ?></strong>
                                                 <?php endif; ?>
                                             </div>
-                                            
+
                                             <?php if ($component->type === 'html'): ?>
                                                 <div class="component-content"><?= nl2br(h($component->content)) ?></div>
                                             <?php elseif ($component->type === 'image'): ?>
                                                 <div class="component-content">
                                                     <div class="d-flex align-items-center mb-2">
-                                                        <img src="<?= h($component->url) ?>" 
-                                                             alt="<?= h($component->alt_text ?: $component->title) ?>" 
-                                                             style="max-width: 100px; max-height: 60px; object-fit: cover;" 
+                                                        <img src="<?= h($component->url) ?>"
+                                                             alt="<?= h($component->alt_text ?: $component->title) ?>"
+                                                             style="max-width: 100px; max-height: 60px; object-fit: cover;"
                                                              class="rounded me-2">
                                                         <div>
-                                                            <strong>Source:</strong> 
+                                                            <strong>Sursă:</strong>
                                                             <?php if ($component->image_type === 'upload'): ?>
-                                                                <span class="badge bg-success">Uploaded</span>
+                                                                <span class="badge bg-success">Încărcat</span>
                                                             <?php else: ?>
                                                                 <span class="badge bg-info">URL</span>
                                                             <?php endif; ?>
@@ -141,21 +141,21 @@
                                                     </div>
                                                     <strong>URL:</strong> <?= h($component->url) ?><br>
                                                     <?php if ($component->alt_text): ?>
-                                                        <strong>Alt Text:</strong> <?= h($component->alt_text) ?>
+                                                        <strong>Text alternativ:</strong> <?= h($component->alt_text) ?>
                                                     <?php endif; ?>
                                                 </div>
                                             <?php elseif ($component->type === 'link'): ?>
                                                 <div class="component-content">
                                                     <strong>URL:</strong> <?= h($component->url) ?><br>
                                                     <?php if ($component->button_caption): ?>
-                                                        <strong>Button Caption:</strong> <?= h($component->button_caption) ?>
+                                                        <strong>Text buton:</strong> <?= h($component->button_caption) ?>
                                                     <?php endif; ?>
                                                 </div>
                                             <?php endif; ?>
                                         </div>
-                                        
+
                                         <div class="btn-group">
-                                            <button type="button" class="btn btn-sm btn-outline-primary edit-component" 
+                                            <button type="button" class="btn btn-sm btn-outline-primary edit-component"
                                                     data-component-id="<?= $component->id ?>"
                                                     data-bs-toggle="modal" data-bs-target="#editComponentModal">
                                                 <i class="fas fa-edit"></i>
@@ -164,7 +164,7 @@
                                                 '<i class="fas fa-trash"></i>',
                                                 ['action' => 'deleteComponent', $component->id],
                                                 [
-                                                    'confirm' => 'Are you sure you want to delete this component?',
+                                                    'confirm' => 'Sigur doriți să ștergeți această componentă?',
                                                     'class' => 'btn btn-sm btn-outline-danger',
                                                     'escape' => false
                                                 ]
@@ -176,19 +176,19 @@
                         <?php else: ?>
                             <div class="text-center py-4 text-muted">
                                 <i class="fas fa-puzzle-piece fa-2x mb-3"></i>
-                                <p>No components added yet. Start building your page by adding components.</p>
+                                <p>Nu s-au adăugat componente încă. Începeți să construiți pagina prin adăugarea de componente.</p>
                             </div>
                         <?php endif; ?>
                     </div>
                 </div>
             </div>
         </div>
-        
+
         <div class="col-md-4">
             <!-- Add Component -->
             <div class="card">
                 <div class="card-header">
-                    <h5 class="card-title mb-0">Add Component</h5>
+                    <h5 class="card-title mb-0">Adaugă componentă</h5>
                 </div>
                 <div class="card-body">
                     <?= $this->Form->create(null, [
@@ -199,107 +199,107 @@
                             <?= $this->Form->control('type', [
                                 'type' => 'select',
                                 'options' => [
-                                    'html' => 'HTML Paragraph',
-                                    'image' => 'Image',
+                                    'html' => 'Paragraf HTML',
+                                    'image' => 'Imagine',
                                     'link' => 'Link'
                                 ],
                                 'class' => 'form-control',
-                                'label' => ['class' => 'form-label'],
-                                'empty' => 'Select component type...',
+                                'label' => ['class' => 'form-label', 'text' => 'Tip'],
+                                'empty' => 'Selectați tipul componentei...',
                                 'id' => 'component-type'
                             ]) ?>
                         </div>
-                        
+
                         <div class="mb-3">
                             <?= $this->Form->control('title', [
                                 'class' => 'form-control',
-                                'label' => ['class' => 'form-label'],
-                                'placeholder' => 'Component title (optional)'
+                                'label' => ['class' => 'form-label', 'text' => 'Titlu'],
+                                'placeholder' => 'Titlu componentă (opțional)'
                             ]) ?>
                         </div>
-                        
+
                         <!-- HTML Content -->
                         <div class="component-field mb-3" id="html-fields" style="display:none;">
                             <?= $this->Form->control('content', [
                                 'type' => 'textarea',
                                 'class' => 'form-control',
-                                'label' => ['class' => 'form-label', 'text' => 'HTML Content'],
+                                'label' => ['class' => 'form-label', 'text' => 'Conținut HTML'],
                                 'rows' => 4
                             ]) ?>
                         </div>
-                        
+
                         <!-- Image Fields -->
                         <div class="component-field" id="image-fields" style="display:none;">
                             <div class="mb-3">
-                                <label class="form-label">Choose Image Source</label>
+                                <label class="form-label">Alegeți sursa imaginii</label>
                                 <div class="form-check">
                                     <input class="form-check-input" type="radio" name="image_source" id="image_url" value="url" checked>
                                     <label class="form-check-label" for="image_url">
-                                        Image URL
+                                        URL imagine
                                     </label>
                                 </div>
                                 <div class="form-check">
                                     <input class="form-check-input" type="radio" name="image_source" id="image_upload" value="upload">
                                     <label class="form-check-label" for="image_upload">
-                                        Upload Image
+                                        Încarcă imagine
                                     </label>
                                 </div>
                             </div>
-                            
+
                             <div class="mb-3" id="url-input">
                                 <?= $this->Form->control('url', [
                                     'class' => 'form-control',
-                                    'label' => ['class' => 'form-label', 'text' => 'Image URL'],
-                                    'placeholder' => 'https://example.com/image.jpg'
+                                    'label' => ['class' => 'form-label', 'text' => 'URL imagine'],
+                                    'placeholder' => 'https://exemplu.com/imagine.jpg'
                                 ]) ?>
                             </div>
-                            
+
                             <div class="mb-3" id="file-input" style="display:none;">
                                 <?= $this->Form->control('image_file', [
                                     'type' => 'file',
                                     'class' => 'form-control',
-                                    'label' => ['class' => 'form-label', 'text' => 'Upload Image'],
+                                    'label' => ['class' => 'form-label', 'text' => 'Încarcă imagine'],
                                     'accept' => 'image/*'
                                 ]) ?>
-                                <div class="form-text">Maximum file size: 5MB. Supported formats: JPEG, PNG, GIF, WebP</div>
+                                <div class="form-text">Dimensiune maximă: 5MB. Formate acceptate: JPEG, PNG, GIF, WebP</div>
                             </div>
-                            
+
                             <div class="mb-3">
                                 <?= $this->Form->control('alt_text', [
                                     'class' => 'form-control',
-                                    'label' => ['class' => 'form-label'],
-                                    'placeholder' => 'Alternative text for accessibility'
+                                    'label' => ['class' => 'form-label', 'text' => 'Text alternativ'],
+                                    'placeholder' => 'Text alternativ pentru accesibilitate'
                                 ]) ?>
                             </div>
                         </div>
-                        
+
                         <!-- Link Fields -->
                         <div class="component-field" id="link-fields" style="display:none;">
                             <div class="mb-3">
                                 <?= $this->Form->control('url', [
                                     'class' => 'form-control',
-                                    'label' => ['class' => 'form-label', 'text' => 'Link URL'],
-                                    'placeholder' => 'https://example.com'
+                                    'label' => ['class' => 'form-label', 'text' => 'URL link'],
+                                    'placeholder' => 'https://exemplu.com'
                                 ]) ?>
                             </div>
                             <div class="mb-3">
                                 <?= $this->Form->control('button_caption', [
                                     'class' => 'form-control',
-                                    'label' => ['class' => 'form-label', 'text' => 'Button Caption'],
-                                    'placeholder' => 'Button text (optional - uses title if empty)'
+                                    'label' => ['class' => 'form-label', 'text' => 'Text buton'],
+                                    'placeholder' => 'Text buton (opțional - folosește titlul dacă e gol)'
                                 ]) ?>
                             </div>
                         </div>
-                        
+
                         <div class="mb-3">
                             <?= $this->Form->control('css_class', [
                                 'class' => 'form-control',
-                                'label' => ['class' => 'form-label'],
-                                'placeholder' => 'Custom CSS classes (optional)'
+                                'label' => ['class' => 'form-label', 'text' => 'Clasă CSS'],
+                                'placeholder' => 'Clase CSS personalizate (opțional)'
                             ]) ?>
                         </div>
-                        
-                        <?= $this->Form->button('Add Component', [
+
+                        <?= $this->Form->button('Adaugă componentă', [
                             'class' => 'btn btn-success w-100'
                         ]) ?>
                     <?= $this->Form->end() ?>
@@ -314,7 +314,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Edit Component</h5>
+                <h5 class="modal-title">Editează componentă</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
@@ -326,102 +326,102 @@
                     <div class="mb-3">
                         <?= $this->Form->control('title', [
                             'class' => 'form-control',
-                            'label' => ['class' => 'form-label'],
+                            'label' => ['class' => 'form-label', 'text' => 'Titlu'],
                             'id' => 'edit-title'
                         ]) ?>
                     </div>
-                    
+
                     <!-- HTML Content -->
                     <div class="edit-field mb-3" id="edit-html-fields" style="display:none;">
                         <?= $this->Form->control('content', [
                             'type' => 'textarea',
                             'class' => 'form-control',
-                            'label' => ['class' => 'form-label', 'text' => 'HTML Content'],
+                            'label' => ['class' => 'form-label', 'text' => 'Conținut HTML'],
                             'rows' => 4,
                             'id' => 'edit-content'
                         ]) ?>
                     </div>
-                    
+
                     <!-- Image Fields -->
                     <div class="edit-field" id="edit-image-fields" style="display:none;">
                         <div class="mb-3">
-                            <label class="form-label">Choose Image Source</label>
+                            <label class="form-label">Alegeți sursa imaginii</label>
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="image_source" id="edit_image_url" value="url" checked>
                                 <label class="form-check-label" for="edit_image_url">
-                                    Image URL
+                                    URL imagine
                                 </label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="image_source" id="edit_image_upload" value="upload">
                                 <label class="form-check-label" for="edit_image_upload">
-                                    Upload New Image
+                                    Încarcă imagine nouă
                                 </label>
                             </div>
                         </div>
-                        
+
                         <div class="mb-3" id="edit-current-image">
-                            <label class="form-label">Current Image</label>
+                            <label class="form-label">Imagine curentă</label>
                             <div id="current-image-preview"></div>
                         </div>
-                        
+
                         <div class="mb-3" id="edit-url-input">
                             <?= $this->Form->control('url', [
                                 'class' => 'form-control',
-                                'label' => ['class' => 'form-label', 'text' => 'Image URL'],
+                                'label' => ['class' => 'form-label', 'text' => 'URL imagine'],
                                 'id' => 'edit-url'
                             ]) ?>
                         </div>
-                        
+
                         <div class="mb-3" id="edit-file-input" style="display:none;">
                             <?= $this->Form->control('image_file', [
                                 'type' => 'file',
                                 'class' => 'form-control',
-                                'label' => ['class' => 'form-label', 'text' => 'Upload New Image'],
+                                'label' => ['class' => 'form-label', 'text' => 'Încarcă imagine nouă'],
                                 'accept' => 'image/*'
                             ]) ?>
-                            <div class="form-text">Maximum file size: 5MB. Supported formats: JPEG, PNG, GIF, WebP</div>
+                            <div class="form-text">Dimensiune maximă: 5MB. Formate acceptate: JPEG, PNG, GIF, WebP</div>
                         </div>
-                        
+
                         <div class="mb-3">
                             <?= $this->Form->control('alt_text', [
                                 'class' => 'form-control',
-                                'label' => ['class' => 'form-label'],
+                                'label' => ['class' => 'form-label', 'text' => 'Text alternativ'],
                                 'id' => 'edit-alt-text'
                             ]) ?>
                         </div>
                     </div>
-                    
+
                     <!-- Link Fields -->
                     <div class="edit-field" id="edit-link-fields" style="display:none;">
                         <div class="mb-3">
                             <?= $this->Form->control('url', [
                                 'class' => 'form-control',
-                                'label' => ['class' => 'form-label', 'text' => 'Link URL'],
+                                'label' => ['class' => 'form-label', 'text' => 'URL link'],
                                 'id' => 'edit-link-url'
                             ]) ?>
                         </div>
                         <div class="mb-3">
                             <?= $this->Form->control('button_caption', [
                                 'class' => 'form-control',
-                                'label' => ['class' => 'form-label', 'text' => 'Button Caption'],
-                                'placeholder' => 'Button text (optional - uses title if empty)',
+                                'label' => ['class' => 'form-label', 'text' => 'Text buton'],
+                                'placeholder' => 'Text buton (opțional - folosește titlul dacă e gol)',
                                 'id' => 'edit-button-caption'
                             ]) ?>
                         </div>
                     </div>
-                    
+
                     <div class="mb-3">
                         <?= $this->Form->control('css_class', [
                             'class' => 'form-control',
-                            'label' => ['class' => 'form-label'],
+                            'label' => ['class' => 'form-label', 'text' => 'Clasă CSS'],
                             'id' => 'edit-css-class'
                         ]) ?>
                     </div>
-                    
+
                     <div class="d-flex justify-content-end">
-                        <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cancel</button>
-                        <?= $this->Form->button('Update Component', [
+                        <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Anulează</button>
+                        <?= $this->Form->button('Actualizează componentă', [
                             'class' => 'btn btn-primary'
                         ]) ?>
                     </div>
@@ -437,11 +437,11 @@ document.addEventListener('DOMContentLoaded', function() {
     // Component type selector
     const typeSelect = document.getElementById('component-type');
     const componentFields = document.querySelectorAll('.component-field');
-    
+
     typeSelect.addEventListener('change', function() {
         // Hide all fields
         componentFields.forEach(field => field.style.display = 'none');
-        
+
         // Show relevant fields
         const selectedType = this.value;
         if (selectedType) {
@@ -451,12 +451,12 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     });
-    
+
     // Image source selector
     const imageSourceRadios = document.querySelectorAll('input[name="image_source"]');
     const urlInput = document.getElementById('url-input');
     const fileInput = document.getElementById('file-input');
-    
+
     imageSourceRadios.forEach(radio => {
         radio.addEventListener('change', function() {
             if (this.value === 'url') {
@@ -474,7 +474,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
-    
+
     // Make components sortable
     const container = document.getElementById('components-container');
     if (container) {
@@ -482,10 +482,10 @@ document.addEventListener('DOMContentLoaded', function() {
             handle: '.component-handle',
             animation: 150,
             onEnd: function(evt) {
-                const componentIds = Array.from(container.children).map(item => 
+                const componentIds = Array.from(container.children).map(item =>
                     item.getAttribute('data-component-id')
                 );
-                
+
                 // Send AJAX request to update order
                 fetch('<?= $this->Url->build(['action' => 'reorderComponents', $page->id]) ?>', {
                     method: 'POST',
@@ -501,30 +501,30 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-    
+
     // Edit component functionality
     document.querySelectorAll('.edit-component').forEach(button => {
         button.addEventListener('click', function() {
             const componentId = this.getAttribute('data-component-id');
             const componentItem = this.closest('.component-item');
-            
+
             // Get component data from the DOM
             const componentType = componentItem.querySelector('.badge').textContent.toLowerCase();
-            const componentTitle = componentItem.querySelector('strong') ? 
+            const componentTitle = componentItem.querySelector('strong') ?
                 componentItem.querySelector('strong').textContent : '';
-            
+
             // Update form action
             const form = document.getElementById('edit-component-form');
             form.action = form.action.replace('__COMPONENT_ID__', componentId);
-            
+
             // Populate common fields
             document.getElementById('edit-title').value = componentTitle;
-            
+
             // Hide all edit fields first
             document.querySelectorAll('.edit-field').forEach(field => {
                 field.style.display = 'none';
             });
-            
+
             // Show and populate fields based on component type
             if (componentType === 'html') {
                 document.getElementById('edit-html-fields').style.display = 'block';
@@ -543,7 +543,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (img) {
                     document.getElementById('edit-url').value = img.src;
                     document.getElementById('edit-alt-text').value = img.alt;
-                    document.getElementById('current-image-preview').innerHTML = 
+                    document.getElementById('current-image-preview').innerHTML =
                         `<img src="${img.src}" alt="${img.alt}" style="max-width: 150px; max-height: 100px;" class="rounded">`;
                 }
             } else if (componentType === 'link') {
@@ -559,7 +559,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Try to get button caption if it exists (we'll need to fetch this from server)
                 fetchComponentData(componentId);
             }
-            
+
             // Get CSS class (this would need to be stored somewhere accessible or fetched from server)
             // For now, we'll fetch the full component data
             if (componentType !== 'link') {
@@ -567,7 +567,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
-    
+
     // Function to fetch full component data from server
     function fetchComponentData(componentId) {
         fetch(`<?= $this->Url->build(['action' => 'getComponent']) ?>/${componentId}`, {
@@ -582,7 +582,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (data.success && data.component) {
                 const comp = data.component;
                 document.getElementById('edit-css-class').value = comp.css_class || '';
-                
+
                 if (comp.type === 'link' && comp.button_caption) {
                     document.getElementById('edit-button-caption').value = comp.button_caption;
                 }
@@ -590,13 +590,13 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .catch(error => console.error('Error fetching component data:', error));
     }
-    
+
     // Handle edit modal image source switching
     document.querySelectorAll('input[name="image_source"]').forEach(radio => {
         radio.addEventListener('change', function() {
             const editUrlInput = document.getElementById('edit-url-input');
             const editFileInput = document.getElementById('edit-file-input');
-            
+
             if (this.value === 'url') {
                 editUrlInput.style.display = 'block';
                 editFileInput.style.display = 'none';

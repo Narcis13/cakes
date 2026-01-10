@@ -6,7 +6,7 @@
  */
 ?>
 
-<?php $this->assign('title', 'Welcome to City General Hospital'); ?>
+<?php $this->assign('title', 'Welcome to Spitalul Militar Pitesti'); ?>
 
 <!-- ======= Hero Section ======= -->
 <?= $this->cell('Hero') ?>

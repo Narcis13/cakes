@@ -4,13 +4,13 @@
  * @var iterable<\App\Model\Entity\Specialization> $specializations
  */
 ?>
-<?php $this->assign('title', 'Medical Specializations'); ?>
+<?php $this->assign('title', 'Specializări medicale'); ?>
 
 <div class="specializations index content">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3><?= __('Medical Specializations') ?></h3>
+        <h3><?= __('Specializări medicale') ?></h3>
         <?= $this->Html->link(
-            '<i class="fas fa-plus"></i> Add New Specialization',
+            '<i class="fas fa-plus"></i> Adaugă specializare nouă',
             ['action' => 'add'],
             ['class' => 'btn btn-primary', 'escape' => false]
         ) ?>
@@ -22,11 +22,11 @@
                 <table class="table table-hover">
                     <thead>
                         <tr>
-                            <th><?= $this->Paginator->sort('name', 'Specialization Name') ?></th>
+                            <th><?= $this->Paginator->sort('name', 'Nume specializare') ?></th>
                             <th><?= $this->Paginator->sort('is_active', 'Status') ?></th>
-                            <th>Staff Count</th>
-                            <th><?= $this->Paginator->sort('created') ?></th>
-                            <th class="actions text-center"><?= __('Actions') ?></th>
+                            <th>Număr personal</th>
+                            <th><?= $this->Paginator->sort('created', 'Creat') ?></th>
+                            <th class="actions text-center"><?= __('Acțiuni') ?></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -40,39 +40,39 @@
                             </td>
                             <td>
                                 <?php if ($specialization->is_active): ?>
-                                    <span class="badge bg-success">Active</span>
+                                    <span class="badge bg-success">Activ</span>
                                 <?php else: ?>
-                                    <span class="badge bg-secondary">Inactive</span>
+                                    <span class="badge bg-secondary">Inactiv</span>
                                 <?php endif; ?>
                             </td>
                             <td>
-                                <?php 
+                                <?php
                                 $staffCount = isset($specialization->staff) ? count($specialization->staff) : 0;
                                 ?>
                                 <span class="badge bg-info text-dark">
-                                    <i class="fas fa-user-md"></i> <?= $staffCount ?> doctors
+                                    <i class="fas fa-user-md"></i> <?= $staffCount ?> medici
                                 </span>
                             </td>
-                            <td><?= h($specialization->created->format('M j, Y')) ?></td>
+                            <td><?= h($specialization->created->format('j M Y')) ?></td>
                             <td class="actions text-center">
                                 <?= $this->Html->link(
                                     '<i class="fas fa-eye"></i>',
                                     ['action' => 'view', $specialization->id],
-                                    ['class' => 'btn btn-sm btn-outline-info', 'escape' => false, 'title' => 'View']
+                                    ['class' => 'btn btn-sm btn-outline-info', 'escape' => false, 'title' => 'Vizualizează']
                                 ) ?>
                                 <?= $this->Html->link(
                                     '<i class="fas fa-edit"></i>',
                                     ['action' => 'edit', $specialization->id],
-                                    ['class' => 'btn btn-sm btn-outline-primary', 'escape' => false, 'title' => 'Edit']
+                                    ['class' => 'btn btn-sm btn-outline-primary', 'escape' => false, 'title' => 'Editează']
                                 ) ?>
                                 <?= $this->Form->postLink(
                                     '<i class="fas fa-trash"></i>',
                                     ['action' => 'delete', $specialization->id],
                                     [
-                                        'confirm' => __('Are you sure you want to delete "{0}"?', $specialization->name),
+                                        'confirm' => __('Sunteți sigur că doriți să ștergeți "{0}"?', $specialization->name),
                                         'class' => 'btn btn-sm btn-outline-danger',
                                         'escape' => false,
-                                        'title' => 'Delete'
+                                        'title' => 'Șterge'
                                     ]
                                 ) ?>
                             </td>
@@ -85,9 +85,9 @@
             <?php if (count($specializations) === 0): ?>
                 <div class="text-center py-5">
                     <i class="fas fa-stethoscope fa-3x text-muted mb-3"></i>
-                    <p class="text-muted">No specializations found</p>
+                    <p class="text-muted">Nu s-au găsit specializări</p>
                     <?= $this->Html->link(
-                        '<i class="fas fa-plus"></i> Add First Specialization',
+                        '<i class="fas fa-plus"></i> Adaugă prima specializare',
                         ['action' => 'add'],
                         ['class' => 'btn btn-primary', 'escape' => false]
                     ) ?>
@@ -106,7 +106,7 @@
                         </ul>
                     </div>
                     <div class="text-muted">
-                        <?= $this->Paginator->counter(__('Page {{page}} of {{pages}}, showing {{current}} of {{count}} total')) ?>
+                        <?= $this->Paginator->counter(__('Pagina {{page}} din {{pages}}, afișând {{current}} din {{count}} total')) ?>
                     </div>
                 </div>
             <?php endif; ?>
