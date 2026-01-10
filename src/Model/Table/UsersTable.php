@@ -62,7 +62,31 @@ class UsersTable extends Table
             ->maxLength('password', 255)
             ->requirePresence('password', 'create')
             ->notEmptyString('password')
-            ->minLength('password', 6, 'Password must be at least 6 characters long');
+            ->minLength('password', 12, 'Password must be at least 12 characters long')
+            ->add('password', 'uppercase', [
+                'rule' => function ($value) {
+                    return (bool)preg_match('/[A-Z]/', $value);
+                },
+                'message' => 'Password must contain at least one uppercase letter (A-Z)',
+            ])
+            ->add('password', 'lowercase', [
+                'rule' => function ($value) {
+                    return (bool)preg_match('/[a-z]/', $value);
+                },
+                'message' => 'Password must contain at least one lowercase letter (a-z)',
+            ])
+            ->add('password', 'number', [
+                'rule' => function ($value) {
+                    return (bool)preg_match('/[0-9]/', $value);
+                },
+                'message' => 'Password must contain at least one number (0-9)',
+            ])
+            ->add('password', 'special', [
+                'rule' => function ($value) {
+                    return (bool)preg_match('/[!@#$%^&*(),.?":{}|<>]/', $value);
+                },
+                'message' => 'Password must contain at least one special character (!@#$%^&*(),.?":{}|<>)',
+            ]);
 
         $validator
             ->scalar('role')

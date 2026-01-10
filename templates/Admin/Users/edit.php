@@ -60,11 +60,32 @@ $this->assign('title', 'Editează utilizator');
                                 'type' => 'password',
                                 'label' => ['text' => 'Parolă nouă (lasă gol pentru a păstra cea actuală)', 'class' => 'form-label'],
                                 'class' => 'form-control',
-                                'placeholder' => 'Introdu parola nouă (min. 6 caractere)',
+                                'placeholder' => 'Introdu parola nouă (min. 12 caractere)',
                                 'required' => false,
-                                'minlength' => 6,
-                                'value' => ''
+                                'minlength' => 12,
+                                'value' => '',
+                                'id' => 'password-field'
                             ]) ?>
+                            <div class="password-requirements mt-2" id="password-requirements" style="display: none;">
+                                <small class="text-muted">Cerințe parolă:</small>
+                                <ul class="list-unstyled mb-0 small">
+                                    <li id="req-length" class="text-danger">
+                                        <i class="fas fa-times-circle"></i> Minim 12 caractere
+                                    </li>
+                                    <li id="req-uppercase" class="text-danger">
+                                        <i class="fas fa-times-circle"></i> Cel puțin o literă mare (A-Z)
+                                    </li>
+                                    <li id="req-lowercase" class="text-danger">
+                                        <i class="fas fa-times-circle"></i> Cel puțin o literă mică (a-z)
+                                    </li>
+                                    <li id="req-number" class="text-danger">
+                                        <i class="fas fa-times-circle"></i> Cel puțin o cifră (0-9)
+                                    </li>
+                                    <li id="req-special" class="text-danger">
+                                        <i class="fas fa-times-circle"></i> Cel puțin un caracter special (!@#$%^&amp;*(),.?":{}|&lt;&gt;)
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
 
@@ -121,10 +142,63 @@ $this->assign('title', 'Editează utilizator');
 </div>
 
 <script>
-// Validare formular
+// Validare formular cu verificare cerințe parolă
 (function() {
     'use strict';
+
+    // Funcții pentru validare parolă în timp real
+    function validatePassword(password) {
+        return {
+            length: password.length >= 12,
+            uppercase: /[A-Z]/.test(password),
+            lowercase: /[a-z]/.test(password),
+            number: /[0-9]/.test(password),
+            special: /[!@#$%^&*(),.?":{}|<>]/.test(password)
+        };
+    }
+
+    function updateRequirementUI(elementId, isValid) {
+        var element = document.getElementById(elementId);
+        if (element) {
+            if (isValid) {
+                element.classList.remove('text-danger');
+                element.classList.add('text-success');
+                element.querySelector('i').classList.remove('fa-times-circle');
+                element.querySelector('i').classList.add('fa-check-circle');
+            } else {
+                element.classList.remove('text-success');
+                element.classList.add('text-danger');
+                element.querySelector('i').classList.remove('fa-check-circle');
+                element.querySelector('i').classList.add('fa-times-circle');
+            }
+        }
+    }
+
     window.addEventListener('load', function() {
+        var passwordField = document.getElementById('password-field');
+        var requirementsDiv = document.getElementById('password-requirements');
+
+        // Verificare în timp real a cerințelor parolei
+        if (passwordField) {
+            passwordField.addEventListener('input', function() {
+                var password = this.value;
+
+                // Afișează cerințele doar când utilizatorul începe să scrie
+                if (requirementsDiv) {
+                    requirementsDiv.style.display = password.length > 0 ? 'block' : 'none';
+                }
+
+                if (password.length > 0) {
+                    var validation = validatePassword(password);
+                    updateRequirementUI('req-length', validation.length);
+                    updateRequirementUI('req-uppercase', validation.uppercase);
+                    updateRequirementUI('req-lowercase', validation.lowercase);
+                    updateRequirementUI('req-number', validation.number);
+                    updateRequirementUI('req-special', validation.special);
+                }
+            });
+        }
+
         var forms = document.getElementsByClassName('needs-validation');
         Array.prototype.filter.call(forms, function(form) {
             form.addEventListener('submit', function(event) {
@@ -132,11 +206,25 @@ $this->assign('title', 'Editează utilizator');
                 var confirmPassword = form.querySelector('input[name="confirm_password"]').value;
 
                 // Validează parolele doar dacă se introduce o parolă nouă
-                if (password && password !== confirmPassword) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                    alert('Parolele nu se potrivesc!');
-                    return false;
+                if (password) {
+                    // Verifică cerințele parolei
+                    var validation = validatePassword(password);
+                    var allValid = validation.length && validation.uppercase &&
+                                   validation.lowercase && validation.number && validation.special;
+
+                    if (!allValid) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        alert('Parola nu îndeplinește toate cerințele de securitate!');
+                        return false;
+                    }
+
+                    if (password !== confirmPassword) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        alert('Parolele nu se potrivesc!');
+                        return false;
+                    }
                 }
 
                 if (form.checkValidity() === false) {
