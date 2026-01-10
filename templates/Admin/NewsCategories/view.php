@@ -50,11 +50,11 @@
                         </tr>
                         <tr>
                             <th class="text-muted">Creat:</th>
-                            <td><?= h($newsCategory->created->format('j M Y H:i')) ?></td>
+                            <td><?= $newsCategory->created ? h($newsCategory->created->format('j M Y H:i')) : '-' ?></td>
                         </tr>
                         <tr>
                             <th class="text-muted">Modificat:</th>
-                            <td><?= h($newsCategory->modified->format('j M Y H:i')) ?></td>
+                            <td><?= $newsCategory->modified ? h($newsCategory->modified->format('j M Y H:i')) : '-' ?></td>
                         </tr>
                     </table>
                 </div>

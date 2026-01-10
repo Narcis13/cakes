@@ -102,7 +102,7 @@ $settingTypes = [
                 <div class="d-flex gap-2">
                     <?= $this->Form->button(
                         'Salvează setare',
-                        ['type' => 'submit', 'class' => 'btn btn-primary', 'escape' => false]
+                        ['type' => 'submit', 'class' => 'btn btn-primary', 'escapeTitle' => false]
                     ) ?>
                     <?= $this->Html->link(
                         'Anulează',

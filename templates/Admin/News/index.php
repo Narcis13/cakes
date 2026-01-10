@@ -66,7 +66,7 @@
                         <?= $this->Form->button('<i class="fas fa-filter"></i> Filtrează', [
                             'type' => 'submit',
                             'class' => 'btn btn-secondary',
-                            'escape' => false
+                            'escapeTitle' => false
                         ]) ?>
                         <?= $this->Html->link('<i class="fas fa-times"></i> Resetează',
                             ['action' => 'index'],

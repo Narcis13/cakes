@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Controller\AppController;
+use App\Controller\Admin\AppController;
 use Cake\Utility\Text;
 
 /**
@@ -55,10 +55,9 @@ class NewsCategoriesController extends AppController
     public function view(?string $id = null)
     {
         $newsCategory = $this->NewsCategories->get($id, [
-            'contain' => ['News' => [
-                'order' => ['News.created' => 'DESC'],
-                'limit' => 10,
-            ]],
+            'contain' => ['News' => function ($q) {
+                return $q->order(['News.created' => 'DESC'])->limit(10);
+            }],
         ]);
 
         $newsCount = $this->NewsCategories->News->find()

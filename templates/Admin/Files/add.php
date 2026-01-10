@@ -90,7 +90,7 @@
             ) ?>
             <?= $this->Form->button(
                 '<i class="fas fa-upload"></i> Încarcă fișier',
-                ['type' => 'submit', 'class' => 'btn btn-primary', 'escape' => false]
+                ['type' => 'submit', 'class' => 'btn btn-primary', 'escapeTitle' => false]
             ) ?>
         </div>
 

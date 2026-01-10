@@ -52,14 +52,21 @@ if (!empty($setting->type)) {
         <?= $this->Form->create($setting) ?>
         <fieldset>
             <legend><?= __('Editează setare: ') . h($setting->key_name) ?></legend>
-            <?php
-                echo $this->Form->control('key_name', ['readonly' => true, 'help' => 'Cheia nu poate fi modificată.', 'label' => 'Cheie']);
-                echo $this->Form->control('type', ['options' => $settingTypes, 'empty' => 'Selectează tipul', 'label' => 'Tip']);
-                echo $this->Form->control('description', ['type' => 'textarea', 'rows' => 3, 'label' => 'Descriere']);
-                echo $this->Form->control('value', ['type' => $valueInputType] + $valueInputOptions);
-            ?>
+            <div class="mb-3">
+                <?= $this->Form->control('key_name', ['readonly' => true, 'label' => ['class' => 'form-label', 'text' => 'Cheie'], 'class' => 'form-control']) ?>
+                <div class="form-text">Cheia nu poate fi modificată.</div>
+            </div>
+            <div class="mb-3">
+                <?= $this->Form->control('type', ['options' => $settingTypes, 'empty' => 'Selectează tipul', 'label' => ['class' => 'form-label', 'text' => 'Tip'], 'class' => 'form-select']) ?>
+            </div>
+            <div class="mb-3">
+                <?= $this->Form->control('description', ['type' => 'textarea', 'rows' => 3, 'label' => ['class' => 'form-label', 'text' => 'Descriere'], 'class' => 'form-control']) ?>
+            </div>
+            <div class="mb-3">
+                <?= $this->Form->control('value', ['type' => $valueInputType, 'label' => ['class' => 'form-label', 'text' => 'Valoare'], 'class' => $valueInputType === 'checkbox' ? 'form-check-input' : 'form-control'] + $valueInputOptions) ?>
+            </div>
         </fieldset>
-        <?= $this->Form->button(__('Trimite'), ['class' => 'btn btn-success mt-3']) ?>
+        <?= $this->Form->button(__('Trimite'), ['class' => 'btn btn-success']) ?>
         <?= $this->Form->end() ?>
     </div>
 </div>

@@ -36,16 +36,20 @@ class AppController extends BaseController
     {
         parent::beforeFilter($event);
 
-        // Check if user is authenticated
-        $result = $this->Authentication->getResult();
-        if (!$result->isValid()) {
-            // Redirect to login if not authenticated and not already on login page
-            if ($this->request->getParam('action') !== 'login') {
-                $this->Flash->error(__('You must be logged in to access the admin area.'));
+        // Override parent's allowUnauthenticated - in admin area only login/logout are allowed
+        $this->Authentication->allowUnauthenticated(['login', 'logout']);
 
-                return $this->redirect(['controller' => 'Users', 'action' => 'login', 'prefix' => 'Admin']);
-            }
-        } else {
+        // Check if user is authenticated (for non-login/logout actions)
+        $result = $this->Authentication->getResult();
+        $action = $this->request->getParam('action');
+
+        if (!in_array($action, ['login', 'logout']) && !$result->isValid()) {
+            $this->Flash->error(__('You must be logged in to access the admin area.'));
+
+            return $this->redirect(['controller' => 'Users', 'action' => 'login', 'prefix' => 'Admin']);
+        }
+
+        if ($result->isValid()) {
             // Check if user has admin role
             $user = $this->Authentication->getIdentity();
             if ($user && !in_array($user->get('role'), ['admin', 'staff'])) {

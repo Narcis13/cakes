@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Controller\AppController;
+use App\Controller\Admin\AppController;
 use Cake\Http\Exception\NotFoundException;
 use Exception;
 use Psr\Http\Message\UploadedFileInterface;

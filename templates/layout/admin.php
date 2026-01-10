@@ -237,32 +237,7 @@ $cakeDescription = 'SMUP Admin';
                                 ['class' => 'nav-link' . ($this->request->getParam('controller') === 'Files' ? ' active' : ''), 'escape' => false]
                             ) ?>
                         </li>
-                        
-                        <li class="nav-item">
-                            <span class="nav-link text-muted small text-uppercase">Automatizare</span>
-                        </li>
-                        <li class="nav-item">
-                            <?= $this->Html->link(
-                                '<i class="fas fa-project-diagram"></i> Fluxuri de lucru',
-                                ['prefix' => 'Admin', 'controller' => 'Workflows', 'action' => 'index'],
-                                ['class' => 'nav-link' . ($this->request->getParam('controller') === 'Workflows' ? ' active' : ''), 'escape' => false]
-                            ) ?>
-                        </li>
-                        <li class="nav-item">
-                            <?= $this->Html->link(
-                                '<i class="fas fa-play-circle"></i> Execuții',
-                                ['prefix' => 'Admin', 'controller' => 'WorkflowExecutions', 'action' => 'index'],
-                                ['class' => 'nav-link' . ($this->request->getParam('controller') === 'WorkflowExecutions' ? ' active' : ''), 'escape' => false]
-                            ) ?>
-                        </li>
-                        <li class="nav-item">
-                            <?= $this->Html->link(
-                                '<i class="fas fa-tasks"></i> Sarcini Manuale',
-                                ['prefix' => 'Admin', 'controller' => 'WorkflowHumanTasks', 'action' => 'index'],
-                                ['class' => 'nav-link' . ($this->request->getParam('controller') === 'WorkflowHumanTasks' ? ' active' : ''), 'escape' => false]
-                            ) ?>
-                        </li>
-                        
+
                         <li class="nav-item">
                             <span class="nav-link text-muted small text-uppercase">Sistem</span>
                         </li>

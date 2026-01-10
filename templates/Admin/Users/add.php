@@ -95,7 +95,7 @@ $this->assign('title', 'Adaugă utilizator');
                 <div class="d-flex gap-2">
                     <?= $this->Form->button(
                         '<i class="fas fa-save"></i> Salvează utilizator',
-                        ['type' => 'submit', 'class' => 'btn btn-primary', 'escape' => false]
+                        ['type' => 'submit', 'class' => 'btn btn-primary', 'escapeTitle' => false]
                     ) ?>
                     <?= $this->Html->link(
                         'Anulează',

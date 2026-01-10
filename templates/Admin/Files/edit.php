@@ -92,7 +92,7 @@
                     ) ?>
                     <?= $this->Form->button(
                         '<i class="fas fa-save"></i> Actualizează fișier',
-                        ['type' => 'submit', 'class' => 'btn btn-primary', 'escape' => false]
+                        ['type' => 'submit', 'class' => 'btn btn-primary', 'escapeTitle' => false]
                     ) ?>
                 </div>
 

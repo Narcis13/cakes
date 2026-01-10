@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\View\Cell;
 
+use Cake\ORM\TableRegistry;
 use Cake\View\Cell;
 
 /**
@@ -19,19 +20,18 @@ class FooterCell extends Cell
      */
     public function display(): void
     {
-        // Example: Fetch settings from database in the future
-        // $settingsTable = \Cake\ORM\TableRegistry::getTableLocator()->get('Settings');
-        // $contactInfo = $settingsTable->find()->where(['key_name LIKE' => 'contact_%'])->toArray();
-        // $socialLinks = $settingsTable->find()->where(['key_name LIKE' => 'social_%'])->toArray();
+        // Fetch contact settings from database
+        $settingsTable = TableRegistry::getTableLocator()->get('Settings');
+        $contactPhone = $settingsTable->find()->where(['key_name' => 'contact_phone'])->first()?->value ?? '';
+        $contactEmail = $settingsTable->find()->where(['key_name' => 'contact_email'])->first()?->value ?? '';
 
-        // For now, using static data as in the original template
         $contactInfo = [
             'name' => 'SMUPitesti',
             'address' => 'Str. Negru Voda nr. 47',
             'city' => 'Pitesti, Arges',
             'country' => 'Romania',
-            'phone' => '+40 248218090',
-            'email' => 'smupitesti@mapn.ro',
+            'phone' => $contactPhone,
+            'email' => $contactEmail,
         ];
 
         $usefulLinks = [

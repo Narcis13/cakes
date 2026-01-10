@@ -93,7 +93,7 @@ $this->assign('title', 'Editare Indisponibilitate Personal');
                 <div class="d-flex gap-2">
                     <?= $this->Form->button(
                         '<i class="fas fa-save"></i> Actualizează Indisponibilitatea',
-                        ['type' => 'submit', 'class' => 'btn btn-primary', 'escape' => false]
+                        ['type' => 'submit', 'class' => 'btn btn-primary', 'escapeTitle' => false]
                     ) ?>
                     <?= $this->Html->link(
                         'Anulează',

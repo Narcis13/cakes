@@ -4,14 +4,14 @@
  * @var iterable<\App\Model\Entity\News> $news
  */
 ?>
-<?php $this->assign('title', 'Hospital News'); ?>
+<?php $this->assign('title', 'Noutăți'); ?>
 
 <!-- ======= News Section ======= -->
 <section id="news" class="news section-bg">
     <div class="container">
         <div class="section-title">
-            <h2>Hospital News</h2>
-            <p>Stay updated with the latest news and announcements from our hospital. Find information about new services, staff updates, medical breakthroughs, and community events.</p>
+            <h2>Noutăți</h2>
+            <p>Rămâneți la curent cu ultimele noutăți și anunțuri de la spitalul nostru. Găsiți informații despre servicii noi, actualizări ale personalului și evenimente.</p>
         </div>
 
         <div class="row">
@@ -31,12 +31,9 @@
                                     ) ?>
                                 </div>
                             <?php else: ?>
-                                <div class="news-img">
+                                <div class="news-img news-img-placeholder">
                                     <?= $this->Html->link(
-                                        $this->Html->image('news-default.jpg', [
-                                            'alt' => 'News',
-                                            'class' => 'img-fluid'
-                                        ]),
+                                        '<div class="placeholder-content"><i class="bi bi-newspaper"></i><span>Noutăți</span></div>',
                                         ['action' => 'view', $article->slug],
                                         ['escape' => false]
                                     ) ?>
@@ -78,7 +75,7 @@
                                 <?php endif; ?>
 
                                 <?= $this->Html->link(
-                                    'Read More <i class="bi bi-arrow-right"></i>',
+                                    'Citește mai mult <i class="bi bi-arrow-right"></i>',
                                     ['action' => 'view', $article->slug],
                                     ['class' => 'read-more', 'escape' => false]
                                 ) ?>
@@ -88,7 +85,7 @@
                 <?php endforeach; ?>
             <?php else: ?>
                 <div class="col-12 text-center">
-                    <p class="text-muted">No news articles available at the moment. Please check back later.</p>
+                    <p class="text-muted">Nu există articole de noutăți disponibile momentan. Vă rugăm să reveniți mai târziu.</p>
                 </div>
             <?php endif; ?>
         </div>
@@ -107,7 +104,7 @@
                         </ul>
                     </nav>
                     <p class="text-center text-muted">
-                        <?= $this->Paginator->counter(__('Page {{page}} of {{pages}}, showing {{current}} article(s) out of {{count}} total')) ?>
+                        <?= $this->Paginator->counter(__('Pagina {{page}} din {{pages}}, afișând {{current}} articol(e) din {{count}} total')) ?>
                     </p>
                 </div>
             </div>
@@ -151,6 +148,42 @@
 
 .news-item:hover .news-img img {
     transform: scale(1.1);
+}
+
+.news-img-placeholder {
+    background: linear-gradient(135deg, #1977cc 0%, #2c4964 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.news-img-placeholder a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    text-decoration: none;
+}
+
+.news-img-placeholder .placeholder-content {
+    text-align: center;
+    color: #fff;
+}
+
+.news-img-placeholder .placeholder-content i {
+    font-size: 4rem;
+    display: block;
+    margin-bottom: 10px;
+    opacity: 0.9;
+}
+
+.news-img-placeholder .placeholder-content span {
+    font-size: 1.1rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    opacity: 0.9;
 }
 
 .news-content {

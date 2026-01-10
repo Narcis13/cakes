@@ -119,7 +119,7 @@
             ) ?>
             <?= $this->Form->button(
                 '<i class="fas fa-save"></i> Actualizează element',
-                ['type' => 'submit', 'class' => 'btn btn-primary', 'escape' => false]
+                ['type' => 'submit', 'class' => 'btn btn-primary', 'escapeTitle' => false]
             ) ?>
         </div>
 

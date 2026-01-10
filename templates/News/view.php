@@ -35,7 +35,7 @@
                             <?php endif; ?>
                             <span class="article-views ms-3">
                                 <i class="bi bi-eye"></i>
-                                <?= $this->Number->format($news->views_count) ?> views
+                                <?= $this->Number->format($news->views_count) ?> vizualizări
                             </span>
                         </div>
                     </div>
@@ -65,7 +65,7 @@
 
                     <!-- Share Buttons -->
                     <div class="article-share mt-5">
-                        <h5>Share this article:</h5>
+                        <h5>Distribuie acest articol:</h5>
                         <div class="share-buttons">
                             <a href="https://www.facebook.com/sharer/sharer.php?u=<?= urlencode($this->Url->build(['action' => 'view', $news->slug], ['fullBase' => true])) ?>" 
                                target="_blank" 
@@ -82,7 +82,7 @@
                                class="btn btn-linkedin">
                                 <i class="bi bi-linkedin"></i> LinkedIn
                             </a>
-                            <a href="mailto:?subject=<?= urlencode($news->title) ?>&body=<?= urlencode('Check out this article: ' . $this->Url->build(['action' => 'view', $news->slug], ['fullBase' => true])) ?>" 
+                            <a href="mailto:?subject=<?= urlencode($news->title) ?>&body=<?= urlencode('Vezi acest articol: ' . $this->Url->build(['action' => 'view', $news->slug], ['fullBase' => true])) ?>"
                                class="btn btn-email">
                                 <i class="bi bi-envelope"></i> Email
                             </a>
@@ -97,7 +97,7 @@
                     <!-- Back to News -->
                     <div class="sidebar-item mb-4">
                         <?= $this->Html->link(
-                            '<i class="bi bi-arrow-left"></i> Back to All News',
+                            '<i class="bi bi-arrow-left"></i> Înapoi la noutăți',
                             ['action' => 'index'],
                             ['class' => 'btn btn-outline-primary w-100', 'escape' => false]
                         ) ?>
@@ -106,7 +106,7 @@
                     <!-- Author Info -->
                     <?php if ($news->staff): ?>
                         <div class="sidebar-item author-info">
-                            <h4 class="sidebar-title">About the Author</h4>
+                            <h4 class="sidebar-title">Despre autor</h4>
                             <div class="author-card">
                                 <?php if ($news->staff->photo): ?>
                                     <div class="author-photo mb-3">
@@ -134,20 +134,20 @@
 
                     <!-- Quick Contact -->
                     <div class="sidebar-item contact-info">
-                        <h4 class="sidebar-title">Need More Information?</h4>
+                        <h4 class="sidebar-title">Aveți nevoie de mai multe informații?</h4>
                         <div class="contact-card">
-                            <p>For more information about this news or our services, please contact us:</p>
+                            <p>Pentru mai multe informații despre această noutate sau serviciile noastre, contactați-ne:</p>
                             <p class="mb-2">
                                 <i class="bi bi-telephone"></i>
-                                <strong>Phone:</strong> +1 5589 55488 55
+                                <strong>Telefon:</strong> <?= h($contactPhone) ?>
                             </p>
                             <p class="mb-2">
                                 <i class="bi bi-envelope"></i>
-                                <strong>Email:</strong> info@hospital.com
+                                <strong>Email:</strong> <?= h($contactEmail) ?>
                             </p>
                             <?= $this->Html->link(
-                                'Contact Us',
-                                ['controller' => 'Pages', 'action' => 'contact'],
+                                'Contactați-ne',
+                                '/formular-contact',
                                 ['class' => 'btn btn-primary btn-sm mt-3']
                             ) ?>
                         </div>

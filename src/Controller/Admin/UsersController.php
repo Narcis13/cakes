@@ -20,10 +20,15 @@ class UsersController extends AppController
      */
     public function beforeFilter(EventInterface $event)
     {
-        // Skip parent beforeFilter for login action
-        if ($this->request->getParam('action') === 'login') {
-            // Call grandparent (AppController) initialize but skip Admin AppController beforeFilter
-            \App\Controller\AppController::beforeFilter($event);
+        // For login/logout actions, allow unauthenticated access
+        // without going through full Admin beforeFilter checks
+        $action = $this->request->getParam('action');
+        if (in_array($action, ['login', 'logout'])) {
+            // Call Cake base controller beforeFilter
+            \Cake\Controller\Controller::beforeFilter($event);
+
+            // Explicitly allow login/logout without authentication
+            $this->Authentication->allowUnauthenticated(['login', 'logout']);
 
             return;
         }
@@ -38,6 +43,9 @@ class UsersController extends AppController
      */
     public function login()
     {
+        // Use minimal login layout without sidebar
+        $this->viewBuilder()->setLayout('admin_login');
+
         $this->request->allowMethod(['get', 'post']);
         $result = $this->Authentication->getResult();
 

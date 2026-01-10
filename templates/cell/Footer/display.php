@@ -6,11 +6,10 @@
                 <div class="col-lg-3 col-md-6 footer-contact">
                     <h4>Spitalul Militar de Urgenta Dr. Ion Jianu Pitesti</h4>
                     <p>
-                        Str. Negru Voda nr. 47 <br>
-                        Pitesti<br>
-                        Arges <br><br>
-                        <strong>Telefon:</strong> 0248218090<br>
-                        <strong>Email:</strong> smupitesti@mapn.ro<br>
+                        <?= h($contactInfo['address']) ?> <br>
+                        <?= h($contactInfo['city']) ?><br><br>
+                        <strong>Telefon:</strong> <?= h($contactInfo['phone']) ?><br>
+                        <strong>Email:</strong> <?= h($contactInfo['email']) ?><br>
                     </p>
                 </div>
 

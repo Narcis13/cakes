@@ -57,7 +57,7 @@
         <div class="col-md-2 d-flex align-items-end">
             <?= $this->Form->button(
                 '<i class="fas fa-search"></i> Filtrează',
-                ['type' => 'submit', 'class' => 'btn btn-outline-primary', 'escape' => false]
+                ['type' => 'submit', 'class' => 'btn btn-outline-primary', 'escapeTitle' => false]
             ) ?>
         </div>
         <?= $this->Form->end() ?>

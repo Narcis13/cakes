@@ -35,11 +35,11 @@
             </tr>
             <tr>
                 <th><?= __('Creat') ?></th>
-                <td><?= h($setting->created->format('d.m.Y H:i:s')) ?></td>
+                <td><?= $setting->created ? h($setting->created->format('d.m.Y H:i:s')) : '-' ?></td>
             </tr>
             <tr>
                 <th><?= __('Modificat') ?></th>
-                <td><?= h($setting->modified->format('d.m.Y H:i:s')) ?></td>
+                <td><?= $setting->modified ? h($setting->modified->format('d.m.Y H:i:s')) : '-' ?></td>
             </tr>
         </table>
         <div class="text">
