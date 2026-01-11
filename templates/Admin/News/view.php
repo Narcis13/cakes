@@ -69,7 +69,7 @@
                     <h5 class="mb-0"><i class="fas fa-file-alt"></i> Conținut</h5>
                 </div>
                 <div class="card-body">
-                    <?= $newsItem->content ?>
+                    <?= $this->Purifier->clean($newsItem->content) ?>
                 </div>
             </div>
         </div>

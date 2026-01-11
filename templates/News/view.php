@@ -59,7 +59,7 @@
                         <?php endif; ?>
                         
                         <div class="article-body">
-                            <?= $news->content ?>
+                            <?= $this->Purifier->clean($news->content) ?>
                         </div>
                     </div>
 
