@@ -164,17 +164,20 @@
                 <?= $this->Html->link(__('Anulează'), ['action' => 'index'], [
                     'class' => 'btn btn-secondary ms-2'
                 ]) ?>
+            </div>
+
+            <?= $this->Form->end() ?>
+
+            <div class="mt-3">
                 <?= $this->Form->postLink(
                     __('Șterge departament'),
                     ['action' => 'delete', $department->id],
                     [
-                        'class' => 'btn btn-danger ms-2',
+                        'class' => 'btn btn-danger',
                         'confirm' => __('Sunteți sigur că doriți să ștergeți "{0}"?', $department->name)
                     ]
                 ) ?>
             </div>
-
-            <?= $this->Form->end() ?>
         </div>
     </div>
 </div>

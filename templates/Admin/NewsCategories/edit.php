@@ -62,16 +62,19 @@
                             ['action' => 'view', $newsCategory->id],
                             ['class' => 'btn btn-outline-secondary ms-2']
                         ) ?>
+                    </div>
+
+                    <?= $this->Form->end() ?>
+
+                    <div class="mt-3">
                         <?= $this->Form->postLink(__('Șterge'),
                             ['action' => 'delete', $newsCategory->id],
                             [
                                 'confirm' => __('Sigur doriți să ștergeți această categorie? Această acțiune nu poate fi anulată.'),
-                                'class' => 'btn btn-outline-danger ms-2'
+                                'class' => 'btn btn-outline-danger'
                             ]
                         ) ?>
                     </div>
-
-                    <?= $this->Form->end() ?>
                 </div>
             </div>
         </div>

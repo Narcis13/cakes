@@ -74,7 +74,17 @@
                         </div>
                     </div>
 
-                    <div class="d-flex justify-content-between">
+                    <div class="d-flex justify-content-end gap-2">
+                        <?= $this->Html->link(__('Anuleaza'), ['action' => 'index'], ['class' => 'btn btn-secondary']) ?>
+                        <?= $this->Form->button('<i class="fas fa-save"></i> ' . __('Salveaza'), [
+                            'class' => 'btn btn-primary',
+                            'escape' => false
+                        ]) ?>
+                    </div>
+
+                    <?= $this->Form->end() ?>
+
+                    <div class="mt-3">
                         <?= $this->Form->postLink(
                             '<i class="fas fa-trash"></i> ' . __('Sterge'),
                             ['action' => 'delete', $galleryItem->id],
@@ -84,16 +94,7 @@
                                 'confirm' => __('Sigur doriti sa stergeti aceasta imagine din galerie?')
                             ]
                         ) ?>
-                        <div class="d-flex gap-2">
-                            <?= $this->Html->link(__('Anuleaza'), ['action' => 'index'], ['class' => 'btn btn-secondary']) ?>
-                            <?= $this->Form->button('<i class="fas fa-save"></i> ' . __('Salveaza'), [
-                                'class' => 'btn btn-primary',
-                                'escape' => false
-                            ]) ?>
-                        </div>
                     </div>
-
-                    <?= $this->Form->end() ?>
                 </div>
             </div>
         </div>

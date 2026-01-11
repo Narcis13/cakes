@@ -73,16 +73,19 @@
                     ['action' => 'view', $specialization->id],
                     ['class' => 'btn btn-outline-secondary ms-2']
                 ) ?>
+            </div>
+            <?= $this->Form->end() ?>
+
+            <div class="mt-3">
                 <?= $this->Form->postLink(
                     __('Șterge'),
                     ['action' => 'delete', $specialization->id],
                     [
                         'confirm' => __('Sunteți sigur că doriți să ștergeți "{0}"? Această acțiune nu poate fi anulată.', $specialization->name),
-                        'class' => 'btn btn-outline-danger ms-2'
+                        'class' => 'btn btn-outline-danger'
                     ]
                 ) ?>
             </div>
-            <?= $this->Form->end() ?>
         </div>
     </div>
 </div>

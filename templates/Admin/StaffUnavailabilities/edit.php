@@ -100,18 +100,21 @@ $this->assign('title', 'Editare Indisponibilitate Personal');
                         ['action' => 'index'],
                         ['class' => 'btn btn-secondary']
                     ) ?>
+                </div>
+
+                <?= $this->Form->end() ?>
+
+                <div class="mt-3">
                     <?= $this->Form->postLink(
                         '<i class="fas fa-trash"></i> Ștergere',
                         ['action' => 'delete', $staffUnavailability->id],
                         [
-                            'class' => 'btn btn-danger ms-auto',
+                            'class' => 'btn btn-danger',
                             'confirm' => 'Sigur doriți să ștergeți această perioadă de indisponibilitate?',
                             'escape' => false
                         ]
                     ) ?>
                 </div>
-
-                <?= $this->Form->end() ?>
             </div>
         </div>
     </div>

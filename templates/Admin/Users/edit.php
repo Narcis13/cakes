@@ -124,18 +124,21 @@ $this->assign('title', 'Editează utilizator');
                         ['action' => 'index'],
                         ['class' => 'btn btn-secondary']
                     ) ?>
+                </div>
+
+                <?= $this->Form->end() ?>
+
+                <div class="mt-3">
                     <?= $this->Form->postLink(
                         '<i class="fas fa-trash"></i> Șterge',
                         ['action' => 'delete', $user->id],
                         [
-                            'class' => 'btn btn-danger ms-auto',
+                            'class' => 'btn btn-danger',
                             'confirm' => 'Ești sigur că vrei să ștergi acest utilizator?',
                             'escape' => false
                         ]
                     ) ?>
                 </div>
-
-                <?= $this->Form->end() ?>
             </div>
         </div>
     </div>

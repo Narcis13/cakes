@@ -100,18 +100,21 @@ $this->assign('title', 'Editare Sărbătoare Spital');
                         ['action' => 'index'],
                         ['class' => 'btn btn-secondary']
                     ) ?>
+                </div>
+
+                <?= $this->Form->end() ?>
+
+                <div class="mt-3">
                     <?= $this->Form->postLink(
                         '<i class="fas fa-trash"></i> Ștergere',
                         ['action' => 'delete', $hospitalHoliday->id],
                         [
-                            'class' => 'btn btn-danger ms-auto',
+                            'class' => 'btn btn-danger',
                             'confirm' => 'Sigur doriți să ștergeți această sărbătoare?',
                             'escape' => false
                         ]
                     ) ?>
                 </div>
-
-                <?= $this->Form->end() ?>
             </div>
         </div>
     </div>

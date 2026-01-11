@@ -196,17 +196,20 @@
                     ['action' => 'view', $newsItem->id],
                     ['class' => 'btn btn-outline-secondary']
                 ) ?>
-                <?= $this->Form->postLink(__('Șterge'),
-                    ['action' => 'delete', $newsItem->id],
-                    [
-                        'confirm' => __('Sigur doriți să ștergeți acest articol? Această acțiune nu poate fi anulată.'),
-                        'class' => 'btn btn-outline-danger'
-                    ]
-                ) ?>
             </div>
         </div>
     </div>
     <?= $this->Form->end() ?>
+
+    <div class="mt-3">
+        <?= $this->Form->postLink(__('Șterge'),
+            ['action' => 'delete', $newsItem->id],
+            [
+                'confirm' => __('Sigur doriți să ștergeți acest articol? Această acțiune nu poate fi anulată.'),
+                'class' => 'btn btn-outline-danger'
+            ]
+        ) ?>
+    </div>
 </div>
 
 <script>
