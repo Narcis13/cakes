@@ -5,7 +5,7 @@
  */
 ?>
 
-<?php $this->assign('title', 'Contact Us - City General Hospital'); ?>
+<?php $this->assign('title', 'Contact Us - Spitalul Militar Pitesti'); ?>
 
 <style>
     .contact-hero {
@@ -153,7 +153,7 @@
                     </div>
                     <h4 class="text-center mb-3">Location</h4>
                     <div class="text-center">
-                        <p><strong>City General Hospital</strong><br>
+                        <p><strong>Spitalul Militar Pitesti</strong><br>
                         123 Medical Center Drive<br>
                         Healthcare City, HC 12345</p>
                         <p><strong>Parking:</strong> Free patient parking available</p>

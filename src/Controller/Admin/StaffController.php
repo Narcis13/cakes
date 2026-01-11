@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Controller\AppController;
 use Cake\Core\Configure;
 use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\Http\Exception\BadRequestException;
@@ -297,9 +296,9 @@ class StaffController extends AppController
     {
         $this->request->allowMethod(['post']);
 
-        if (!$this->request->is('ajax')) {
-            throw new BadRequestException('This action only accepts AJAX requests.');
-        }
+        // Always return JSON response for this action
+        $this->viewBuilder()->setClassName('Json');
+        $this->autoRender = false;
 
         $data = $this->request->getData();
         $staffId = $data['staff_id'] ?? null;
@@ -347,9 +346,11 @@ class StaffController extends AppController
                 throw new Exception('Resend API key not configured or using default placeholder');
             }
 
-            // Use verified domain for production
-            $senderEmail = 'office@eleventen.live';
-            $senderName = 'SMU Pitesti';
+            // Get sender email from database settings
+            // Fallback to Resend's testing domain if not configured
+            $siteSettings = $this->fetchTable('SiteSettings');
+            $senderEmail = $siteSettings->getValue('sender_email', 'onboarding@resend.dev');
+            $senderName = $siteSettings->getValue('sender_name', 'SMU Pitesti');
 
             // Initialize Resend client
             $resend = Resend::client($resendApiKey);

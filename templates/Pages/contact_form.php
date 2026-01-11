@@ -10,7 +10,7 @@
  */
 ?>
 
-<?php $this->assign('title', 'Formular de Contact - City General Hospital'); ?>
+<?php $this->assign('title', 'Formular de Contact - Spitalul Militar Pitesti'); ?>
 
 <style>
     .contact-hero {

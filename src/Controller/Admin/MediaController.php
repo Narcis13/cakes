@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Controller\AppController;
+use Cake\Event\EventInterface;
 use Psr\Http\Message\UploadedFileInterface;
 
 /**
@@ -20,6 +20,22 @@ class MediaController extends AppController
     {
         parent::initialize();
         $this->viewBuilder()->setLayout('admin');
+    }
+
+    /**
+     * Before filter callback.
+     *
+     * @param \Cake\Event\EventInterface $event The beforeFilter event.
+     * @return \Cake\Http\Response|null|void
+     */
+    public function beforeFilter(EventInterface $event)
+    {
+        parent::beforeFilter($event);
+
+        // Unlock AJAX actions from FormProtection
+        if ($this->components()->has('FormProtection')) {
+            $this->FormProtection->setConfig('unlockedActions', ['upload', 'deleteFile', 'browse']);
+        }
     }
 
     /**
@@ -75,6 +91,52 @@ class MediaController extends AppController
                 'success' => $successCount > 0,
                 'message' => "{$successCount} of {$totalCount} files uploaded successfully",
                 'results' => $results,
+            ]));
+    }
+
+    /**
+     * Browse method - Return JSON list of files for TinyMCE file picker
+     *
+     * @return \Cake\Http\Response JSON response
+     */
+    public function browse()
+    {
+        $this->autoRender = false;
+
+        $uploadsDir = WWW_ROOT . 'img' . DS . 'uploads';
+        $files = [];
+
+        if (is_dir($uploadsDir)) {
+            $scannedFiles = array_diff(scandir($uploadsDir), ['.', '..']);
+
+            foreach ($scannedFiles as $file) {
+                $filePath = $uploadsDir . DS . $file;
+                if (is_file($filePath)) {
+                    $fileInfo = pathinfo($file);
+                    $extension = strtolower($fileInfo['extension'] ?? '');
+                    $isImage = in_array($extension, ['jpg', 'jpeg', 'png', 'gif', 'webp']);
+
+                    // Only return images for TinyMCE image picker
+                    if ($isImage) {
+                        $files[] = [
+                            'filename' => $file,
+                            'title' => $fileInfo['filename'],
+                            'url' => '/img/uploads/' . $file,
+                            'size' => filesize($filePath),
+                            'date' => date('Y-m-d H:i:s', filemtime($filePath)),
+                        ];
+                    }
+                }
+            }
+
+            // Sort by date descending (newest first)
+            usort($files, fn($a, $b) => strtotime($b['date']) - strtotime($a['date']));
+        }
+
+        return $this->response->withType('application/json')
+            ->withStringBody(json_encode([
+                'success' => true,
+                'files' => $files,
             ]));
     }
 

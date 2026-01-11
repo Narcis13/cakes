@@ -3,7 +3,7 @@
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\User $user
  */
-$this->assign('title', 'View User');
+$this->assign('title', 'Vizualizare utilizator');
 ?>
 
 <div class="row">
@@ -11,16 +11,16 @@ $this->assign('title', 'View User');
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1>
                 <i class="fas fa-user"></i>
-                View User
+                Vizualizare utilizator
             </h1>
             <div>
                 <?= $this->Html->link(
-                    '<i class="fas fa-edit"></i> Edit',
+                    '<i class="fas fa-edit"></i> Editează',
                     ['action' => 'edit', $user->id],
                     ['class' => 'btn btn-primary', 'escape' => false]
                 ) ?>
                 <?= $this->Html->link(
-                    '<i class="fas fa-arrow-left"></i> Back to Users',
+                    '<i class="fas fa-arrow-left"></i> Înapoi la utilizatori',
                     ['action' => 'index'],
                     ['class' => 'btn btn-secondary', 'escape' => false]
                 ) ?>
@@ -40,46 +40,46 @@ $this->assign('title', 'View User');
                             <td><?= h($user->email) ?></td>
                         </tr>
                         <tr>
-                            <th>Role</th>
+                            <th>Rol</th>
                             <td>
                                 <?php
                                     $roleClass = $user->role === 'admin' ? 'bg-danger' : 'bg-info';
-                                    $roleLabel = $user->role === 'admin' ? 'Administrator' : 'Staff Member';
+                                    $roleLabel = $user->role === 'admin' ? 'Administrator' : 'Membru personal';
                                 ?>
                                 <span class="badge <?= $roleClass ?>"><?= $roleLabel ?></span>
                             </td>
                         </tr>
                         <tr>
-                            <th>Created</th>
-                            <td><?= $user->created ? $user->created->format('F j, Y, g:i a') : 'N/A' ?></td>
+                            <th>Creat</th>
+                            <td><?= $user->created ? $user->created->format('d F Y, H:i') : 'N/A' ?></td>
                         </tr>
                         <tr>
-                            <th>Last Modified</th>
-                            <td><?= $user->modified ? $user->modified->format('F j, Y, g:i a') : 'N/A' ?></td>
+                            <th>Ultima modificare</th>
+                            <td><?= $user->modified ? $user->modified->format('d F Y, H:i') : 'N/A' ?></td>
                         </tr>
                     </tbody>
                 </table>
 
                 <div class="mt-4">
-                    <h3>Role Permissions</h3>
+                    <h3>Permisiuni rol</h3>
                     <div class="alert alert-info">
                         <?php if ($user->role === 'admin'): ?>
                             <i class="fas fa-shield-alt"></i>
-                            <strong>Administrator Access:</strong>
+                            <strong>Acces administrator:</strong>
                             <ul class="mb-0 mt-2">
-                                <li>Full access to all admin panel features</li>
-                                <li>Can manage users and assign roles</li>
-                                <li>Can modify all content and settings</li>
-                                <li>Can view system reports and analytics</li>
+                                <li>Acces complet la toate funcționalitățile panoului de administrare</li>
+                                <li>Poate gestiona utilizatorii și atribui roluri</li>
+                                <li>Poate modifica tot conținutul și setările</li>
+                                <li>Poate vizualiza rapoartele și analizele sistemului</li>
                             </ul>
                         <?php else: ?>
                             <i class="fas fa-user"></i>
-                            <strong>Staff Member Access:</strong>
+                            <strong>Acces membru personal:</strong>
                             <ul class="mb-0 mt-2">
-                                <li>Can manage content (pages, news, etc.)</li>
-                                <li>Can upload and manage files</li>
-                                <li>Cannot manage users or system settings</li>
-                                <li>Limited access to reports</li>
+                                <li>Poate gestiona conținutul (pagini, noutăți, etc.)</li>
+                                <li>Poate încărca și gestiona fișiere</li>
+                                <li>Nu poate gestiona utilizatori sau setările sistemului</li>
+                                <li>Acces limitat la rapoarte</li>
                             </ul>
                         <?php endif; ?>
                     </div>
@@ -87,16 +87,16 @@ $this->assign('title', 'View User');
 
                 <div class="d-flex gap-2 mt-4">
                     <?= $this->Html->link(
-                        '<i class="fas fa-edit"></i> Edit User',
+                        '<i class="fas fa-edit"></i> Editează utilizator',
                         ['action' => 'edit', $user->id],
                         ['class' => 'btn btn-primary', 'escape' => false]
                     ) ?>
                     <?= $this->Form->postLink(
-                        '<i class="fas fa-trash"></i> Delete User',
+                        '<i class="fas fa-trash"></i> Șterge utilizator',
                         ['action' => 'delete', $user->id],
                         [
                             'class' => 'btn btn-danger',
-                            'confirm' => 'Are you sure you want to delete this user?',
+                            'confirm' => 'Ești sigur că vrei să ștergi acest utilizator?',
                             'escape' => false
                         ]
                     ) ?>

@@ -49,6 +49,15 @@ class AppointmentsTable extends Table
         $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
+        $this->addBehavior('Auditable', [
+            'excludeFields' => [
+                'modified',
+                'created',
+                'confirmation_token',
+                'reminded_24h',
+                'reminded_2h',
+            ],
+        ]);
 
         $this->belongsTo('Services', [
             'foreignKey' => 'service_id',

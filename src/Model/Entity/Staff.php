@@ -51,8 +51,8 @@ class Staff extends Entity
         'years_experience' => true,
         'staff_type' => true,
         'is_active' => true,
-        'created' => true,
-        'modified' => true,
+        'created' => false,
+        'modified' => false,
         'department' => true,
     ];
 

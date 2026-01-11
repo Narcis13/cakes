@@ -168,7 +168,7 @@ class PagesController extends AppController
         switch ($page) {
             case 'index':
                 $this->set([
-                    'title' => 'Welcome to City General Hospital',
+                    'title' => 'Spitalul Militar Pitesti',
                     'description' => 'Excellence in healthcare with compassionate care for over 50 years. 24/7 emergency services, specialist care, and comprehensive medical services.',
                     'keywords' => 'hospital, healthcare, emergency, medical services, doctors, appointments',
                 ]);
@@ -176,15 +176,15 @@ class PagesController extends AppController
 
             case 'contact':
                 $this->set([
-                    'title' => 'Contact Us - City General Hospital',
-                    'description' => 'Get in touch with City General Hospital. Contact information, directions, and online contact form. 24/7 emergency services available.',
+                    'title' => 'Contact Us - Spitalul Militar Pitesti',
+                    'description' => 'Get in touch with Spitalul Militar Pitesti. Contact information, directions, and online contact form. 24/7 emergency services available.',
                     'keywords' => 'contact, hospital, emergency, phone, address, directions',
                 ]);
                 break;
 
             case 'contact_form':
                 $this->set([
-                    'title' => 'Formular de Contact - City General Hospital',
+                    'title' => 'Formular de Contact - Spitalul Militar Pitesti',
                     'description' => 'Completați formularul de contact pentru a ne trimite un mesaj. Vă vom răspunde în cel mai scurt timp.',
                     'keywords' => 'formular, contact, mesaj, spital, comunicare',
                 ]);
@@ -192,15 +192,15 @@ class PagesController extends AppController
 
             case 'about':
                 $this->set([
-                    'title' => 'About Us - City General Hospital',
-                    'description' => 'Learn about City General Hospital - our history, mission, values, and commitment to providing exceptional healthcare to our community.',
+                    'title' => 'About Us - Spitalul Militar Pitesti',
+                    'description' => 'Learn about Spitalul Militar Pitesti - our history, mission, values, and commitment to providing exceptional healthcare to our community.',
                     'keywords' => 'about, hospital history, mission, values, healthcare',
                 ]);
                 break;
 
             case 'services':
                 $this->set([
-                    'title' => 'Medical Services - City General Hospital',
+                    'title' => 'Medical Services - Spitalul Militar Pitesti',
                     'description' => 'Comprehensive medical services including emergency care, cardiology, pediatrics, surgery, imaging, and specialized treatments.',
                     'keywords' => 'medical services, emergency, cardiology, pediatrics, surgery, imaging',
                 ]);
@@ -208,7 +208,7 @@ class PagesController extends AppController
 
             case 'emergency':
                 $this->set([
-                    'title' => 'Emergency Services - City General Hospital',
+                    'title' => 'Emergency Services - Spitalul Militar Pitesti',
                     'description' => '24/7 Emergency Department with advanced life support, trauma care, and rapid response team. Call 911 for emergencies.',
                     'keywords' => 'emergency, 911, trauma, urgent care, emergency room',
                 ]);
@@ -216,8 +216,8 @@ class PagesController extends AppController
 
             default:
                 $this->set([
-                    'title' => 'City General Hospital',
-                    'description' => 'City General Hospital - Your trusted healthcare provider',
+                    'title' => 'Spitalul Militar Pitesti',
+                    'description' => 'Spitalul Militar Pitesti - Your trusted healthcare provider',
                     'keywords' => 'hospital, healthcare, medical',
                 ]);
         }
@@ -235,8 +235,8 @@ class PagesController extends AppController
 
         // Set global variables for all pages
         $this->set([
-            'cakeDescription' => 'City General Hospital',
-            'hospitalName' => 'City General Hospital',
+            'cakeDescription' => 'Spitalul Militar Pitesti',
+            'hospitalName' => 'Spitalul Militar Pitesti',
             'hospitalPhone' => '(555) 123-4567',
             'emergencyPhone' => '911',
             'hospitalAddress' => '123 Medical Center Drive, Healthcare City, HC 12345',

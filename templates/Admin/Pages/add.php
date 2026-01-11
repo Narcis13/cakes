@@ -4,13 +4,13 @@
  * @var \App\Model\Entity\Page $page
  */
 ?>
-<?php $this->assign('title', 'Add Page'); ?>
+<?php $this->assign('title', 'Adaugă pagină'); ?>
 
 <div class="pages form content">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3><?= __('Add Page') ?></h3>
+        <h3><?= __('Adaugă pagină') ?></h3>
         <?= $this->Html->link(
-            '<i class="fas fa-arrow-left"></i> Back to Pages',
+            '<i class="fas fa-arrow-left"></i> Înapoi la pagini',
             ['action' => 'index'],
             ['class' => 'btn btn-outline-secondary', 'escape' => false]
         ) ?>
@@ -24,42 +24,42 @@
                         <div class="mb-3">
                             <?= $this->Form->control('title', [
                                 'class' => 'form-control',
-                                'label' => ['class' => 'form-label'],
+                                'label' => ['class' => 'form-label', 'text' => 'Titlu'],
                                 'required' => true
                             ]) ?>
                         </div>
-                        
+
                         <div class="mb-3">
                             <?= $this->Form->control('slug', [
                                 'class' => 'form-control',
-                                'label' => ['class' => 'form-label'],
-                                'help' => 'Leave blank to auto-generate from title'
+                                'label' => ['class' => 'form-label', 'text' => 'Slug'],
+                                'help' => 'Lăsați gol pentru generare automată din titlu'
                             ]) ?>
                         </div>
-                        
+
                         <div class="mb-3">
                             <?= $this->Form->control('content', [
                                 'type' => 'textarea',
                                 'class' => 'form-control',
-                                'label' => ['class' => 'form-label', 'text' => 'Page Content (Optional)'],
+                                'label' => ['class' => 'form-label', 'text' => 'Conținut pagină (opțional)'],
                                 'rows' => 6,
-                                'help' => 'This is optional. You can build your page using components instead.'
+                                'help' => 'Aceasta este opțional. Puteți construi pagina folosind componente în schimb.'
                             ]) ?>
                         </div>
-                        
+
                         <div class="mb-3">
                             <?= $this->Form->control('meta_description', [
                                 'class' => 'form-control',
-                                'label' => ['class' => 'form-label'],
-                                'help' => 'SEO meta description (max 160 characters)'
+                                'label' => ['class' => 'form-label', 'text' => 'Descriere meta'],
+                                'help' => 'Descriere meta SEO (maxim 160 caractere)'
                             ]) ?>
                         </div>
                     </div>
-                    
+
                     <div class="col-md-4">
                         <div class="card">
                             <div class="card-header">
-                                <h5 class="card-title mb-0">Publishing</h5>
+                                <h5 class="card-title mb-0">Publicare</h5>
                             </div>
                             <div class="card-body">
                                 <div class="mb-3">
@@ -68,31 +68,31 @@
                                             'class' => 'form-check-input',
                                             'checked' => true
                                         ]) ?>
-                                        <?= $this->Form->label('is_published', 'Published', [
+                                        <?= $this->Form->label('is_published', 'Publicat', [
                                             'class' => 'form-check-label'
                                         ]) ?>
                                     </div>
                                 </div>
-                                
+
                                 <div class="mb-3">
                                     <?= $this->Form->control('template', [
                                         'class' => 'form-control',
-                                        'label' => ['class' => 'form-label'],
-                                        'empty' => 'Default Template',
-                                        'help' => 'Custom template file (optional)'
+                                        'label' => ['class' => 'form-label', 'text' => 'Șablon'],
+                                        'empty' => 'Șablon implicit',
+                                        'help' => 'Fișier șablon personalizat (opțional)'
                                     ]) ?>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="mt-4">
-                    <?= $this->Form->button('Save Page', [
+                    <?= $this->Form->button('Salvează pagina', [
                         'class' => 'btn btn-primary'
                     ]) ?>
                     <?= $this->Html->link(
-                        'Cancel',
+                        'Anulează',
                         ['action' => 'index'],
                         ['class' => 'btn btn-secondary ms-2']
                     ) ?>
@@ -107,7 +107,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Auto-generate slug from title
     const titleInput = document.getElementById('title');
     const slugInput = document.getElementById('slug');
-    
+
     titleInput.addEventListener('input', function() {
         if (!slugInput.value) {
             const slug = this.value

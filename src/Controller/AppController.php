@@ -51,7 +51,7 @@ class AppController extends Controller
          * Enable the following component for recommended CakePHP form protection settings.
          * see https://book.cakephp.org/5/en/controllers/components/form-protection.html
          */
-        //$this->loadComponent('FormProtection');
+        $this->loadComponent('FormProtection');
     }
 
     /**
@@ -64,13 +64,17 @@ class AppController extends Controller
     {
         parent::beforeFilter($event);
 
-        // Allow public access to all actions by default
-        // Admin controllers will override this to require authentication
-        $this->Authentication->allowUnauthenticated([
-            'index', 'view', 'display', 'page', 'contact', 'contactForm', 
-            'login', 'logout', 'register', 'book', 'checkAvailability', 
-            'getAvailableSlots', 'success', 'emergency', 'cardiology', 
-            'pediatrics', 'radiology', 'category', 'search', 'submit'
-        ]);
+        // Only allow public access for non-admin routes
+        // Admin prefix has its own authentication handling
+        $prefix = $this->request->getParam('prefix');
+        if ($prefix !== 'Admin') {
+            // Allow public access to common public actions
+            $this->Authentication->allowUnauthenticated([
+                'index', 'view', 'display', 'page', 'contact', 'contactForm',
+                'login', 'logout', 'register', 'book', 'checkAvailability',
+                'getAvailableSlots', 'success', 'emergency', 'cardiology',
+                'pediatrics', 'radiology', 'category', 'search', 'submit',
+            ]);
+        }
     }
 }

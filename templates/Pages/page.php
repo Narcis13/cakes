@@ -29,7 +29,7 @@
                                 
                                 <div class="component-content">
                                     <?php if ($component->type === 'html'): ?>
-                                        <?= nl2br(h($component->content)) ?>
+                                        <?= $this->Purifier->clean($component->content) ?>
                                     <?php elseif ($component->type === 'image'): ?>
                                         <div class="text-center">
                                             <img src="<?= h($component->url) ?>" 

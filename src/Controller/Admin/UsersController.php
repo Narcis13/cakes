@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Service\LoginSecurityService;
+use Cake\Controller\Controller;
 use Cake\Event\EventInterface;
 
 /**
@@ -20,10 +22,15 @@ class UsersController extends AppController
      */
     public function beforeFilter(EventInterface $event)
     {
-        // Skip parent beforeFilter for login action
-        if ($this->request->getParam('action') === 'login') {
-            // Call grandparent (AppController) initialize but skip Admin AppController beforeFilter
-            \App\Controller\AppController::beforeFilter($event);
+        // For login/logout actions, allow unauthenticated access
+        // without going through full Admin beforeFilter checks
+        $action = $this->request->getParam('action');
+        if (in_array($action, ['login', 'logout'])) {
+            // Call Cake base controller beforeFilter
+            Controller::beforeFilter($event);
+
+            // Explicitly allow login/logout without authentication
+            $this->Authentication->allowUnauthenticated(['login', 'logout']);
 
             return;
         }
@@ -38,34 +45,73 @@ class UsersController extends AppController
      */
     public function login()
     {
+        // Use minimal login layout without sidebar
+        $this->viewBuilder()->setLayout('admin_login');
+
         $this->request->allowMethod(['get', 'post']);
         $result = $this->Authentication->getResult();
 
-        // Debug logging
+        // Initialize login security service
+        $loginSecurity = new LoginSecurityService();
+
         if ($this->request->is('post')) {
             $data = $this->request->getData();
-            $this->log('Login attempt for: ' . ($data['email'] ?? 'no email'), 'debug');
-            $this->log('Authentication result: ' . ($result ? $result->getStatus() : 'no result'), 'debug');
-            if ($result) {
-                $this->log('Result errors: ' . json_encode($result->getErrors()), 'debug');
+            $email = $data['email'] ?? '';
+            $ipAddress = $this->request->clientIp();
+            $userAgent = $this->request->getHeaderLine('User-Agent');
+
+            // Debug logging (without PII)
+            $this->log('Login attempt received', 'debug');
+
+            // Check if login is allowed (rate limiting)
+            $loginCheck = $loginSecurity->isLoginAllowed($email, $ipAddress);
+            if (!$loginCheck['allowed']) {
+                $this->Flash->error(__($loginCheck['reason']));
+
+                return null;
             }
+
+            // Check authentication result
+            if ($result && $result->isValid()) {
+                // Record successful login and clear failed attempts
+                $loginSecurity->recordLoginAttempt($email, $ipAddress, $userAgent, true);
+                $loginSecurity->clearAttemptsOnSuccess($email, $ipAddress);
+
+                // Validate redirect URL - only allow internal admin paths
+                $redirect = $this->validateRedirectUrl($this->request->getQuery('redirect'));
+
+                return $this->redirect($redirect);
+            }
+
+            // Authentication failed - record the attempt
+            $loginSecurity->recordLoginAttempt($email, $ipAddress, $userAgent, false);
+            $this->Flash->error(__('Invalid email or password'));
+
+            return null;
         }
 
-        // Redirect if already logged in
+        // Redirect if already logged in (GET request)
         if ($result && $result->isValid()) {
-            $redirect = $this->request->getQuery('redirect', [
+            return $this->redirect([
                 'controller' => 'Dashboard',
                 'action' => 'index',
                 'prefix' => 'Admin',
             ]);
-
-            return $this->redirect($redirect);
         }
+    }
 
-        // Display error if user submitted and authentication failed
-        if ($this->request->is('post') && !$result->isValid()) {
-            $this->Flash->error(__('Invalid email or password'));
-        }
+    /**
+     * Validate redirect URL to prevent open redirect vulnerability.
+     * Only allows internal admin paths.
+     *
+     * @param mixed $redirect The redirect value from query string
+     * @return array The validated redirect array
+     */
+    private function validateRedirectUrl(mixed $redirect): array
+    {
+        $default = ['controller' => 'Dashboard', 'action' => 'index', 'prefix' => 'Admin'];
+        // Only allow Admin prefix routes - always redirect to dashboard for security
+        return $default;
     }
 
     /**

@@ -7,9 +7,9 @@
  */
 ?>
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2><i class="fas fa-file-alt"></i> File Manager</h2>
+    <h2><i class="fas fa-file-alt"></i> Manager fișiere</h2>
     <?= $this->Html->link(
-        '<i class="fas fa-plus"></i> Upload File',
+        '<i class="fas fa-plus"></i> Încarcă fișier',
         ['action' => 'add'],
         ['class' => 'btn btn-primary', 'escape' => false]
     ) ?>
@@ -23,8 +23,8 @@
             <?= $this->Form->control('search', [
                 'type' => 'text',
                 'class' => 'form-control',
-                'label' => 'Search',
-                'placeholder' => 'Search files...',
+                'label' => 'Caută',
+                'placeholder' => 'Caută fișiere...',
                 'value' => $this->request->getQuery('search')
             ]) ?>
         </div>
@@ -32,8 +32,8 @@
             <?= $this->Form->control('type', [
                 'type' => 'select',
                 'class' => 'form-select',
-                'label' => 'File Type',
-                'empty' => 'All Types',
+                'label' => 'Tip fișier',
+                'empty' => 'Toate tipurile',
                 'options' => array_combine(
                     array_column($fileTypes, 'file_type'),
                     array_map('ucfirst', array_column($fileTypes, 'file_type'))
@@ -45,8 +45,8 @@
             <?= $this->Form->control('category', [
                 'type' => 'select',
                 'class' => 'form-select',
-                'label' => 'Category',
-                'empty' => 'All Categories',
+                'label' => 'Categorie',
+                'empty' => 'Toate categoriile',
                 'options' => array_combine(
                     array_column($categories, 'category'),
                     array_column($categories, 'category')
@@ -56,8 +56,8 @@
         </div>
         <div class="col-md-2 d-flex align-items-end">
             <?= $this->Form->button(
-                '<i class="fas fa-search"></i> Filter',
-                ['type' => 'submit', 'class' => 'btn btn-outline-primary', 'escape' => false]
+                '<i class="fas fa-search"></i> Filtrează',
+                ['type' => 'submit', 'class' => 'btn btn-outline-primary', 'escapeTitle' => false]
             ) ?>
         </div>
         <?= $this->Form->end() ?>
@@ -72,14 +72,14 @@
             <table class="table table-striped table-hover">
                 <thead class="table-dark">
                     <tr>
-                        <th><?= $this->Paginator->sort('original_name', 'File Name') ?></th>
-                        <th><?= $this->Paginator->sort('file_type', 'Type') ?></th>
-                        <th><?= $this->Paginator->sort('category', 'Category') ?></th>
-                        <th><?= $this->Paginator->sort('file_size', 'Size') ?></th>
-                        <th><?= $this->Paginator->sort('download_count', 'Downloads') ?></th>
-                        <th><?= $this->Paginator->sort('is_public', 'Visibility') ?></th>
-                        <th><?= $this->Paginator->sort('created', 'Uploaded') ?></th>
-                        <th class="text-center">Actions</th>
+                        <th><?= $this->Paginator->sort('original_name', 'Nume fișier') ?></th>
+                        <th><?= $this->Paginator->sort('file_type', 'Tip') ?></th>
+                        <th><?= $this->Paginator->sort('category', 'Categorie') ?></th>
+                        <th><?= $this->Paginator->sort('file_size', 'Dimensiune') ?></th>
+                        <th><?= $this->Paginator->sort('download_count', 'Descărcări') ?></th>
+                        <th><?= $this->Paginator->sort('is_public', 'Vizibilitate') ?></th>
+                        <th><?= $this->Paginator->sort('created', 'Încărcat') ?></th>
+                        <th class="text-center">Acțiuni</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -105,7 +105,7 @@
                             <?php if ($file->category): ?>
                                 <span class="badge bg-secondary"><?= h($file->category) ?></span>
                             <?php else: ?>
-                                <span class="text-muted">No category</span>
+                                <span class="text-muted">Fără categorie</span>
                             <?php endif; ?>
                         </td>
                         <td><?= $this->Number->toReadableSize($file->file_size) ?></td>
@@ -116,13 +116,13 @@
                             <?php if ($file->is_public): ?>
                                 <span class="badge bg-success">Public</span>
                             <?php else: ?>
-                                <span class="badge bg-warning">Private</span>
+                                <span class="badge bg-warning">Privat</span>
                             <?php endif; ?>
                         </td>
                         <td>
-                            <?= h($file->created->format('M j, Y')) ?>
+                            <?= h($file->created->format('j M Y')) ?>
                             <?php if ($file->user): ?>
-                                <br><small class="text-muted">by <?= h($file->user->email) ?></small>
+                                <br><small class="text-muted">de <?= h($file->user->email) ?></small>
                             <?php endif; ?>
                         </td>
                         <td class="text-center">
@@ -130,27 +130,27 @@
                                 <?= $this->Html->link(
                                     '<i class="fas fa-download"></i>',
                                     ['action' => 'download', $file->id],
-                                    ['class' => 'btn btn-sm btn-outline-success', 'escape' => false, 'title' => 'Download']
+                                    ['class' => 'btn btn-sm btn-outline-success', 'escape' => false, 'title' => 'Descarcă']
                                 ) ?>
                                 <?= $this->Html->link(
                                     '<i class="fas fa-eye"></i>',
                                     ['action' => 'view', $file->id],
-                                    ['class' => 'btn btn-sm btn-outline-info', 'escape' => false, 'title' => 'View']
+                                    ['class' => 'btn btn-sm btn-outline-info', 'escape' => false, 'title' => 'Vizualizează']
                                 ) ?>
                                 <?= $this->Html->link(
                                     '<i class="fas fa-edit"></i>',
                                     ['action' => 'edit', $file->id],
-                                    ['class' => 'btn btn-sm btn-outline-primary', 'escape' => false, 'title' => 'Edit']
+                                    ['class' => 'btn btn-sm btn-outline-primary', 'escape' => false, 'title' => 'Editează']
                                 ) ?>
                                 <?= $this->Form->postLink(
                                     '<i class="fas fa-trash"></i>',
                                     ['action' => 'delete', $file->id],
                                     [
                                         'method' => 'delete',
-                                        'confirm' => __('Are you sure you want to delete "{0}"?', $file->original_name),
+                                        'confirm' => __('Sigur doriți să ștergeți "{0}"?', $file->original_name),
                                         'class' => 'btn btn-sm btn-outline-danger',
                                         'escape' => false,
-                                        'title' => 'Delete'
+                                        'title' => 'Șterge'
                                     ]
                                 ) ?>
                                 <?= $this->Html->link(
@@ -159,7 +159,7 @@
                                     [
                                         'class' => 'btn btn-sm btn-outline-secondary copy-url',
                                         'escape' => false,
-                                        'title' => 'Copy URL',
+                                        'title' => 'Copiază URL',
                                         'data-url' => $this->Url->build($file->file_url, ['fullBase' => true])
                                     ]
                                 ) ?>
@@ -173,10 +173,10 @@
         <?php else: ?>
         <div class="text-center py-5">
             <i class="fas fa-file-alt fa-3x text-muted mb-3"></i>
-            <h5 class="text-muted">No files found</h5>
-            <p class="text-muted">Upload your first file to get started.</p>
+            <h5 class="text-muted">Nu s-au găsit fișiere</h5>
+            <p class="text-muted">Încărcați primul fișier pentru a începe.</p>
             <?= $this->Html->link(
-                '<i class="fas fa-plus"></i> Upload File',
+                '<i class="fas fa-plus"></i> Încarcă fișier',
                 ['action' => 'add'],
                 ['class' => 'btn btn-primary', 'escape' => false]
             ) ?>
@@ -187,13 +187,13 @@
 
 <!-- Pagination -->
 <?php if ($this->Paginator->total() > $this->Paginator->param('perPage')): ?>
-<nav aria-label="Page navigation" class="mt-4">
+<nav aria-label="Navigare pagini" class="mt-4">
     <ul class="pagination justify-content-center">
-        <?= $this->Paginator->first('<< First', ['class' => 'page-link']) ?>
-        <?= $this->Paginator->prev('< Previous', ['class' => 'page-link']) ?>
+        <?= $this->Paginator->first('<< Prima', ['class' => 'page-link']) ?>
+        <?= $this->Paginator->prev('< Anterioară', ['class' => 'page-link']) ?>
         <?= $this->Paginator->numbers(['class' => 'page-link']) ?>
-        <?= $this->Paginator->next('Next >', ['class' => 'page-link']) ?>
-        <?= $this->Paginator->last('Last >>', ['class' => 'page-link']) ?>
+        <?= $this->Paginator->next('Următoarea >', ['class' => 'page-link']) ?>
+        <?= $this->Paginator->last('Ultima >>', ['class' => 'page-link']) ?>
     </ul>
 </nav>
 <?php endif; ?>
@@ -213,10 +213,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="toast show" role="alert">
                         <div class="toast-header">
                             <i class="fas fa-check text-success me-2"></i>
-                            <strong class="me-auto">Success</strong>
+                            <strong class="me-auto">Succes</strong>
                         </div>
                         <div class="toast-body">
-                            URL copied to clipboard!
+                            URL copiat în clipboard!
                         </div>
                     </div>
                 `;

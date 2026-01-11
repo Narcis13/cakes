@@ -23,10 +23,10 @@ class NewsCell extends Cell
         $news = $newsTable->find()
             ->where(['News.is_published' => true])
             ->orderBy(['News.publish_date' => 'DESC'])
-            ->limit(6)
+            ->limit(3)
             ->toArray();
 
-        $videoUrl = 'https://www.youtube.com/watch?v=jDDaplaOz7Q';
+        $videoUrl = 'https://www.youtube.com/watch?v=NAo4_KqTwlg&t=1s';
         $title = 'ULTIMELE NOUTATI';
         $description = 'Află ultimele noutați din viața spitalului nostru';
 

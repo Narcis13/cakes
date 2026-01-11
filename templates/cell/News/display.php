@@ -18,7 +18,14 @@
               <div class="news-card h-100">
                 <?php if ($article->featured_image): ?>
                 <div class="news-image">
-                  <img src="<?= h($article->featured_image) ?>" alt="<?= h($article->title) ?>" class="img-fluid">
+                  <?= $this->Html->image('news/' . $article->featured_image, [
+                    'alt' => h($article->title),
+                    'class' => 'img-fluid'
+                  ]) ?>
+                </div>
+                <?php else: ?>
+                <div class="news-image news-placeholder">
+                  <i class="bi bi-newspaper"></i>
                 </div>
                 <?php endif; ?>
                 <div class="news-content p-3">
@@ -40,7 +47,15 @@
           <?php endforeach; ?>
         </div>
 
-        <?php if (empty($news)): ?>
+        <?php if (!empty($news)): ?>
+        <div class="text-center mt-4">
+          <?= $this->Html->link(
+            'Vezi toate noutățile <i class="bi bi-arrow-right"></i>',
+            '/news',
+            ['class' => 'btn btn-primary', 'escape' => false]
+          ) ?>
+        </div>
+        <?php else: ?>
         <div class="text-center py-4">
           <p class="text-muted">Nu există noutăți publicate momentan.</p>
         </div>
@@ -112,5 +127,17 @@
   margin-top: auto;
   padding-top: 10px;
   border-top: 1px solid #f1f1f1;
+}
+
+.news-placeholder {
+  background: linear-gradient(135deg, #1977cc 0%, #2c4964 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.news-placeholder i {
+  font-size: 3rem;
+  color: rgba(255, 255, 255, 0.8);
 }
 </style>

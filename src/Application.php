@@ -16,6 +16,8 @@ declare(strict_types=1);
  */
 namespace App;
 
+use App\Middleware\HttpsEnforcementMiddleware;
+use App\Middleware\SecurityHeadersMiddleware;
 use Authentication\AuthenticationService;
 use Authentication\AuthenticationServiceInterface;
 use Authentication\AuthenticationServiceProviderInterface;
@@ -76,6 +78,12 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
             // and make an error page/response
             ->add(new ErrorHandlerMiddleware(Configure::read('Error'), $this))
 
+            // Enforce HTTPS in production (disabled in debug mode)
+            ->add(new HttpsEnforcementMiddleware())
+
+            // Add security headers to all responses
+            ->add(new SecurityHeadersMiddleware())
+
             // Handle plugin/theme assets like CakePHP normally does.
             ->add(new AssetMiddleware([
                 'cacheTime' => Configure::read('Asset.cacheTime'),
@@ -129,6 +137,7 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
         $service->setConfig([
             'unauthenticatedRedirect' => Router::url([
                 'prefix' => 'Admin',
+                'plugin' => null,
                 'controller' => 'Users',
                 'action' => 'login',
             ]),
@@ -146,6 +155,7 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
             'fields' => $fields,
             'loginUrl' => Router::url([
                 'prefix' => 'Admin',
+                'plugin' => null,
                 'controller' => 'Users',
                 'action' => 'login',
             ]),

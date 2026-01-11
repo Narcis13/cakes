@@ -41,7 +41,7 @@ class DepartmentsCell extends Cell
                 'title' => $dept->name,
                 'subtitle' => $dept->description ? substr(strip_tags($dept->description), 0, 100) . '...' : 'Professional healthcare services',
                 'description' => $dept->services_html ?: $dept->description ?: 'Comprehensive medical care provided by our experienced team of healthcare professionals.',
-                'image' => $dept->picture ?: 'https://via.placeholder.com/800x600/4CAF50/ffffff.png',
+                'image' => $dept->picture ?: '/img/departments-1.jpg',
             ];
             $isFirst = false;
         }
@@ -55,7 +55,7 @@ class DepartmentsCell extends Cell
                     'title' => 'General Medicine',
                     'subtitle' => 'Comprehensive primary healthcare services',
                     'description' => 'Our General Medicine department provides comprehensive primary healthcare services with experienced physicians.',
-                    'image' => 'https://via.placeholder.com/800x600/4CAF50/ffffff.png',
+                    'image' => '/img/departments-1.jpg',
                 ],
             ];
         }

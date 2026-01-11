@@ -32,7 +32,7 @@ class Setting extends Entity
         'value' => true,
         'description' => true,
         'type' => true,
-        'created' => true,
-        'modified' => true,
+        'created' => false,
+        'modified' => false,
     ];
 }

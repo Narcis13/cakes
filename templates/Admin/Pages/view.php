@@ -11,17 +11,17 @@
         <h3><?= h($page->title) ?></h3>
         <div>
             <?= $this->Html->link(
-                '<i class="fas fa-eye"></i> View Live',
+                '<i class="fas fa-eye"></i> Vezi live',
                 '/' . $page->slug,
                 ['class' => 'btn btn-outline-info', 'escape' => false, 'target' => '_blank']
             ) ?>
             <?= $this->Html->link(
-                '<i class="fas fa-edit"></i> Edit',
+                '<i class="fas fa-edit"></i> Editează',
                 ['action' => 'edit', $page->id],
                 ['class' => 'btn btn-primary ms-2', 'escape' => false]
             ) ?>
             <?= $this->Html->link(
-                '<i class="fas fa-arrow-left"></i> Back to Pages',
+                '<i class="fas fa-arrow-left"></i> Înapoi la pagini',
                 ['action' => 'index'],
                 ['class' => 'btn btn-outline-secondary ms-2', 'escape' => false]
             ) ?>
@@ -37,7 +37,7 @@
                             <?= nl2br(h($page->content)) ?>
                         </div>
                     <?php endif; ?>
-                    
+
                     <?php if (!empty($page->page_components)): ?>
                         <div class="page-components">
                             <?php foreach ($page->page_components as $component): ?>
@@ -46,15 +46,15 @@
                                         <?php if ($component->title): ?>
                                             <h4><?= h($component->title) ?></h4>
                                         <?php endif; ?>
-                                        
+
                                         <?php if ($component->type === 'html'): ?>
                                             <div class="component-content">
                                                 <?= nl2br(h($component->content)) ?>
                                             </div>
                                         <?php elseif ($component->type === 'image'): ?>
                                             <div class="component-content">
-                                                <img src="<?= h($component->url) ?>" 
-                                                     alt="<?= h($component->alt_text ?: $component->title) ?>" 
+                                                <img src="<?= h($component->url) ?>"
+                                                     alt="<?= h($component->alt_text ?: $component->title) ?>"
                                                      class="img-fluid">
                                             </div>
                                         <?php elseif ($component->type === 'link'): ?>
@@ -72,52 +72,52 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="col-md-4">
             <div class="card">
                 <div class="card-header">
-                    <h5 class="card-title mb-0">Page Information</h5>
+                    <h5 class="card-title mb-0">Informații pagină</h5>
                 </div>
                 <div class="card-body">
                     <dl class="row">
                         <dt class="col-sm-5">Status:</dt>
                         <dd class="col-sm-7">
                             <?php if ($page->is_published): ?>
-                                <span class="badge bg-success">Published</span>
+                                <span class="badge bg-success">Publicat</span>
                             <?php else: ?>
-                                <span class="badge bg-secondary">Draft</span>
+                                <span class="badge bg-secondary">Ciornă</span>
                             <?php endif; ?>
                         </dd>
-                        
+
                         <dt class="col-sm-5">Slug:</dt>
                         <dd class="col-sm-7"><code><?= h($page->slug) ?></code></dd>
-                        
+
                         <?php if ($page->template): ?>
-                            <dt class="col-sm-5">Template:</dt>
+                            <dt class="col-sm-5">Șablon:</dt>
                             <dd class="col-sm-7"><?= h($page->template) ?></dd>
                         <?php endif; ?>
-                        
+
                         <?php if ($page->meta_description): ?>
-                            <dt class="col-sm-5">Meta Description:</dt>
+                            <dt class="col-sm-5">Descriere meta:</dt>
                             <dd class="col-sm-7"><?= h($page->meta_description) ?></dd>
                         <?php endif; ?>
-                        
-                        <dt class="col-sm-5">Created:</dt>
-                        <dd class="col-sm-7"><?= h($page->created->format('M j, Y g:i A')) ?></dd>
-                        
-                        <dt class="col-sm-5">Modified:</dt>
-                        <dd class="col-sm-7"><?= h($page->modified->format('M j, Y g:i A')) ?></dd>
-                        
-                        <dt class="col-sm-5">Components:</dt>
+
+                        <dt class="col-sm-5">Creat:</dt>
+                        <dd class="col-sm-7"><?= h($page->created->format('j M Y H:i')) ?></dd>
+
+                        <dt class="col-sm-5">Modificat:</dt>
+                        <dd class="col-sm-7"><?= h($page->modified->format('j M Y H:i')) ?></dd>
+
+                        <dt class="col-sm-5">Componente:</dt>
                         <dd class="col-sm-7"><?= count($page->page_components) ?></dd>
                     </dl>
                 </div>
             </div>
-            
+
             <?php if (!empty($page->page_components)): ?>
                 <div class="card mt-3">
                     <div class="card-header">
-                        <h5 class="card-title mb-0">Components</h5>
+                        <h5 class="card-title mb-0">Componente</h5>
                     </div>
                     <div class="card-body">
                         <div class="list-group list-group-flush">
@@ -129,14 +129,14 @@
                                             <?php if ($component->title): ?>
                                                 <?= h($component->title) ?>
                                             <?php else: ?>
-                                                <em class="text-muted">Untitled</em>
+                                                <em class="text-muted">Fără titlu</em>
                                             <?php endif; ?>
                                         </div>
                                         <div>
                                             <?php if ($component->is_active): ?>
-                                                <span class="badge bg-success">Active</span>
+                                                <span class="badge bg-success">Activ</span>
                                             <?php else: ?>
-                                                <span class="badge bg-secondary">Inactive</span>
+                                                <span class="badge bg-secondary">Inactiv</span>
                                             <?php endif; ?>
                                         </div>
                                     </div>

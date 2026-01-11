@@ -47,7 +47,12 @@ class NewsController extends AppController
             ->where(['id' => $news->id])
             ->execute();
 
-        $this->set(compact('news'));
+        // Fetch contact settings from database
+        $settingsTable = $this->fetchTable('Settings');
+        $contactEmail = $settingsTable->find()->where(['key_name' => 'contact_email'])->first()?->value ?? '';
+        $contactPhone = $settingsTable->find()->where(['key_name' => 'contact_phone'])->first()?->value ?? '';
+
+        $this->set(compact('news', 'contactEmail', 'contactPhone'));
     }
 
     /**

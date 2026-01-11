@@ -7,10 +7,10 @@
 ?>
 <div class="doctorSchedules calendar content">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3><?= __('Doctor Schedules Calendar') ?></h3>
+        <h3><?= __('Calendar Program Medici') ?></h3>
         <div>
-            <?= $this->Html->link(__('List View'), ['action' => 'index'], ['class' => 'btn btn-secondary']) ?>
-            <?= $this->Html->link(__('Add Schedule'), ['action' => 'add'], ['class' => 'btn btn-primary']) ?>
+            <?= $this->Html->link(__('Vizualizare Listă'), ['action' => 'index'], ['class' => 'btn btn-secondary']) ?>
+            <?= $this->Html->link(__('Adaugă Program'), ['action' => 'add'], ['class' => 'btn btn-primary']) ?>
         </div>
     </div>
 
@@ -36,42 +36,42 @@
                                                     ) ?>
                                                 </h6>
                                                 <p class="mb-1">
-                                                    <i class="far fa-clock"></i> 
+                                                    <i class="far fa-clock"></i>
                                                     <strong><?= h($schedule->time_range) ?></strong>
                                                 </p>
                                                 <p class="mb-1">
-                                                    <i class="fas fa-stethoscope"></i> 
+                                                    <i class="fas fa-stethoscope"></i>
                                                     <?= h($schedule->service->name) ?>
                                                 </p>
                                                 <p class="mb-0 small text-muted">
-                                                    <?= __('Max: {0} appointments', $schedule->max_appointments) ?>
+                                                    <?= __('Max: {0} programări', $schedule->max_appointments) ?>
                                                     <?php if ($schedule->slot_duration): ?>
-                                                        | <?= __n('{0} min slots', '{0} min slots', $schedule->slot_duration, $schedule->slot_duration) ?>
+                                                        | <?= __n('{0} min intervale', '{0} min intervale', $schedule->slot_duration, $schedule->slot_duration) ?>
                                                     <?php endif; ?>
                                                     <?php if ($schedule->buffer_minutes > 0): ?>
-                                                        | <?= __('{0} min buffer', $schedule->buffer_minutes) ?>
+                                                        | <?= __('{0} min tampon', $schedule->buffer_minutes) ?>
                                                     <?php endif; ?>
                                                 </p>
                                             </div>
                                             <div class="text-end">
                                                 <?php if (!$schedule->is_active): ?>
-                                                    <span class="badge bg-danger mb-2"><?= __('Inactive') ?></span>
+                                                    <span class="badge bg-danger mb-2"><?= __('Inactiv') ?></span>
                                                     <br>
                                                 <?php endif; ?>
                                                 <div class="btn-group btn-group-sm" role="group">
                                                     <?= $this->Html->link(
                                                         '<i class="fas fa-edit"></i>',
                                                         ['action' => 'edit', $schedule->id],
-                                                        ['class' => 'btn btn-outline-secondary', 'escape' => false, 'title' => __('Edit')]
+                                                        ['class' => 'btn btn-outline-secondary', 'escape' => false, 'title' => __('Editare')]
                                                     ) ?>
                                                     <?= $this->Form->postLink(
                                                         '<i class="fas fa-trash"></i>',
                                                         ['action' => 'delete', $schedule->id],
                                                         [
-                                                            'confirm' => __('Are you sure you want to delete this schedule?'),
+                                                            'confirm' => __('Sigur doriți să ștergeți acest program?'),
                                                             'class' => 'btn btn-outline-danger',
                                                             'escape' => false,
-                                                            'title' => __('Delete')
+                                                            'title' => __('Ștergere')
                                                         ]
                                                     ) ?>
                                                 </div>
@@ -82,7 +82,7 @@
                             <?php else: ?>
                                 <p class="text-muted text-center my-4">
                                     <i class="fas fa-calendar-times fa-2x mb-2"></i><br>
-                                    <?= __('No schedules for this day') ?>
+                                    <?= __('Niciun program pentru această zi') ?>
                                 </p>
                             <?php endif; ?>
                         </div>

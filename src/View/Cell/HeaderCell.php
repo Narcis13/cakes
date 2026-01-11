@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\View\Cell;
 
+use Cake\ORM\TableRegistry;
 use Cake\View\Cell;
 
 /**
@@ -21,6 +22,12 @@ class HeaderCell extends Cell
             ->where(['is_active' => true])
             ->order(['sort_order' => 'ASC']);
 
-        $this->set(compact('navbarItems'));
+        // Fetch appointment URL from settings
+        $settingsTable = TableRegistry::getTableLocator()->get('Settings');
+        $urlProgramari = $settingsTable->find()
+            ->where(['key_name' => 'url_programari'])
+            ->first()?->value ?? '/appointments';
+
+        $this->set(compact('navbarItems', 'urlProgramari'));
     }
 }

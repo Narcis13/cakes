@@ -30,7 +30,7 @@ class ContactMessage extends Entity
         'nume_prenume' => true,
         'email' => true,
         'mesaj' => true,
-        'created' => true,
-        'modified' => true,
+        'created' => false,
+        'modified' => false,
     ];
 }

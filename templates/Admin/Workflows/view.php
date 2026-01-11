@@ -14,15 +14,15 @@
         </div>
         <div class="col-md-4 text-end">
             <div class="btn-group" role="group">
-                <?= $this->Html->link(__('Execute'), ['action' => 'execute', $workflow->id], ['class' => 'btn btn-success']) ?>
-                <?= $this->Html->link(__('Edit'), ['action' => 'edit', $workflow->id], ['class' => 'btn btn-primary']) ?>
-                <?= $this->Html->link(__('Clone'), ['action' => 'clone', $workflow->id], ['class' => 'btn btn-secondary']) ?>
+                <?= $this->Html->link(__('Execută'), ['action' => 'execute', $workflow->id], ['class' => 'btn btn-success']) ?>
+                <?= $this->Html->link(__('Editează'), ['action' => 'edit', $workflow->id], ['class' => 'btn btn-primary']) ?>
+                <?= $this->Html->link(__('Clonează'), ['action' => 'clone', $workflow->id], ['class' => 'btn btn-secondary']) ?>
                 <?= $this->Form->postLink(
-                    $workflow->is_active ? __('Deactivate') : __('Activate'),
+                    $workflow->is_active ? __('Dezactivează') : __('Activează'),
                     ['action' => 'toggleStatus', $workflow->id],
-                    ['class' => 'btn btn-warning', 'confirm' => __('Are you sure you want to {0} this workflow?', $workflow->is_active ? 'deactivate' : 'activate')]
+                    ['class' => 'btn btn-warning', 'confirm' => __('Sigur doriți să {0} acest flux de lucru?', $workflow->is_active ? 'dezactivați' : 'activați')]
                 ) ?>
-                <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $workflow->id], ['confirm' => __('Are you sure you want to delete # {0}?', $workflow->id), 'class' => 'btn btn-danger']) ?>
+                <?= $this->Form->postLink(__('Șterge'), ['action' => 'delete', $workflow->id], ['confirm' => __('Sigur doriți să ștergeți # {0}?', $workflow->id), 'class' => 'btn btn-danger']) ?>
             </div>
         </div>
     </div>
@@ -31,7 +31,7 @@
         <div class="col-md-6">
             <div class="card">
                 <div class="card-header">
-                    <h5 class="mb-0"><?= __('Workflow Details') ?></h5>
+                    <h5 class="mb-0"><?= __('Detalii flux de lucru') ?></h5>
                 </div>
                 <div class="card-body">
                     <table class="table table-borderless">
@@ -45,16 +45,23 @@
                                     'archived' => 'dark',
                                     default => 'secondary'
                                 };
+                                $statusLabels = [
+                                    'active' => 'Activ',
+                                    'draft' => 'Ciornă',
+                                    'inactive' => 'Inactiv',
+                                    'archived' => 'Arhivat',
+                                ];
+                                $statusLabel = $statusLabels[$workflow->status] ?? $workflow->status;
                                 ?>
-                                <span class="badge bg-<?= $statusClass ?>"><?= h($workflow->status) ?></span>
+                                <span class="badge bg-<?= $statusClass ?>"><?= h($statusLabel) ?></span>
                             </td>
                         </tr>
                         <tr>
-                            <th><?= __('Version') ?></th>
+                            <th><?= __('Versiune') ?></th>
                             <td><?= $this->Number->format($workflow->version) ?></td>
                         </tr>
                         <tr>
-                            <th><?= __('Category') ?></th>
+                            <th><?= __('Categorie') ?></th>
                             <td>
                                 <?php if ($workflow->category): ?>
                                     <span class="badge bg-info"><?= h($workflow->category) ?></span>
@@ -64,7 +71,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <th><?= __('Icon') ?></th>
+                            <th><?= __('Pictogramă') ?></th>
                             <td>
                                 <?php if ($workflow->icon): ?>
                                     <i class="fas <?= h($workflow->icon) ?>"></i> <?= h($workflow->icon) ?>
@@ -74,52 +81,52 @@
                             </td>
                         </tr>
                         <tr>
-                            <th><?= __('Template') ?></th>
+                            <th><?= __('Șablon') ?></th>
                             <td>
                                 <?php if ($workflow->is_template): ?>
-                                    <span class="badge bg-primary"><?= __('Yes') ?></span>
+                                    <span class="badge bg-primary"><?= __('Da') ?></span>
                                 <?php else: ?>
-                                    <span class="badge bg-secondary"><?= __('No') ?></span>
+                                    <span class="badge bg-secondary"><?= __('Nu') ?></span>
                                 <?php endif; ?>
                             </td>
                         </tr>
                         <tr>
-                            <th><?= __('Created By') ?></th>
+                            <th><?= __('Creat de') ?></th>
                             <td>
                                 <?php if (isset($workflow->creator)): ?>
                                     <?= h($workflow->creator->name ?? $workflow->creator->email) ?>
                                 <?php else: ?>
-                                    <?= __('User #{0}', $workflow->created_by) ?>
+                                    <?= __('Utilizator #{0}', $workflow->created_by) ?>
                                 <?php endif; ?>
                             </td>
                         </tr>
                         <tr>
-                            <th><?= __('Created') ?></th>
+                            <th><?= __('Creat') ?></th>
                             <td><?= h($workflow->created->format('Y-m-d H:i:s')) ?></td>
                         </tr>
                         <tr>
-                            <th><?= __('Modified') ?></th>
+                            <th><?= __('Modificat') ?></th>
                             <td><?= h($workflow->modified->format('Y-m-d H:i:s')) ?></td>
                         </tr>
                     </table>
                 </div>
             </div>
         </div>
-        
+
         <div class="col-md-6">
             <div class="card">
                 <div class="card-header">
-                    <h5 class="mb-0"><?= __('Execution Statistics') ?></h5>
+                    <h5 class="mb-0"><?= __('Statistici execuție') ?></h5>
                 </div>
                 <div class="card-body">
                     <?php if (!empty($executionStats)): ?>
                         <table class="table table-borderless">
                             <tr>
-                                <th><?= __('Total Executions') ?></th>
+                                <th><?= __('Total execuții') ?></th>
                                 <td><?= $this->Number->format($executionStats['total']) ?></td>
                             </tr>
                             <tr>
-                                <th><?= __('Successful') ?></th>
+                                <th><?= __('Reușite') ?></th>
                                 <td>
                                     <span class="text-success">
                                         <?= $this->Number->format($executionStats['successful']) ?>
@@ -130,7 +137,7 @@
                                 </td>
                             </tr>
                             <tr>
-                                <th><?= __('Failed') ?></th>
+                                <th><?= __('Eșuate') ?></th>
                                 <td>
                                     <span class="text-danger">
                                         <?= $this->Number->format($executionStats['failed']) ?>
@@ -141,7 +148,7 @@
                                 </td>
                             </tr>
                             <tr>
-                                <th><?= __('Running') ?></th>
+                                <th><?= __('În execuție') ?></th>
                                 <td>
                                     <span class="text-warning">
                                         <?= $this->Number->format($executionStats['running']) ?>
@@ -149,7 +156,7 @@
                                 </td>
                             </tr>
                             <tr>
-                                <th><?= __('Average Duration') ?></th>
+                                <th><?= __('Durată medie') ?></th>
                                 <td>
                                     <?php if ($executionStats['avg_duration']): ?>
                                         <?= h($executionStats['avg_duration']) ?>
@@ -159,18 +166,18 @@
                                 </td>
                             </tr>
                             <tr>
-                                <th><?= __('Last Execution') ?></th>
+                                <th><?= __('Ultima execuție') ?></th>
                                 <td>
                                     <?php if ($executionStats['last_execution']): ?>
                                         <?= h($executionStats['last_execution']->format('Y-m-d H:i:s')) ?>
                                     <?php else: ?>
-                                        <span class="text-muted"><?= __('Never') ?></span>
+                                        <span class="text-muted"><?= __('Niciodată') ?></span>
                                     <?php endif; ?>
                                 </td>
                             </tr>
                         </table>
                     <?php else: ?>
-                        <p class="text-muted mb-0"><?= __('No execution data available yet.') ?></p>
+                        <p class="text-muted mb-0"><?= __('Nu există date de execuție încă.') ?></p>
                     <?php endif; ?>
                 </div>
             </div>
@@ -181,9 +188,9 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0"><?= __('Workflow Definition') ?></h5>
+                    <h5 class="mb-0"><?= __('Definiție flux de lucru') ?></h5>
                     <button type="button" class="btn btn-sm btn-outline-secondary" onclick="toggleDefinitionView()">
-                        <i class="fas fa-exchange-alt"></i> <?= __('Toggle View') ?>
+                        <i class="fas fa-exchange-alt"></i> <?= __('Comută vizualizare') ?>
                     </button>
                 </div>
                 <div class="card-body">
@@ -193,13 +200,13 @@
                     <div id="definition-visual" style="display: none;">
                         <div class="workflow-summary">
                             <?php if ($workflow->definition): ?>
-                                <h6><?= __('Workflow Elements') ?></h6>
+                                <h6><?= __('Elemente flux de lucru') ?></h6>
                                 <ul class="list-group">
                                     <?php foreach ($workflow->definition['elements'] ?? [] as $element): ?>
                                         <li class="list-group-item">
                                             <div class="d-flex justify-content-between align-items-center">
                                                 <div>
-                                                    <strong><?= h($element['node'] ?? 'Unknown') ?></strong>
+                                                    <strong><?= h($element['node'] ?? 'Necunoscut') ?></strong>
                                                     <?php if (!empty($element['label'])): ?>
                                                         <span class="text-muted">- <?= h($element['label']) ?></span>
                                                     <?php endif; ?>
@@ -212,7 +219,7 @@
                                             </div>
                                             <?php if (!empty($element['edges'])): ?>
                                                 <small class="text-muted">
-                                                    <?= __('Edges: {0}', implode(', ', array_keys($element['edges']))) ?>
+                                                    <?= __('Muchii: {0}', implode(', ', array_keys($element['edges']))) ?>
                                                 </small>
                                             <?php endif; ?>
                                         </li>
@@ -231,7 +238,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
-                    <h5 class="mb-0"><?= __('Recent Executions') ?></h5>
+                    <h5 class="mb-0"><?= __('Execuții recente') ?></h5>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
@@ -239,11 +246,11 @@
                             <thead>
                                 <tr>
                                     <th><?= __('ID') ?></th>
-                                    <th><?= __('Started') ?></th>
+                                    <th><?= __('Început') ?></th>
                                     <th><?= __('Status') ?></th>
-                                    <th><?= __('Duration') ?></th>
-                                    <th><?= __('Executed By') ?></th>
-                                    <th class="actions"><?= __('Actions') ?></th>
+                                    <th><?= __('Durată') ?></th>
+                                    <th><?= __('Executat de') ?></th>
+                                    <th class="actions"><?= __('Acțiuni') ?></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -260,8 +267,15 @@
                                             'cancelled' => 'secondary',
                                             default => 'secondary'
                                         };
+                                        $statusLabels = [
+                                            'completed' => 'Finalizat',
+                                            'failed' => 'Eșuat',
+                                            'running' => 'În execuție',
+                                            'cancelled' => 'Anulat',
+                                        ];
+                                        $statusLabel = $statusLabels[$execution->status] ?? $execution->status;
                                         ?>
-                                        <span class="badge bg-<?= $statusClass ?>"><?= h($execution->status) ?></span>
+                                        <span class="badge bg-<?= $statusClass ?>"><?= h($statusLabel) ?></span>
                                     </td>
                                     <td>
                                         <?php if ($execution->completed_at): ?>
@@ -274,11 +288,11 @@
                                         <?php if (isset($execution->user)): ?>
                                             <?= h($execution->user->name ?? $execution->user->email) ?>
                                         <?php else: ?>
-                                            <?= __('System') ?>
+                                            <?= __('Sistem') ?>
                                         <?php endif; ?>
                                     </td>
                                     <td class="actions">
-                                        <?= $this->Html->link(__('View Logs'), ['controller' => 'WorkflowExecutions', 'action' => 'view', $execution->id], ['class' => 'btn btn-sm btn-outline-primary']) ?>
+                                        <?= $this->Html->link(__('Vezi jurnal'), ['controller' => 'WorkflowExecutions', 'action' => 'view', $execution->id], ['class' => 'btn btn-sm btn-outline-primary']) ?>
                                     </td>
                                 </tr>
                                 <?php endforeach; ?>
@@ -286,7 +300,7 @@
                         </table>
                     </div>
                     <div class="text-center mt-3">
-                        <?= $this->Html->link(__('View All Executions'), ['controller' => 'WorkflowExecutions', 'action' => 'index', '?' => ['workflow_id' => $workflow->id]], ['class' => 'btn btn-outline-primary']) ?>
+                        <?= $this->Html->link(__('Vezi toate execuțiile'), ['controller' => 'WorkflowExecutions', 'action' => 'index', '?' => ['workflow_id' => $workflow->id]], ['class' => 'btn btn-outline-primary']) ?>
                     </div>
                 </div>
             </div>
@@ -299,7 +313,7 @@
 function toggleDefinitionView() {
     const jsonView = document.getElementById('definition-json');
     const visualView = document.getElementById('definition-visual');
-    
+
     if (jsonView.style.display === 'block') {
         jsonView.style.display = 'none';
         visualView.style.display = 'block';

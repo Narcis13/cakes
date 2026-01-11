@@ -5,19 +5,19 @@
  * @var array $departments
  */
 ?>
-<?php $this->assign('title', 'Edit Service'); ?>
+<?php $this->assign('title', 'Editează serviciu'); ?>
 
 <div class="service edit content">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3><?= __('Edit Medical Service') ?></h3>
+        <h3><?= __('Editează serviciu medical') ?></h3>
         <div>
             <?= $this->Html->link(
-                '<i class="fas fa-eye"></i> View',
+                '<i class="fas fa-eye"></i> Vizualizează',
                 ['action' => 'view', $service->id],
                 ['class' => 'btn btn-outline-primary me-2', 'escape' => false]
             ) ?>
             <?= $this->Html->link(
-                '<i class="fas fa-arrow-left"></i> Back to List',
+                '<i class="fas fa-arrow-left"></i> Înapoi la listă',
                 ['action' => 'index'],
                 ['class' => 'btn btn-secondary', 'escape' => false]
             ) ?>
@@ -27,56 +27,56 @@
     <div class="card">
         <div class="card-body">
             <?= $this->Form->create($service) ?>
-            
+
             <div class="row">
                 <div class="col-md-8">
                     <fieldset>
-                        <legend><?= __('Service Information') ?></legend>
-                        
+                        <legend><?= __('Informații serviciu') ?></legend>
+
                         <?= $this->Form->control('name', [
                             'class' => 'form-control',
-                            'label' => ['class' => 'form-label', 'text' => 'Service Name'],
+                            'label' => ['class' => 'form-label', 'text' => 'Nume serviciu'],
                             'required' => true,
-                            'placeholder' => 'e.g., General Consultation, X-Ray, Blood Test'
+                            'placeholder' => 'ex., Consultație generală, Radiografie, Analize de sânge'
                         ]) ?>
-                        
+
                         <?= $this->Form->control('description', [
                             'type' => 'textarea',
                             'class' => 'form-control',
-                            'label' => ['class' => 'form-label'],
+                            'label' => ['class' => 'form-label', 'text' => 'Descriere'],
                             'rows' => 4,
-                            'placeholder' => 'Describe the medical service...'
+                            'placeholder' => 'Descrieți serviciul medical...'
                         ]) ?>
-                        
+
                         <div class="row">
                             <div class="col-md-6">
                                 <?= $this->Form->control('department_id', [
                                     'type' => 'select',
                                     'options' => $departments,
-                                    'empty' => 'Select Department',
+                                    'empty' => 'Selectați departamentul',
                                     'class' => 'form-select',
-                                    'label' => ['class' => 'form-label', 'text' => 'Department']
+                                    'label' => ['class' => 'form-label', 'text' => 'Departament']
                                 ]) ?>
                             </div>
                             <div class="col-md-6">
                                 <?= $this->Form->control('duration_minutes', [
                                     'type' => 'number',
                                     'class' => 'form-control',
-                                    'label' => ['class' => 'form-label', 'text' => 'Duration (minutes)'],
-                                    'placeholder' => 'e.g., 30, 60, 90',
+                                    'label' => ['class' => 'form-label', 'text' => 'Durată (minute)'],
+                                    'placeholder' => 'ex., 30, 60, 90',
                                     'min' => 0,
                                     'step' => 5
                                 ]) ?>
                             </div>
                         </div>
-                        
+
                         <div class="row">
                             <div class="col-md-6">
                                 <?= $this->Form->control('price', [
                                     'type' => 'number',
                                     'class' => 'form-control',
-                                    'label' => ['class' => 'form-label', 'text' => 'Price ($)'],
-                                    'placeholder' => 'e.g., 100.00',
+                                    'label' => ['class' => 'form-label', 'text' => 'Preț (RON)'],
+                                    'placeholder' => 'ex., 100.00',
                                     'min' => 0,
                                     'step' => 0.01
                                 ]) ?>
@@ -87,7 +87,7 @@
                                     'class' => 'form-check-input',
                                     'label' => [
                                         'class' => 'form-check-label',
-                                        'text' => 'Service is active'
+                                        'text' => 'Serviciul este activ'
                                     ],
                                     'templates' => [
                                         'checkboxWrapper' => '<div class="form-check mb-3">{{label}}</div>',
@@ -98,78 +98,78 @@
                         </div>
                     </fieldset>
                 </div>
-                
+
                 <div class="col-md-4">
                     <fieldset>
-                        <legend><?= __('Requirements & Instructions') ?></legend>
-                        
+                        <legend><?= __('Cerințe și instrucțiuni') ?></legend>
+
                         <?= $this->Form->control('requirements', [
                             'type' => 'textarea',
                             'class' => 'form-control',
-                            'label' => ['class' => 'form-label', 'text' => 'Patient Requirements'],
+                            'label' => ['class' => 'form-label', 'text' => 'Cerințe pentru pacienți'],
                             'rows' => 6,
-                            'placeholder' => 'e.g., Fasting required, Bring previous reports, etc.'
+                            'placeholder' => 'ex., Este necesar post alimentar, Aduceți rapoartele anterioare, etc.'
                         ]) ?>
-                        
+
                         <div class="alert alert-info">
-                            <i class="fas fa-info-circle"></i> <strong>Tips:</strong>
+                            <i class="fas fa-info-circle"></i> <strong>Sfaturi:</strong>
                             <ul class="mb-0 mt-2">
-                                <li>Enter preparation instructions</li>
-                                <li>List any prerequisites</li>
-                                <li>Mention what patients should bring</li>
+                                <li>Introduceți instrucțiuni de pregătire</li>
+                                <li>Listați cerințele preliminare</li>
+                                <li>Menționați ce trebuie să aducă pacienții</li>
                             </ul>
                         </div>
-                        
+
                         <hr>
-                        
+
                         <div class="text-muted">
-                            <p class="mb-1"><strong>Service Details:</strong></p>
-                            <small>Created: <?= h($service->created->format('M j, Y g:i A')) ?></small><br>
-                            <small>Modified: <?= h($service->modified->format('M j, Y g:i A')) ?></small>
+                            <p class="mb-1"><strong>Detalii serviciu:</strong></p>
+                            <small>Creat: <?= h($service->created->format('j M Y H:i')) ?></small><br>
+                            <small>Modificat: <?= h($service->modified->format('j M Y H:i')) ?></small>
                         </div>
                     </fieldset>
                 </div>
             </div>
-            
+
             <div class="mt-4">
-                <?= $this->Form->button(__('Update Service'), [
+                <?= $this->Form->button(__('Actualizează serviciu'), [
                     'class' => 'btn btn-primary'
                 ]) ?>
-                <?= $this->Html->link(__('Cancel'), 
-                    ['action' => 'view', $service->id], 
+                <?= $this->Html->link(__('Anulează'),
+                    ['action' => 'view', $service->id],
                     ['class' => 'btn btn-outline-secondary ms-2']
                 ) ?>
-                <?= $this->Form->postLink(__('Delete'), 
-                    ['action' => 'delete', $service->id], 
+                <?= $this->Form->postLink(__('Șterge'),
+                    ['action' => 'delete', $service->id],
                     [
-                        'confirm' => __('Are you sure you want to delete "{0}"? This action cannot be undone.', $service->name),
+                        'confirm' => __('Sunteți sigur că doriți să ștergeți "{0}"? Această acțiune nu poate fi anulată.', $service->name),
                         'class' => 'btn btn-outline-danger ms-2'
                     ]
                 ) ?>
             </div>
-            
+
             <?= $this->Form->end() ?>
         </div>
     </div>
 </div>
 
 <script>
-// Auto-calculate duration in hours/minutes display
+// Calculează automat afișarea duratei în ore/minute
 document.getElementById('duration-minutes').addEventListener('input', function(e) {
     const minutes = parseInt(e.target.value) || 0;
     const hours = Math.floor(minutes / 60);
     const mins = minutes % 60;
-    
+
     let display = '';
     if (hours > 0) {
-        display = hours + ' hour' + (hours > 1 ? 's' : '');
+        display = hours + ' oră' + (hours > 1 ? ' ore' : '');
         if (mins > 0) {
-            display += ' ' + mins + ' min' + (mins > 1 ? 's' : '');
+            display += ' ' + mins + ' min' + (mins > 1 ? 'ute' : 'ut');
         }
     } else if (mins > 0) {
-        display = mins + ' minute' + (mins > 1 ? 's' : '');
+        display = mins + ' minut' + (mins > 1 ? 'e' : '');
     }
-    
-    // You could show this in a helper text element if desired
+
+    // Puteți afișa acest lucru într-un element text ajutător dacă doriți
 });
 </script>

@@ -4,19 +4,19 @@
  * @var \Cake\ORM\ResultSet<\App\Model\Entity\Workflow> $workflows
  */
 ?>
-<?php $this->assign('title', 'Workflows'); ?>
+<?php $this->assign('title', 'Fluxuri de lucru'); ?>
 
 <div class="workflows index content">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3><i class="fas fa-project-diagram"></i> <?= __('Workflows') ?></h3>
+        <h3><i class="fas fa-project-diagram"></i> <?= __('Fluxuri de lucru') ?></h3>
         <div>
             <?= $this->Html->link(
-                '<i class="fas fa-plus"></i> ' . __('New Workflow'),
+                '<i class="fas fa-plus"></i> ' . __('Flux de lucru nou'),
                 ['action' => 'add'],
                 ['class' => 'btn btn-primary', 'escape' => false]
             ) ?>
             <?= $this->Html->link(
-                '<i class="fas fa-paint-brush"></i> ' . __('Workflow Builder'),
+                '<i class="fas fa-paint-brush"></i> ' . __('Constructor fluxuri'),
                 ['action' => 'builder'],
                 ['class' => 'btn btn-info', 'escape' => false]
             ) ?>
@@ -30,13 +30,13 @@
                     <table class="table table-hover">
                         <thead>
                             <tr>
-                                <th><?= $this->Paginator->sort('name') ?></th>
-                                <th><?= $this->Paginator->sort('category') ?></th>
-                                <th><?= $this->Paginator->sort('status') ?></th>
-                                <th><?= $this->Paginator->sort('version') ?></th>
+                                <th><?= $this->Paginator->sort('name', 'Nume') ?></th>
+                                <th><?= $this->Paginator->sort('category', 'Categorie') ?></th>
+                                <th><?= $this->Paginator->sort('status', 'Status') ?></th>
+                                <th><?= $this->Paginator->sort('version', 'Versiune') ?></th>
                                 <th><?= $this->Paginator->sort('created_by', 'Creator') ?></th>
-                                <th><?= $this->Paginator->sort('created') ?></th>
-                                <th class="actions text-center"><?= __('Actions') ?></th>
+                                <th><?= $this->Paginator->sort('created', 'Creat') ?></th>
+                                <th class="actions text-center"><?= __('Acțiuni') ?></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -51,7 +51,7 @@
                                         ['action' => 'view', $workflow->id]
                                     ) ?>
                                     <?php if ($workflow->is_template): ?>
-                                        <span class="badge bg-info ms-2">Template</span>
+                                        <span class="badge bg-info ms-2">Șablon</span>
                                     <?php endif; ?>
                                 </td>
                                 <td>
@@ -69,10 +69,17 @@
                                         'inactive' => 'bg-warning',
                                         'archived' => 'bg-dark',
                                     ];
+                                    $statusLabels = [
+                                        'draft' => 'Ciornă',
+                                        'active' => 'Activ',
+                                        'inactive' => 'Inactiv',
+                                        'archived' => 'Arhivat',
+                                    ];
                                     $statusClass = $statusClasses[$workflow->status] ?? 'bg-secondary';
+                                    $statusLabel = $statusLabels[$workflow->status] ?? ucfirst($workflow->status);
                                     ?>
                                     <span class="badge <?= $statusClass ?>">
-                                        <?= h(ucfirst($workflow->status)) ?>
+                                        <?= h($statusLabel) ?>
                                     </span>
                                 </td>
                                 <td>
@@ -94,7 +101,7 @@
                                             [
                                                 'escape' => false,
                                                 'class' => 'btn btn-outline-primary',
-                                                'title' => __('View'),
+                                                'title' => __('Vizualizează'),
                                             ]
                                         ) ?>
                                         <?= $this->Html->link(
@@ -103,7 +110,7 @@
                                             [
                                                 'escape' => false,
                                                 'class' => 'btn btn-outline-secondary',
-                                                'title' => __('Edit'),
+                                                'title' => __('Editează'),
                                             ]
                                         ) ?>
                                         <?= $this->Html->link(
@@ -112,7 +119,7 @@
                                             [
                                                 'escape' => false,
                                                 'class' => 'btn btn-outline-info',
-                                                'title' => __('Visual Builder'),
+                                                'title' => __('Constructor vizual'),
                                             ]
                                         ) ?>
                                         <?php if ($workflow->is_active): ?>
@@ -122,8 +129,8 @@
                                                 [
                                                     'escape' => false,
                                                     'class' => 'btn btn-outline-success',
-                                                    'title' => __('Execute'),
-                                                    'confirm' => __('Execute workflow "{0}"?', $workflow->name),
+                                                    'title' => __('Execută'),
+                                                    'confirm' => __('Executați fluxul de lucru "{0}"?', $workflow->name),
                                                 ]
                                             ) ?>
                                         <?php endif; ?>
@@ -133,7 +140,7 @@
                                             [
                                                 'escape' => false,
                                                 'class' => 'btn btn-outline-info',
-                                                'title' => __('Clone'),
+                                                'title' => __('Clonează'),
                                             ]
                                         ) ?>
                                         <?= $this->Form->postLink(
@@ -142,8 +149,8 @@
                                             [
                                                 'escape' => false,
                                                 'class' => 'btn btn-outline-danger',
-                                                'title' => __('Delete'),
-                                                'confirm' => __('Are you sure you want to delete "{0}"?', $workflow->name),
+                                                'title' => __('Șterge'),
+                                                'confirm' => __('Sigur doriți să ștergeți "{0}"?', $workflow->name),
                                             ]
                                         ) ?>
                                     </div>
@@ -155,7 +162,7 @@
                 </div>
 
                 <div class="d-flex justify-content-between align-items-center mt-4">
-                    <nav aria-label="Page navigation">
+                    <nav aria-label="Navigare pagini">
                         <ul class="pagination mb-0">
                             <?= $this->Paginator->first('<i class="fas fa-angle-double-left"></i>', ['escape' => false]) ?>
                             <?= $this->Paginator->prev('<i class="fas fa-angle-left"></i>', ['escape' => false]) ?>
@@ -165,16 +172,16 @@
                         </ul>
                     </nav>
                     <p class="mb-0 text-muted">
-                        <?= $this->Paginator->counter(__('Page {{page}} of {{pages}}, showing {{current}} record(s) out of {{count}} total')) ?>
+                        <?= $this->Paginator->counter(__('Pagina {{page}} din {{pages}}, arătând {{current}} înregistrare(i) din {{count}} total')) ?>
                     </p>
                 </div>
             <?php else: ?>
                 <div class="text-center py-5">
                     <i class="fas fa-project-diagram fa-4x text-muted mb-3"></i>
-                    <h4 class="text-muted">No workflows found</h4>
-                    <p class="text-muted">Create your first workflow to get started with automation.</p>
+                    <h4 class="text-muted">Nu s-au găsit fluxuri de lucru</h4>
+                    <p class="text-muted">Creați primul flux de lucru pentru a începe automatizarea.</p>
                     <?= $this->Html->link(
-                        '<i class="fas fa-plus"></i> Create Workflow',
+                        '<i class="fas fa-plus"></i> Creează flux de lucru',
                         ['action' => 'add'],
                         ['class' => 'btn btn-primary', 'escape' => false]
                     ) ?>

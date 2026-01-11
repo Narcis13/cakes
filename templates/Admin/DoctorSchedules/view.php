@@ -7,11 +7,11 @@
 <div class="row">
     <aside class="column">
         <div class="side-nav">
-            <h4 class="heading"><?= __('Actions') ?></h4>
-            <?= $this->Html->link(__('Edit Doctor Schedule'), ['action' => 'edit', $doctorSchedule->id], ['class' => 'side-nav-item']) ?>
-            <?= $this->Form->postLink(__('Delete Doctor Schedule'), ['action' => 'delete', $doctorSchedule->id], ['confirm' => __('Are you sure you want to delete # {0}?', $doctorSchedule->id), 'class' => 'side-nav-item']) ?>
-            <?= $this->Html->link(__('List Doctor Schedules'), ['action' => 'index'], ['class' => 'side-nav-item']) ?>
-            <?= $this->Html->link(__('New Doctor Schedule'), ['action' => 'add'], ['class' => 'side-nav-item']) ?>
+            <h4 class="heading"><?= __('Acțiuni') ?></h4>
+            <?= $this->Html->link(__('Editare Program Medic'), ['action' => 'edit', $doctorSchedule->id], ['class' => 'side-nav-item']) ?>
+            <?= $this->Form->postLink(__('Ștergere Program Medic'), ['action' => 'delete', $doctorSchedule->id], ['confirm' => __('Sigur doriți să ștergeți programul #{0}?', $doctorSchedule->id), 'class' => 'side-nav-item']) ?>
+            <?= $this->Html->link(__('Lista Program Medici'), ['action' => 'index'], ['class' => 'side-nav-item']) ?>
+            <?= $this->Html->link(__('Program Nou'), ['action' => 'add'], ['class' => 'side-nav-item']) ?>
         </div>
     </aside>
     <div class="column column-80">
@@ -19,65 +19,65 @@
             <h3><?= h($doctorSchedule->id) ?></h3>
             <table class="table">
                 <tr>
-                    <th><?= __('Doctor') ?></th>
+                    <th><?= __('Medic') ?></th>
                     <td><?= $doctorSchedule->has('staff') ? $this->Html->link($doctorSchedule->staff->name, ['controller' => 'Staff', 'action' => 'view', $doctorSchedule->staff->id]) : '' ?></td>
                 </tr>
                 <tr>
-                    <th><?= __('Service') ?></th>
+                    <th><?= __('Serviciu') ?></th>
                     <td><?= $doctorSchedule->has('service') ? $this->Html->link($doctorSchedule->service->name, ['controller' => 'Services', 'action' => 'view', $doctorSchedule->service->id]) : '' ?></td>
                 </tr>
                 <tr>
-                    <th><?= __('Day of Week') ?></th>
+                    <th><?= __('Zi din săptămână') ?></th>
                     <td><?= h($doctorSchedule->day_name) ?></td>
                 </tr>
                 <tr>
-                    <th><?= __('Time Range') ?></th>
+                    <th><?= __('Interval orar') ?></th>
                     <td><?= h($doctorSchedule->time_range) ?></td>
                 </tr>
                 <tr>
-                    <th><?= __('Start Time') ?></th>
+                    <th><?= __('Ora început') ?></th>
                     <td><?= h($doctorSchedule->start_time->format('H:i')) ?></td>
                 </tr>
                 <tr>
-                    <th><?= __('End Time') ?></th>
+                    <th><?= __('Ora sfârșit') ?></th>
                     <td><?= h($doctorSchedule->end_time->format('H:i')) ?></td>
                 </tr>
                 <tr>
-                    <th><?= __('Maximum Appointments') ?></th>
+                    <th><?= __('Număr maxim programări') ?></th>
                     <td><?= $this->Number->format($doctorSchedule->max_appointments) ?></td>
                 </tr>
                 <tr>
-                    <th><?= __('Slot Duration') ?></th>
+                    <th><?= __('Durată interval') ?></th>
                     <td>
                         <?php if ($doctorSchedule->slot_duration): ?>
-                            <?= $this->Number->format($doctorSchedule->slot_duration) ?> <?= __('minutes') ?>
+                            <?= $this->Number->format($doctorSchedule->slot_duration) ?> <?= __('minute') ?>
                         <?php else: ?>
-                            <em><?= __('Using service default') ?></em>
+                            <em><?= __('Folosește durata implicită a serviciului') ?></em>
                         <?php endif; ?>
                     </td>
                 </tr>
                 <tr>
-                    <th><?= __('Buffer Minutes') ?></th>
-                    <td><?= $this->Number->format($doctorSchedule->buffer_minutes) ?> <?= __('minutes') ?></td>
+                    <th><?= __('Minute tampon') ?></th>
+                    <td><?= $this->Number->format($doctorSchedule->buffer_minutes) ?> <?= __('minute') ?></td>
                 </tr>
                 <tr>
-                    <th><?= __('Total Slots') ?></th>
+                    <th><?= __('Total intervale') ?></th>
                     <td><?= $this->Number->format($doctorSchedule->total_slots) ?></td>
                 </tr>
                 <tr>
-                    <th><?= __('Status') ?></th>
+                    <th><?= __('Stare') ?></th>
                     <td>
                         <span class="badge bg-<?= $doctorSchedule->is_active ? 'success' : 'danger' ?>">
-                            <?= $doctorSchedule->is_active ? __('Active') : __('Inactive') ?>
+                            <?= $doctorSchedule->is_active ? __('Activ') : __('Inactiv') ?>
                         </span>
                     </td>
                 </tr>
                 <tr>
-                    <th><?= __('Created') ?></th>
+                    <th><?= __('Creat') ?></th>
                     <td><?= h($doctorSchedule->created) ?></td>
                 </tr>
                 <tr>
-                    <th><?= __('Modified') ?></th>
+                    <th><?= __('Modificat') ?></th>
                     <td><?= h($doctorSchedule->modified) ?></td>
                 </tr>
             </table>
