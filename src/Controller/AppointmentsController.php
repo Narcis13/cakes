@@ -318,15 +318,15 @@ class AppointmentsController extends AppController
         if ($this->request->is('post')) {
             $data = $this->request->getData();
 
-            // Debug log the received data
-            Log::debug('Book appointment data received: ' . json_encode($data));
+            // Debug log (without PII)
+            Log::debug('Book appointment request received');
 
             // Validate required fields
             if (
                 empty($data['doctor_id']) || empty($data['service_id']) ||
                 empty($data['appointment_date']) || empty($data['appointment_time'])
             ) {
-                Log::error('Missing required fields. Data: ' . json_encode($data));
+                Log::error('Missing required fields in appointment booking');
                 $this->Flash->error('Vă rugăm să completați toate câmpurile obligatorii.');
 
                 return $this->redirect(['action' => 'index']);
@@ -441,8 +441,8 @@ class AppointmentsController extends AppController
 
                 return $this->redirect(['action' => 'success', $appointment->id]);
             } else {
-                // Log validation errors
-                Log::error('Appointment save failed. Errors: ' . json_encode($appointment->getErrors()));
+                // Log validation errors (without patient PII)
+                Log::error('Appointment save failed - validation errors occurred');
                 $this->Flash->error('Programarea nu a putut fi salvată. Vă rugăm să încercați din nou.');
 
                 // For AJAX requests, return JSON error response
