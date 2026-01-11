@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace App;
 
+use App\Middleware\HttpsEnforcementMiddleware;
 use App\Middleware\SecurityHeadersMiddleware;
 use Authentication\AuthenticationService;
 use Authentication\AuthenticationServiceInterface;
@@ -76,6 +77,9 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
             // Catch any exceptions in the lower layers,
             // and make an error page/response
             ->add(new ErrorHandlerMiddleware(Configure::read('Error'), $this))
+
+            // Enforce HTTPS in production (disabled in debug mode)
+            ->add(new HttpsEnforcementMiddleware())
 
             // Add security headers to all responses
             ->add(new SecurityHeadersMiddleware())

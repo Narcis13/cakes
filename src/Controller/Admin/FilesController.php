@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 
 use Cake\Http\Exception\NotFoundException;
 use Exception;
+use finfo;
 use Psr\Http\Message\UploadedFileInterface;
 
 /**
@@ -266,34 +267,14 @@ class FilesController extends AppController
             return ['success' => false, 'error' => 'No file uploaded or upload error occurred'];
         }
 
-        // Validate file type
-        $allowedTypes = [
-            'application/pdf',
-            'application/msword',
-            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-            'application/vnd.ms-excel',
-            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            'application/vnd.ms-powerpoint',
-            'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-            'text/plain',
-            'text/csv',
-            'image/jpeg',
-            'image/png',
-            'image/gif',
-            'image/webp',
-            'application/zip',
-            'application/x-rar-compressed',
-        ];
-
-        $mimeType = $uploadedFile->getClientMediaType();
-        if (!in_array($mimeType, $allowedTypes)) {
-            return ['success' => false, 'error' => 'Invalid file type. Only documents, images, and archives are allowed.'];
-        }
-
         // Validate file size (max 10MB)
         if ($uploadedFile->getSize() > 10 * 1024 * 1024) {
             return ['success' => false, 'error' => 'File size too large. Maximum 10MB allowed.'];
         }
+
+        // Get original filename and extension
+        $originalName = $uploadedFile->getClientFilename();
+        $extension = strtolower(pathinfo($originalName, PATHINFO_EXTENSION));
 
         // Create uploads directory if it doesn't exist
         $uploadsDir = WWW_ROOT . 'files' . DS . 'uploads';
@@ -301,25 +282,76 @@ class FilesController extends AppController
             mkdir($uploadsDir, 0755, true);
         }
 
-        // Generate unique filename
-        $originalName = $uploadedFile->getClientFilename();
-        $extension = pathinfo($originalName, PATHINFO_EXTENSION);
-        $filename = uniqid('file_') . '.' . $extension;
-        $uploadPath = $uploadsDir . DS . $filename;
+        // Save to temporary location for server-side validation
+        $tempFilename = uniqid('temp_') . '.' . $extension;
+        $tempPath = $uploadsDir . DS . $tempFilename;
 
-        // Move uploaded file
         try {
-            $uploadedFile->moveTo($uploadPath);
-
-            return [
-                'success' => true,
-                'filename' => $filename,
-                'path' => $uploadPath,
-                'url' => '/files/uploads/' . $filename,
-            ];
+            $uploadedFile->moveTo($tempPath);
         } catch (Exception $e) {
             return ['success' => false, 'error' => 'Failed to upload file: ' . $e->getMessage()];
         }
+
+        // Server-side MIME type detection using finfo
+        $finfo = new finfo(FILEINFO_MIME_TYPE);
+        $actualMimeType = $finfo->file($tempPath);
+
+        // Define allowed MIME types and their corresponding extensions
+        $allowedMimeTypes = [
+            'application/pdf' => ['pdf'],
+            'application/msword' => ['doc'],
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => ['docx'],
+            'application/vnd.ms-excel' => ['xls'],
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' => ['xlsx'],
+            'application/vnd.ms-powerpoint' => ['ppt'],
+            'application/vnd.openxmlformats-officedocument.presentationml.presentation' => ['pptx'],
+            'text/plain' => ['txt'],
+            'text/csv' => ['csv'],
+            'image/jpeg' => ['jpg', 'jpeg'],
+            'image/png' => ['png'],
+            'image/gif' => ['gif'],
+            'image/webp' => ['webp'],
+            'application/zip' => ['zip'],
+            'application/x-rar-compressed' => ['rar'],
+        ];
+
+        // Validate MIME type is allowed
+        if (!isset($allowedMimeTypes[$actualMimeType])) {
+            // Clean up temp file
+            unlink($tempPath);
+
+            return ['success' => false, 'error' => 'Invalid file type. Only documents, images, and archives are allowed.'];
+        }
+
+        // Validate file extension matches detected MIME type
+        $allowedExtensions = $allowedMimeTypes[$actualMimeType];
+        if (!in_array($extension, $allowedExtensions)) {
+            // Clean up temp file
+            unlink($tempPath);
+
+            return [
+                'success' => false,
+                'error' => 'File extension does not match file type. Expected: ' . implode(', ', $allowedExtensions),
+            ];
+        }
+
+        // Rename temp file to final filename
+        $filename = uniqid('file_') . '.' . $extension;
+        $uploadPath = $uploadsDir . DS . $filename;
+
+        if (!rename($tempPath, $uploadPath)) {
+            // Clean up temp file if rename fails
+            unlink($tempPath);
+
+            return ['success' => false, 'error' => 'Failed to save file.'];
+        }
+
+        return [
+            'success' => true,
+            'filename' => $filename,
+            'path' => $uploadPath,
+            'url' => '/files/uploads/' . $filename,
+        ];
     }
 
     /**
