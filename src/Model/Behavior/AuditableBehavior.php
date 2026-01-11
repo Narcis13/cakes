@@ -94,7 +94,7 @@ class AuditableBehavior extends Behavior
     {
         if (!$entity->isNew()) {
             // Store original values before update
-            $this->_originalValues = $this->_getFilteredValues($entity->getOriginal());
+            $this->_originalValues = $this->_getFilteredValues($entity->getOriginalValues());
         }
     }
 

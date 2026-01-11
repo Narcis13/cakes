@@ -253,6 +253,7 @@
             </div>
             <div class="modal-body">
                 <form id="mailForm">
+                    <?= $this->Form->hidden('_csrfToken', ['value' => $this->request->getAttribute('csrfToken')]) ?>
                     <input type="hidden" id="staffId" name="staff_id">
                     <input type="hidden" id="staffEmail" name="staff_email">
 

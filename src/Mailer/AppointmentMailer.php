@@ -5,10 +5,27 @@ namespace App\Mailer;
 
 use Cake\Core\Configure;
 use Cake\Mailer\Mailer;
+use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Routing\Router;
 
 class AppointmentMailer extends Mailer
 {
+    use LocatorAwareTrait;
+
+    /**
+     * Get sender email from database settings
+     *
+     * @return array
+     */
+    protected function getSenderFromSettings(): array
+    {
+        $siteSettings = $this->fetchTable('SiteSettings');
+        $senderEmail = $siteSettings->getValue('sender_email', 'onboarding@resend.dev');
+        $senderName = $siteSettings->getValue('sender_name', 'SMU Pitesti');
+
+        return [$senderEmail => $senderName];
+    }
+
     public static function getConfig(): array
     {
         return [
@@ -22,6 +39,7 @@ class AppointmentMailer extends Mailer
         $hospitalConfig = Configure::read('Hospital');
 
         $this
+            ->setFrom($this->getSenderFromSettings())
             ->setTo($appointment->patient_email)
             ->setSubject('Confirmare programare - ' . $hospitalConfig['name'])
             ->setEmailFormat('both')
@@ -46,6 +64,7 @@ class AppointmentMailer extends Mailer
         $hospitalConfig = Configure::read('Hospital');
 
         $this
+            ->setFrom($this->getSenderFromSettings())
             ->setTo($appointment->patient_email)
             ->setSubject('Reamintire programare - ' . $hospitalConfig['name'])
             ->setEmailFormat('both')
@@ -64,6 +83,7 @@ class AppointmentMailer extends Mailer
         $hospitalConfig = Configure::read('Hospital');
 
         $this
+            ->setFrom($this->getSenderFromSettings())
             ->setTo($appointment->patient_email)
             ->setSubject('Anulare programare - ' . $hospitalConfig['name'])
             ->setEmailFormat('both')
@@ -82,6 +102,7 @@ class AppointmentMailer extends Mailer
         $hospitalConfig = Configure::read('Hospital');
 
         $this
+            ->setFrom($this->getSenderFromSettings())
             ->setTo($appointment->patient_email)
             ->setSubject('Reprogramare - ' . $hospitalConfig['name'])
             ->setEmailFormat('both')
@@ -100,6 +121,7 @@ class AppointmentMailer extends Mailer
         $hospitalConfig = Configure::read('Hospital');
 
         $this
+            ->setFrom($this->getSenderFromSettings())
             ->setTo($hospitalConfig['email'])
             ->setSubject('Programare nouă - ' . $hospitalConfig['name'])
             ->setEmailFormat('both')
@@ -123,6 +145,7 @@ class AppointmentMailer extends Mailer
         $hospitalConfig = Configure::read('Hospital');
 
         $this
+            ->setFrom($this->getSenderFromSettings())
             ->setTo($appointment->patient_email)
             ->setSubject('Programare confirmată - ' . $hospitalConfig['name'])
             ->setEmailFormat('both')

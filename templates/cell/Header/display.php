@@ -2,6 +2,7 @@
 /**
  * @var \App\View\AppView $this
  * @var iterable<\App\Model\Entity\NavbarItem> $navbarItems
+ * @var string $urlProgramari
  */
 ?>
 <header id="header" class="fixed-top">
@@ -21,7 +22,7 @@
         <i class="bi bi-list mobile-nav-toggle"></i>
       </nav><!-- .navbar -->
 
-      <a href="/appointments" class="appointment-btn"><span class="d-none d-md-inline">Programare</span> online</a>
+      <a href="<?= h($urlProgramari) ?>" class="appointment-btn"<?= str_starts_with($urlProgramari, 'http') ? ' target="_blank" rel="noopener"' : '' ?>><span class="d-none d-md-inline">Programare</span> online</a>
 
     </div>
 </header><!-- End Header -->

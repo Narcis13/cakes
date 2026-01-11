@@ -63,31 +63,6 @@
                         </div>
                     </div>
 
-                    <!-- Share Buttons -->
-                    <div class="article-share mt-5">
-                        <h5>Distribuie acest articol:</h5>
-                        <div class="share-buttons">
-                            <a href="https://www.facebook.com/sharer/sharer.php?u=<?= urlencode($this->Url->build(['action' => 'view', $news->slug], ['fullBase' => true])) ?>" 
-                               target="_blank" 
-                               class="btn btn-facebook">
-                                <i class="bi bi-facebook"></i> Facebook
-                            </a>
-                            <a href="https://twitter.com/intent/tweet?url=<?= urlencode($this->Url->build(['action' => 'view', $news->slug], ['fullBase' => true])) ?>&text=<?= urlencode($news->title) ?>" 
-                               target="_blank" 
-                               class="btn btn-twitter">
-                                <i class="bi bi-twitter"></i> Twitter
-                            </a>
-                            <a href="https://www.linkedin.com/shareArticle?mini=true&url=<?= urlencode($this->Url->build(['action' => 'view', $news->slug], ['fullBase' => true])) ?>&title=<?= urlencode($news->title) ?>" 
-                               target="_blank" 
-                               class="btn btn-linkedin">
-                                <i class="bi bi-linkedin"></i> LinkedIn
-                            </a>
-                            <a href="mailto:?subject=<?= urlencode($news->title) ?>&body=<?= urlencode('Vezi acest articol: ' . $this->Url->build(['action' => 'view', $news->slug], ['fullBase' => true])) ?>"
-                               class="btn btn-email">
-                                <i class="bi bi-envelope"></i> Email
-                            </a>
-                        </div>
-                    </div>
                 </article>
             </div>
 
@@ -236,51 +211,6 @@
     margin: 20px 0;
 }
 
-/* Share Buttons */
-.article-share {
-    padding-top: 30px;
-    border-top: 1px solid #eee;
-}
-
-.share-buttons {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-    margin-top: 15px;
-}
-
-.share-buttons .btn {
-    padding: 8px 16px;
-    border-radius: 5px;
-    text-decoration: none;
-    color: #fff;
-    font-size: 14px;
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    transition: opacity 0.3s;
-}
-
-.share-buttons .btn:hover {
-    opacity: 0.8;
-}
-
-.btn-facebook {
-    background-color: #1877f2;
-}
-
-.btn-twitter {
-    background-color: #1da1f2;
-}
-
-.btn-linkedin {
-    background-color: #0077b5;
-}
-
-.btn-email {
-    background-color: #6c757d;
-}
-
 /* Sidebar */
 .sidebar {
     margin-top: 40px;
@@ -323,17 +253,13 @@
     .article {
         padding: 20px;
     }
-    
+
     .article-title {
         font-size: 1.8rem;
     }
-    
+
     .sidebar {
         margin-top: 20px;
-    }
-    
-    .share-buttons {
-        justify-content: center;
     }
 }
 </style>

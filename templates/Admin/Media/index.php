@@ -306,18 +306,24 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
 
+            const formData = new FormData();
+            formData.append('filename', filename);
+            formData.append('_csrfToken', '<?= $this->request->getAttribute('csrfToken') ?>');
+
             fetch('<?= $this->Url->build(['action' => 'deleteFile']) ?>', {
                 method: 'POST',
+                credentials: 'same-origin',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'X-CSRF-Token': '<?= $this->request->getAttribute('csrfToken') ?>'
+                    'X-Requested-With': 'XMLHttpRequest'
                 },
-                body: JSON.stringify({
-                    filename: filename
-                })
+                body: formData
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('HTTP error ' + response.status);
+                }
+                return response.json();
+            })
             .then(data => {
                 if (data.success) {
                     // Remove the file item from the DOM

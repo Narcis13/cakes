@@ -164,8 +164,12 @@ class FilesController extends AppController
             // Handle file replacement if new file is uploaded
             $uploadedFile = $this->request->getUploadedFile('file');
             if ($uploadedFile && $uploadedFile->getError() === UPLOAD_ERR_OK) {
-                // Delete old file
-                if (file_exists($file->file_path)) {
+                // Delete old file - construct path at runtime
+                $uploadsDir = WWW_ROOT . 'files' . DS . 'uploads';
+                $oldFilePath = $uploadsDir . DS . $file->filename;
+                if (file_exists($oldFilePath)) {
+                    unlink($oldFilePath);
+                } elseif (file_exists($file->file_path)) {
                     unlink($file->file_path);
                 }
 
@@ -212,8 +216,14 @@ class FilesController extends AppController
         $this->request->allowMethod(['post', 'delete']);
         $file = $this->Files->get($id);
 
-        // Delete physical file
-        if (file_exists($file->file_path)) {
+        // Construct the file path at runtime to ensure it's correct
+        $uploadsDir = WWW_ROOT . 'files' . DS . 'uploads';
+        $physicalPath = $uploadsDir . DS . $file->filename;
+
+        // Delete physical file - try both the constructed path and the stored path
+        if (file_exists($physicalPath)) {
+            unlink($physicalPath);
+        } elseif (file_exists($file->file_path)) {
             unlink($file->file_path);
         }
 
@@ -237,7 +247,16 @@ class FilesController extends AppController
     {
         $file = $this->Files->get($id);
 
-        if (!file_exists($file->file_path)) {
+        // Construct the file path at runtime
+        $uploadsDir = WWW_ROOT . 'files' . DS . 'uploads';
+        $physicalPath = $uploadsDir . DS . $file->filename;
+
+        // Try constructed path first, then fall back to stored path
+        if (file_exists($physicalPath)) {
+            $filePath = $physicalPath;
+        } elseif (file_exists($file->file_path)) {
+            $filePath = $file->file_path;
+        } else {
             throw new NotFoundException(__('File not found on server.'));
         }
 
@@ -247,7 +266,7 @@ class FilesController extends AppController
             ['id' => $file->id],
         );
 
-        $this->response = $this->response->withFile($file->file_path, [
+        $this->response = $this->response->withFile($filePath, [
             'download' => true,
             'name' => $file->original_name,
         ]);
@@ -320,7 +339,10 @@ class FilesController extends AppController
             // Clean up temp file
             unlink($tempPath);
 
-            return ['success' => false, 'error' => 'Invalid file type. Only documents, images, and archives are allowed.'];
+            return [
+                'success' => false,
+                'error' => 'Invalid file type. Only documents, images, and archives are allowed.',
+            ];
         }
 
         // Validate file extension matches detected MIME type

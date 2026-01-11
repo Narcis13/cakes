@@ -67,10 +67,10 @@ class SecurityHeadersMiddleware implements MiddlewareInterface
             "script-src 'self' 'unsafe-inline' 'unsafe-eval' " .
                 'https://cdn.jsdelivr.net https://cdn.tiny.cloud https://cdnjs.cloudflare.com',
             "style-src 'self' 'unsafe-inline' " .
-                'https://fonts.googleapis.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com',
-            "font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net data:",
+                'https://fonts.googleapis.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://cdn.tiny.cloud',
+            "font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com data:",
             "img-src 'self' data: https:",
-            "connect-src 'self'",
+            "connect-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://cdn.tiny.cloud",
             "frame-ancestors 'self'",
             "base-uri 'self'",
             "form-action 'self'",
