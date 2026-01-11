@@ -110,17 +110,7 @@ class UsersController extends AppController
     private function validateRedirectUrl(mixed $redirect): array
     {
         $default = ['controller' => 'Dashboard', 'action' => 'index', 'prefix' => 'Admin'];
-
-        // If no redirect or not a string, use default
-        if (empty($redirect) || !is_string($redirect)) {
-            return $default;
-        }
-
-        // Only allow paths starting with /smupa1881/ (admin prefix)
-        if (str_starts_with($redirect, '/smupa1881/')) {
-            return $redirect;
-        }
-
+        // Only allow Admin prefix routes - always redirect to dashboard for security
         return $default;
     }
 

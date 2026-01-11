@@ -27,6 +27,6 @@ class LoginAttempt extends Entity
         'ip_address' => true,
         'user_agent' => true,
         'success' => true,
-        'attempted_at' => true,
+        'attempted_at' => false,
     ];
 }

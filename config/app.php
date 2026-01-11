@@ -411,6 +411,16 @@ return [
      */
     'Session' => [
         'defaults' => 'php',
+        'timeout' => 30,
+        'cookie' => 'HOSPITAL_SESSION',
+        'ini' => [
+            'session.cookie_secure' => true,
+            'session.cookie_httponly' => true,
+            'session.cookie_samesite' => 'Strict',
+            'session.use_strict_mode' => true,
+            'session.use_only_cookies' => true,
+            'session.gc_maxlifetime' => 1800,
+        ],
     ],
 
     /**
