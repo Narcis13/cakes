@@ -41,6 +41,9 @@ class UsersTable extends Table
         $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
+        $this->addBehavior('Auditable', [
+            'excludeFields' => ['password', 'modified', 'created', 'last_login_at', 'last_login_ip'],
+        ]);
     }
 
     /**
