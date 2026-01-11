@@ -9,6 +9,7 @@ use App\Model\Table\StaffTable;
 use App\Service\AvailabilityService;
 use Cake\Cache\Cache;
 use Cake\Core\Configure;
+use Cake\Http\Exception\ForbiddenException;
 use Cake\Http\Exception\NotFoundException;
 use Cake\I18n\Date;
 use Cake\I18n\Time;
@@ -207,13 +208,13 @@ class AppointmentsController extends AppController
                 }
 
                 if (!empty($services)) {
+                    // SECURITY: Only expose public-safe doctor information
+                    // Do NOT include email or phone in public API responses
                     $availableDoctors[] = [
                         'id' => $doctor->id,
                         'name' => $doctor->first_name . ' ' . $doctor->last_name,
                         'specialization' => $doctor->specialization,
                         'photo' => $doctor->photo,
-                        'email' => $doctor->email,
-                        'phone' => $doctor->phone,
                         'services' => $services,
                     ];
                 }
@@ -389,6 +390,10 @@ class AppointmentsController extends AppController
             }
 
             if ($this->Appointments->save($appointment)) {
+                // SECURITY: Store appointment ID in session for success page access
+                // This prevents ID enumeration attacks on the success page
+                $this->request->getSession()->write('last_booked_appointment_id', $appointment->id);
+
                 // Send confirmation email
                 try {
                     $mailer = new AppointmentMailer();
@@ -494,7 +499,12 @@ class AppointmentsController extends AppController
         if ($appointment->status === 'confirmed') {
             $this->Flash->info('Această programare a fost deja confirmată.');
 
-            return $this->redirect(['action' => 'success', $appointment->id]);
+            // SECURITY: Include token in redirect for authorization
+            return $this->redirect([
+                'action' => 'success',
+                $appointment->id,
+                '?' => ['token' => $token],
+            ]);
         }
 
         // Check token expiry (24 hours)
@@ -520,7 +530,12 @@ class AppointmentsController extends AppController
 
             $this->Flash->success('Programarea a fost confirmată cu succes!');
 
-            return $this->redirect(['action' => 'success', $appointment->id]);
+            // SECURITY: Include token in redirect for authorization
+            return $this->redirect([
+                'action' => 'success',
+                $appointment->id,
+                '?' => ['token' => $token],
+            ]);
         } else {
             $this->Flash->error('Nu am putut confirma programarea. Vă rugăm să încercați din nou.');
         }
@@ -531,18 +546,56 @@ class AppointmentsController extends AppController
     /**
      * Success page - Booking confirmation
      *
+     * SECURITY: Protected against ID enumeration
+     * Access is only allowed if:
+     * 1. User just booked this appointment (session contains appointment ID), OR
+     * 2. User has a valid confirmation token (from email link)
+     *
      * @param string|null $id Appointment id
      * @return \Cake\Http\Response|null|void
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found
+     * @throws \Cake\Http\Exception\ForbiddenException When access is denied
      */
     public function success(?string $id = null)
     {
-        $appointment = $this->Appointments->get($id, [
-            'contain' => [
-                'Doctors' => ['Departments'],
-                'Services',
-            ],
-        ]);
+        if (!$id) {
+            throw new ForbiddenException('Access denied');
+        }
+
+        $session = $this->request->getSession();
+        $validAppointmentId = $session->read('last_booked_appointment_id');
+        $token = $this->request->getQuery('token');
+
+        // Allow access if: 1) just booked (session), or 2) has valid token
+        if ($id === (string)$validAppointmentId) {
+            // Access via session (just booked)
+            $appointment = $this->Appointments->get($id, [
+                'contain' => [
+                    'Doctors' => ['Departments'],
+                    'Services',
+                ],
+            ]);
+            // Clear session after first access
+            $session->delete('last_booked_appointment_id');
+        } elseif ($token) {
+            // Access via confirmation token (from email)
+            $appointment = $this->Appointments->find()
+                ->where([
+                    'id' => $id,
+                    'confirmation_token' => $token,
+                ])
+                ->contain([
+                    'Doctors' => ['Departments'],
+                    'Services',
+                ])
+                ->first();
+
+            if (!$appointment) {
+                throw new ForbiddenException('Access denied');
+            }
+        } else {
+            // No valid session or token - access denied
+            throw new ForbiddenException('Access denied');
+        }
 
         $this->set(compact('appointment'));
     }
