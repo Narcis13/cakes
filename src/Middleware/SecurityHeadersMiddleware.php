@@ -65,12 +65,12 @@ class SecurityHeadersMiddleware implements MiddlewareInterface
         $directives = [
             "default-src 'self'",
             "script-src 'self' 'unsafe-inline' 'unsafe-eval' " .
-                'https://cdn.jsdelivr.net https://cdn.tiny.cloud https://cdnjs.cloudflare.com https://cdn.plyr.io',
+                'https://cdn.jsdelivr.net https://cdn.tiny.cloud https://cdnjs.cloudflare.com https://cdn.plyr.io https://www.youtube.com',
             "style-src 'self' 'unsafe-inline' " .
                 'https://fonts.googleapis.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://cdn.tiny.cloud https://cdn.plyr.io',
             "font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com data:",
             "img-src 'self' data: https:",
-            "connect-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://cdn.tiny.cloud",
+            "connect-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://cdn.tiny.cloud https://cdn.plyr.io",
             "frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com",
             "frame-ancestors 'self'",
             "base-uri 'self'",
