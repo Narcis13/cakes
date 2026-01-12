@@ -25,7 +25,15 @@ return [
      *   You should treat it as extremely sensitive data.
      */
     'Security' => [
-        'salt' => env('SECURITY_SALT', '__SALT__'),
+        'salt' => env('SECURITY_SALT', '97de4793d5e250d6a5ac5032627eb2ad425ae674a91153553ae353daf2f8689e'),
+    ],
+
+    /*
+     * Third-party API Keys
+     */
+    'ApiKeys' => [
+        'tinymce' => env('TINYMCE_API_KEY', 'mw6ldaj3x35183lcdhla0dtj3uqtuv8fxharylsurnqxyy1c'),
+        'resend' => env('RESEND_API_KEY', 'your-resend-api-key-here'),
     ],
 
     /*
@@ -36,18 +44,18 @@ return [
      */
     'Datasources' => [
         'default' => [
-            'host' => 'localhost',
+            'host' => '127.0.0.1',
             /*
              * CakePHP will use the default DB port based on the driver selected
              * MySQL on MAMP uses port 8889, MAMP users will want to uncomment
              * the following line and set the port accordingly
              */
-            //'port' => 'non_standard_port_number',
+            'port' => '8889',
 
-            'username' => 'my_app',
-            'password' => 'secret',
+            'username' => 'root',
+            'password' => 'root',
 
-            'database' => 'my_app',
+            'database' => 'smupitesti',
             /*
              * If not using the default 'public' schema with the PostgreSQL driver
              * set it here.
@@ -57,7 +65,7 @@ return [
             /*
              * You can use a DSN string to set the entire configuration
              */
-            'url' => env('DATABASE_URL', null),
+           // 'url' => env('DATABASE_URL', null),
         ],
 
         /*
@@ -83,12 +91,67 @@ return [
      */
     'EmailTransport' => [
         'default' => [
-            'host' => 'localhost',
-            'port' => 25,
-            'username' => null,
-            'password' => null,
+            'className' => 'Smtp',
+            'host' => env('EMAIL_HOST', 'smtp.gmail.com'),
+            'port' => env('EMAIL_PORT', 587),
+            'username' => env('EMAIL_USERNAME', 'your-email@gmail.com'),
+            'password' => env('EMAIL_PASSWORD', 'your-app-password'),
             'client' => null,
+            'tls' => true,
+            'timeout' => 30,
+            'context' => [
+                'ssl' => [
+                    'verify_peer' => false,
+                    'verify_peer_name' => false,
+                    'allow_self_signed' => true
+                ]
+            ],
             'url' => env('EMAIL_TRANSPORT_DEFAULT_URL', null),
         ],
+    ],
+    
+    /*
+     * Email configuration for sending emails
+     */
+    'Email' => [
+        'default' => [
+            'transport' => 'default',
+            'from' => [env('EMAIL_FROM_ADDRESS', 'noreply@spital.ro') => env('EMAIL_FROM_NAME', 'Spitalul Municipal')],
+            'charset' => 'utf-8',
+            'headerCharset' => 'utf-8',
+        ],
+    ],
+    
+    /*
+     * Appointment System Configuration
+     */
+    'Appointments' => [
+        'min_advance_hours' => 1, // Minimum hours in advance to book
+        'max_advance_days' => 90, // Maximum days in advance to book
+        'slot_interval' => 30, // Time slot interval in minutes
+        'default_start_time' => '09:00:00', // Default working day start
+        'default_end_time' => '17:00:00', // Default working day end
+        'default_buffer_minutes' => 0, // Default buffer time between appointments
+        'confirmation_token_expiry' => 24, // Token expiry in hours
+        'default_appointment_status' => 'pending',
+        'allow_weekend_appointments' => false,
+        'business_hours' => [
+            'start' => '08:00',
+            'end' => '18:00'
+        ],
+        'rate_limit' => [
+            'attempts' => 10,
+            'window' => 3600 // 1 hour in seconds
+        ]
+    ],
+    
+    /*
+     * Hospital Configuration
+     */
+    'Hospital' => [
+        'name' => 'Spitalul Municipal',
+        'phone' => '0123 456 789',
+        'address' => 'Strada Sănătății, Nr. 1',
+        'email' => 'contact@spital.ro'
     ],
 ];
