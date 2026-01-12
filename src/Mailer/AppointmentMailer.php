@@ -5,25 +5,19 @@ namespace App\Mailer;
 
 use Cake\Core\Configure;
 use Cake\Mailer\Mailer;
-use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Routing\Router;
 
 class AppointmentMailer extends Mailer
 {
-    use LocatorAwareTrait;
 
     /**
-     * Get sender email from database settings
+     * Get sender email configuration
      *
      * @return array
      */
     protected function getSenderFromSettings(): array
     {
-        $siteSettings = $this->fetchTable('SiteSettings');
-        $senderEmail = $siteSettings->getValue('sender_email', 'onboarding@resend.dev');
-        $senderName = $siteSettings->getValue('sender_name', 'SMU Pitesti');
-
-        return [$senderEmail => $senderName];
+        return ['noreply@smupitesti.online' => 'Spitalul Militar Pitesti'];
     }
 
     public static function getConfig(): array

@@ -57,11 +57,11 @@
                         </tr>
                         <tr>
                             <th><?= __('Medic') ?></th>
-                            <td><?= $appointment->has('doctor') ? $this->Html->link($appointment->doctor->first_name . ' ' . $appointment->doctor->last_name, ['controller' => 'Staff', 'action' => 'view', $appointment->doctor->id]) : '' ?></td>
+                            <td><?= $appointment->doctor ? $this->Html->link($appointment->doctor->first_name . ' ' . $appointment->doctor->last_name, ['controller' => 'Staff', 'action' => 'view', $appointment->doctor->id]) : '-' ?></td>
                         </tr>
                         <tr>
                             <th><?= __('Serviciu') ?></th>
-                            <td><?= $appointment->has('service') ? $this->Html->link($appointment->service->name, ['controller' => 'Services', 'action' => 'view', $appointment->service->id]) : '' ?></td>
+                            <td><?= $appointment->service ? $this->Html->link($appointment->service->name, ['controller' => 'Services', 'action' => 'view', $appointment->service->id]) : '-' ?></td>
                         </tr>
                     </table>
                 </div>

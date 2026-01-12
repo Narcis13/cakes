@@ -20,11 +20,11 @@
             <table class="table">
                 <tr>
                     <th><?= __('Medic') ?></th>
-                    <td><?= $doctorSchedule->has('staff') ? $this->Html->link($doctorSchedule->staff->name, ['controller' => 'Staff', 'action' => 'view', $doctorSchedule->staff->id]) : '' ?></td>
+                    <td><?= $doctorSchedule->staff ? $this->Html->link($doctorSchedule->staff->name, ['controller' => 'Staff', 'action' => 'view', $doctorSchedule->staff->id]) : '-' ?></td>
                 </tr>
                 <tr>
                     <th><?= __('Serviciu') ?></th>
-                    <td><?= $doctorSchedule->has('service') ? $this->Html->link($doctorSchedule->service->name, ['controller' => 'Services', 'action' => 'view', $doctorSchedule->service->id]) : '' ?></td>
+                    <td><?= $doctorSchedule->service ? $this->Html->link($doctorSchedule->service->name, ['controller' => 'Services', 'action' => 'view', $doctorSchedule->service->id]) : '-' ?></td>
                 </tr>
                 <tr>
                     <th><?= __('Zi din săptămână') ?></th>

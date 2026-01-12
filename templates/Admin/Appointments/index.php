@@ -100,8 +100,8 @@
                             <?= $this->Html->link($appointment->patient_email, 'mailto:' . $appointment->patient_email) ?>
                         </small>
                     </td>
-                    <td><?= $appointment->has('doctor') ? h($appointment->doctor->first_name . ' ' . $appointment->doctor->last_name) : '' ?></td>
-                    <td><?= $appointment->has('service') ? h($appointment->service->name) : '' ?></td>
+                    <td><?= $appointment->doctor ? h($appointment->doctor->first_name . ' ' . $appointment->doctor->last_name) : '-' ?></td>
+                    <td><?= $appointment->service ? h($appointment->service->name) : '-' ?></td>
                     <td>
                         <?php
                         $statusClass = [

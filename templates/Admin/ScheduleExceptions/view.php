@@ -36,7 +36,7 @@ $daysOfWeek = [
                     <table class="table">
                         <tr>
                             <th><?= __('Medic') ?></th>
-                            <td><?= $scheduleException->has('staff') ? $this->Html->link($scheduleException->staff->name, ['controller' => 'Staff', 'action' => 'view', $scheduleException->staff->id]) : '' ?></td>
+                            <td><?= $scheduleException->staff ? $this->Html->link($scheduleException->staff->name, ['controller' => 'Staff', 'action' => 'view', $scheduleException->staff->id]) : '-' ?></td>
                         </tr>
                         <tr>
                             <th><?= __('Data') ?></th>

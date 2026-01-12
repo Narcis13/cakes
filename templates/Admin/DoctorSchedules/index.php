@@ -82,11 +82,11 @@
             <tbody>
                 <?php foreach ($doctorSchedules as $doctorSchedule): ?>
                 <tr>
-                    <td><?= $doctorSchedule->has('staff') ? h($doctorSchedule->staff->name) : '' ?></td>
+                    <td><?= $doctorSchedule->staff ? h($doctorSchedule->staff->name) : '-' ?></td>
                     <td><?= h($doctorSchedule->day_name) ?></td>
                     <td><?= h($doctorSchedule->start_time->format('H:i')) ?></td>
                     <td><?= h($doctorSchedule->end_time->format('H:i')) ?></td>
-                    <td><?= $doctorSchedule->has('service') ? h($doctorSchedule->service->name) : '' ?></td>
+                    <td><?= $doctorSchedule->service ? h($doctorSchedule->service->name) : '-' ?></td>
                     <td>
                         <span class="badge bg-info">
                             <?= __('Max: {0}', $doctorSchedule->max_appointments) ?>

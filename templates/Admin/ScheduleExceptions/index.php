@@ -95,7 +95,7 @@
                 ?>
                 <?php foreach ($scheduleExceptions as $scheduleException): ?>
                 <tr>
-                    <td><?= $scheduleException->has('staff') ? h($scheduleException->staff->name) : '' ?></td>
+                    <td><?= $scheduleException->staff ? h($scheduleException->staff->name) : '-' ?></td>
                     <td><?= $scheduleException->exception_date->format('d.m.Y') ?></td>
                     <td><?= $daysOfWeek[$scheduleException->exception_date->format('l')] ?? '' ?></td>
                     <td>

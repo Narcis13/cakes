@@ -346,11 +346,9 @@ class StaffController extends AppController
                 throw new Exception('Resend API key not configured or using default placeholder');
             }
 
-            // Get sender email from database settings
-            // Fallback to Resend's testing domain if not configured
-            $siteSettings = $this->fetchTable('SiteSettings');
-            $senderEmail = $siteSettings->getValue('sender_email', 'onboarding@resend.dev');
-            $senderName = $siteSettings->getValue('sender_name', 'SMU Pitesti');
+            // Sender configuration
+            $senderEmail = 'noreply@smupitesti.online';
+            $senderName = 'Spitalul Militar Pitesti';
 
             // Initialize Resend client
             $resend = Resend::client($resendApiKey);
