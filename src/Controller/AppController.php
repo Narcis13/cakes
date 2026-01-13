@@ -74,6 +74,8 @@ class AppController extends Controller
                 'login', 'logout', 'register', 'book', 'checkAvailability',
                 'getAvailableSlots', 'success', 'emergency', 'cardiology',
                 'pediatrics', 'radiology', 'category', 'search', 'submit',
+                // Patient portal public actions
+                'verifyEmail', 'forgotPassword', 'resetPassword',
             ]);
         }
     }

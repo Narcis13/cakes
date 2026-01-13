@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Mailer\PatientMailer;
 use App\Model\Entity\Patient;
 use App\Service\PatientAuthService;
+use App\Service\PatientEmailService;
 use Authentication\PasswordHasher\DefaultPasswordHasher;
 use Cake\Event\EventInterface;
 use Cake\Http\Response;
@@ -68,6 +68,8 @@ class PatientsController extends AppController
         if (!in_array($action, $publicActions, true)) {
             $this->viewBuilder()->setLayout('portal');
         }
+
+        return null;
     }
 
     /**
@@ -113,18 +115,36 @@ class PatientsController extends AppController
                 return null;
             }
 
-            // Generate verification token
-            $data['verification_token'] = $this->authService->generateVerificationToken();
-            $data['is_active'] = true;
-            $data['failed_login_attempts'] = 0;
+            // Check if email exists but is not verified - allow re-registration
+            $email = (string)($data['email'] ?? '');
+            $existingPatient = $this->Patients->find()
+                ->where(['email' => $email])
+                ->first();
+
+            if ($existingPatient) {
+                if ($existingPatient->email_verified_at !== null) {
+                    // Email is already verified - can't re-register
+                    $this->Flash->error('Această adresă de email este deja înregistrată.');
+                    $this->set(compact('patient'));
+
+                    return null;
+                }
+                // Use existing unverified record
+                $patient = $existingPatient;
+            }
 
             $patient = $this->Patients->patchEntity($patient, $data);
 
+            // Set security fields directly (not via mass assignment)
+            $patient->verification_token = $this->authService->generateVerificationToken();
+            $patient->is_active = true;
+            $patient->failed_login_attempts = 0;
+
             if ($this->Patients->save($patient)) {
-                // Send verification email
+                // Send verification email via Resend
                 try {
-                    $mailer = new PatientMailer();
-                    $mailer->verification($patient, $patient->verification_token)->send();
+                    $emailService = new PatientEmailService();
+                    $emailService->sendVerification($patient, $patient->verification_token);
 
                     $this->Flash->success('Contul a fost creat. Verificați email-ul pentru activare.');
                 } catch (Exception $e) {
@@ -142,6 +162,8 @@ class PatientsController extends AppController
         }
 
         $this->set(compact('patient'));
+
+        return null;
     }
 
     /**
@@ -205,6 +227,8 @@ class PatientsController extends AppController
 
             $this->Flash->error('Email sau parolă incorectă.');
         }
+
+        return null;
     }
 
     /**
@@ -237,10 +261,10 @@ class PatientsController extends AppController
         $patient = $this->authService->verifyEmail($token);
 
         if ($patient) {
-            // Send welcome email
+            // Send welcome email via Resend
             try {
-                $mailer = new PatientMailer();
-                $mailer->welcome($patient)->send();
+                $emailService = new PatientEmailService();
+                $emailService->sendWelcome($patient);
             } catch (Exception $e) {
                 Log::error('Patient welcome email error: ' . $e->getMessage());
             }
@@ -274,10 +298,10 @@ class PatientsController extends AppController
                 // Generate reset token
                 $token = $this->authService->generatePasswordResetToken($patient);
 
-                // Send reset email
+                // Send reset email via Resend
                 try {
-                    $mailer = new PatientMailer();
-                    $mailer->passwordReset($patient, $token)->send();
+                    $emailService = new PatientEmailService();
+                    $emailService->sendPasswordReset($patient, $token);
                 } catch (Exception $e) {
                     Log::error('Password reset email error: ' . $e->getMessage());
                 }
@@ -285,6 +309,8 @@ class PatientsController extends AppController
 
             return $this->redirect(['action' => 'login']);
         }
+
+        return null;
     }
 
     /**
@@ -340,6 +366,8 @@ class PatientsController extends AppController
         }
 
         $this->set('token', $token);
+
+        return null;
     }
 
     /**
@@ -392,6 +420,8 @@ class PatientsController extends AppController
         ];
 
         $this->set(compact('patient', 'upcomingAppointments', 'appointmentStats'));
+
+        return null;
     }
 
     /**
@@ -428,6 +458,8 @@ class PatientsController extends AppController
         });
 
         $this->set(compact('patient', 'upcomingAppointments', 'pastAppointments'));
+
+        return null;
     }
 
     /**
@@ -570,6 +602,8 @@ class PatientsController extends AppController
         }
 
         $this->set(compact('patient'));
+
+        return null;
     }
 
     /**
