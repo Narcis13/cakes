@@ -253,7 +253,6 @@
             </div>
             <div class="modal-body">
                 <form id="mailForm">
-                    <?= $this->Form->hidden('_csrfToken', ['value' => $this->request->getAttribute('csrfToken')]) ?>
                     <input type="hidden" id="staffId" name="staff_id">
                     <input type="hidden" id="staffEmail" name="staff_email">
 
@@ -283,6 +282,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const mailModal = new bootstrap.Modal(document.getElementById('mailModal'));
     const mailForm = document.getElementById('mailForm');
     const sendMailBtn = document.getElementById('sendMailBtn');
+    const csrfToken = '<?= $this->request->getAttribute('csrfToken') ?>';
 
     // Gestionează click-urile pe butonul de email
     document.querySelectorAll('.mail-btn').forEach(btn => {
@@ -307,11 +307,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Gestionează click-ul pe butonul de trimitere
     sendMailBtn.addEventListener('click', function() {
-        const form = mailForm;
-        const formData = new FormData(form);
+        const staffId = document.getElementById('staffId').value;
+        const staffEmail = document.getElementById('staffEmail').value;
+        const subject = document.getElementById('mailSubject').value.trim();
+        const content = document.getElementById('mailContent').value.trim();
 
         // Validare de bază
-        if (!formData.get('subject').trim() || !formData.get('content').trim()) {
+        if (!subject || !content) {
             alert('Vă rugăm să completați atât subiectul cât și conținutul.');
             return;
         }
@@ -320,16 +322,31 @@ document.addEventListener('DOMContentLoaded', function() {
         sendMailBtn.disabled = true;
         sendMailBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Se trimite...';
 
+        // Pregătește datele pentru trimitere
+        const data = {
+            staff_id: staffId,
+            staff_email: staffEmail,
+            subject: subject,
+            content: content
+        };
+
         // Trimite email-ul prin AJAX
         fetch('<?= $this->Url->build(['action' => 'sendEmail']) ?>', {
             method: 'POST',
-            body: formData,
+            body: JSON.stringify(data),
             headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
                 'X-Requested-With': 'XMLHttpRequest',
-                'X-CSRF-Token': '<?= $this->request->getAttribute('csrfToken') ?>'
+                'X-CSRF-Token': csrfToken
             }
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Eroare server: ' + response.status);
+            }
+            return response.json();
+        })
         .then(data => {
             if (data.success) {
                 alert('Email-ul a fost trimis cu succes!');

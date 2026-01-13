@@ -26,6 +26,11 @@ class StaffController extends AppController
     {
         parent::initialize();
         $this->viewBuilder()->setLayout('admin');
+
+        // Disable FormProtection for AJAX sendEmail action
+        if ($this->request->getParam('action') === 'sendEmail') {
+            $this->FormProtection->setConfig('unlockedActions', ['sendEmail']);
+        }
     }
 
     /**
