@@ -46,10 +46,32 @@ return static function (RouteBuilder $routes) {
             ->setPass(['id'])
             ->setPatterns(['id' => '\d+']);
         
-        // Patient portal routes
+        // Patient Portal Routes
         $builder->connect('/portal', ['controller' => 'Patients', 'action' => 'portal']);
         $builder->connect('/portal/login', ['controller' => 'Patients', 'action' => 'login']);
         $builder->connect('/portal/register', ['controller' => 'Patients', 'action' => 'register']);
+        $builder->connect('/portal/logout', ['controller' => 'Patients', 'action' => 'logout']);
+
+        // Password reset routes
+        $builder->connect('/portal/forgot-password', ['controller' => 'Patients', 'action' => 'forgotPassword']);
+        $builder->connect('/portal/reset-password/{token}', ['controller' => 'Patients', 'action' => 'resetPassword'])
+            ->setPass(['token'])
+            ->setPatterns(['token' => '[a-zA-Z0-9]+']);
+
+        // Email verification route
+        $builder->connect('/portal/verify-email/{token}', ['controller' => 'Patients', 'action' => 'verifyEmail'])
+            ->setPass(['token'])
+            ->setPatterns(['token' => '[a-zA-Z0-9]+']);
+
+        // Patient appointments management
+        $builder->connect('/portal/appointments', ['controller' => 'Patients', 'action' => 'appointments']);
+        $builder->connect('/portal/appointments/cancel/{id}', ['controller' => 'Patients', 'action' => 'cancelAppointment'])
+            ->setPass(['id'])
+            ->setPatterns(['id' => '\d+'])
+            ->setMethods(['POST']);
+
+        // Patient profile
+        $builder->connect('/portal/profile', ['controller' => 'Patients', 'action' => 'profile']);
         
         // Medical services routes
         $builder->connect('/services/emergency', ['controller' => 'Services', 'action' => 'emergency']);

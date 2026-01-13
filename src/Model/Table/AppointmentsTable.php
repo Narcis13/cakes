@@ -15,6 +15,7 @@ use DateTime;
 /**
  * Appointments Model
  *
+ * @property \App\Model\Table\PatientsTable&\Cake\ORM\Association\BelongsTo $Patients
  * @property \App\Model\Table\ServicesTable&\Cake\ORM\Association\BelongsTo $Services
  * @property \App\Model\Table\StaffTable&\Cake\ORM\Association\BelongsTo $Doctors
  * @method \App\Model\Entity\Appointment newEmptyEntity()
@@ -59,6 +60,9 @@ class AppointmentsTable extends Table
             ],
         ]);
 
+        $this->belongsTo('Patients', [
+            'foreignKey' => 'patient_id',
+        ]);
         $this->belongsTo('Services', [
             'foreignKey' => 'service_id',
         ]);
@@ -175,6 +179,7 @@ class AppointmentsTable extends Table
      */
     public function buildRules(RulesChecker $rules): RulesChecker
     {
+        $rules->add($rules->existsIn(['patient_id'], 'Patients'), ['errorField' => 'patient_id']);
         $rules->add($rules->existsIn(['service_id'], 'Services'), ['errorField' => 'service_id']);
         $rules->add($rules->existsIn(['doctor_id'], 'Doctors'), ['errorField' => 'doctor_id']);
 

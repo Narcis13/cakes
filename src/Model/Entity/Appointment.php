@@ -10,6 +10,7 @@ use Cake\ORM\Entity;
  * Appointment Entity
  *
  * @property int $id
+ * @property int|null $patient_id
  * @property string $patient_name
  * @property string $patient_phone
  * @property string $patient_email
@@ -27,6 +28,7 @@ use Cake\ORM\Entity;
  * @property \Cake\I18n\DateTime $created
  * @property \Cake\I18n\DateTime $modified
  *
+ * @property \App\Model\Entity\Patient|null $patient
  * @property \App\Model\Entity\Service $service
  * @property \App\Model\Entity\Staff $doctor
  * @property-read \Cake\I18n\DateTime|null $full_date_time
@@ -46,6 +48,7 @@ class Appointment extends Entity
      * @var array<string, bool>
      */
     protected array $_accessible = [
+        'patient_id' => true,
         'patient_name' => true,
         'patient_phone' => true,
         'patient_email' => true,
@@ -65,6 +68,7 @@ class Appointment extends Entity
         'reminded_2h' => false,
         'created' => false,
         'modified' => false,
+        'patient' => true,
         'service' => true,
         'doctor' => true,
     ];

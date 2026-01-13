@@ -14,6 +14,7 @@ use Cake\ORM\Entity;
  * @property string|null $title
  * @property string|null $specialization
  * @property int|null $department_id
+ * @property int|null $specialization_id
  * @property string|null $phone
  * @property string|null $email
  * @property string|null $bio
@@ -25,6 +26,7 @@ use Cake\ORM\Entity;
  * @property \Cake\I18n\DateTime $modified
  *
  * @property \App\Model\Entity\Department $department
+ * @property \App\Model\Entity\Specialization|null $specialization_data
  * @property string $name Virtual field for full name
  */
 class Staff extends Entity
@@ -44,6 +46,7 @@ class Staff extends Entity
         'title' => true,
         'specialization' => true,
         'department_id' => true,
+        'specialization_id' => true,
         'phone' => true,
         'email' => true,
         'bio' => true,
@@ -54,6 +57,7 @@ class Staff extends Entity
         'created' => false,
         'modified' => false,
         'department' => true,
+        'specialization_data' => true,
     ];
 
     /**

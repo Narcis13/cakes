@@ -125,11 +125,79 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
 
     /**
      * Returns a service provider instance.
+     * Routes to patient or admin authentication based on request path.
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request Request
      * @return \Authentication\AuthenticationServiceInterface
      */
     public function getAuthenticationService(ServerRequestInterface $request): AuthenticationServiceInterface
+    {
+        $path = $request->getUri()->getPath();
+
+        // Patient portal and appointment routes use patient authentication
+        if (str_starts_with($path, '/portal') || str_starts_with($path, '/appointments')) {
+            return $this->getPatientAuthenticationService();
+        }
+
+        // Default: Admin authentication (existing code)
+        return $this->getAdminAuthenticationService();
+    }
+
+    /**
+     * Returns authentication service for patient portal.
+     * Uses separate session key and Patients table with active finder.
+     *
+     * @return \Authentication\AuthenticationService
+     */
+    private function getPatientAuthenticationService(): AuthenticationService
+    {
+        $service = new AuthenticationService();
+
+        $service->setConfig([
+            'unauthenticatedRedirect' => Router::url([
+                'controller' => 'Patients',
+                'action' => 'login',
+            ]),
+            'queryParam' => 'redirect',
+        ]);
+
+        $fields = [
+            'username' => 'email',
+            'password' => 'password',
+        ];
+
+        // Separate session key for patients (doesn't conflict with admin session)
+        $service->loadAuthenticator('Authentication.Session', [
+            'sessionKey' => 'PatientAuth',
+        ]);
+
+        $service->loadAuthenticator('Authentication.Form', [
+            'fields' => $fields,
+            'loginUrl' => Router::url([
+                'controller' => 'Patients',
+                'action' => 'login',
+            ]),
+        ]);
+
+        // Only verified, active patients can authenticate
+        $service->loadIdentifier('Authentication.Password', [
+            'fields' => $fields,
+            'resolver' => [
+                'className' => 'Authentication.Orm',
+                'userModel' => 'Patients',
+                'finder' => 'active',
+            ],
+        ]);
+
+        return $service;
+    }
+
+    /**
+     * Returns authentication service for admin panel.
+     *
+     * @return \Authentication\AuthenticationService
+     */
+    private function getAdminAuthenticationService(): AuthenticationService
     {
         $service = new AuthenticationService();
 

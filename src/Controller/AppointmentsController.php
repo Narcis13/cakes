@@ -9,6 +9,7 @@ use App\Model\Table\StaffTable;
 use App\Service\AvailabilityService;
 use Cake\Cache\Cache;
 use Cake\Core\Configure;
+use Cake\Event\EventInterface;
 use Cake\Http\Exception\ForbiddenException;
 use Cake\Http\Exception\NotFoundException;
 use Cake\I18n\Date;
@@ -57,21 +58,36 @@ class AppointmentsController extends AppController
         // Initialize AvailabilityService
         $this->availabilityService = new AvailabilityService();
 
-        // Allow public access to all appointment actions
+        // Only these actions are public (no patient auth)
         $this->Authentication->allowUnauthenticated([
-            'index',
             'checkAvailability',
             'getAvailableSlots',
-            'book',
-            'confirm',
-            'success',
-            'generateCaptcha',
+            'confirm', // Email confirmation link
+            'success', // Success page (session-protected)
         ]);
+    }
 
-        // Load AJAX routes
-        $this->Authentication->allowUnauthenticated([
-            'getDoctorsBySpecialty',
-        ]);
+    /**
+     * Before filter - Require patient authentication for booking
+     *
+     * @param \Cake\Event\EventInterface $event The event
+     * @return \Cake\Http\Response|null|void
+     */
+    public function beforeFilter(EventInterface $event)
+    {
+        parent::beforeFilter($event);
+
+        $action = $this->request->getParam('action');
+
+        // Require patient auth for booking
+        if (in_array($action, ['index', 'book'])) {
+            $identity = $this->Authentication->getIdentity();
+            if (!$identity) {
+                $this->Flash->error('Trebuie să fiți autentificat pentru a face o programare.');
+
+                return $this->redirect(['controller' => 'Patients', 'action' => 'login']);
+            }
+        }
     }
 
     /**
@@ -81,6 +97,9 @@ class AppointmentsController extends AppController
      */
     public function index()
     {
+        // Get authenticated patient
+        $patient = $this->Authentication->getIdentity()->getOriginalData();
+
         // Get all active specializations
         $specializations = $this->fetchTable('Specializations')->find()
             ->select(['id', 'name'])
@@ -104,7 +123,7 @@ class AppointmentsController extends AppController
         ->orderAsc('name')
         ->toArray();
 
-        $this->set(compact('specializations', 'services'));
+        $this->set(compact('patient', 'specializations', 'services'));
     }
 
     /**
@@ -314,6 +333,9 @@ class AppointmentsController extends AppController
             return $this->redirect(['action' => 'index']);
         }
 
+        // Get authenticated patient
+        $patient = $this->Authentication->getIdentity()->getOriginalData();
+
         $appointment = $this->Appointments->newEmptyEntity();
 
         if ($this->request->is('post')) {
@@ -333,23 +355,11 @@ class AppointmentsController extends AppController
                 return $this->redirect(['action' => 'index']);
             }
 
-            // Validate CAPTCHA
-            if (!$this->validateCaptcha($data['captcha_answer'] ?? '')) {
-                $this->Flash->error('Răspunsul la întrebarea de securitate este incorect.');
-
-                if ($this->request->is('ajax')) {
-                    $this->viewBuilder()->setClassName('Json');
-                    $this->set([
-                        'success' => false,
-                        'message' => 'Răspunsul la întrebarea de securitate este incorect.',
-                    ]);
-                    $this->viewBuilder()->setOption('serialize', ['success', 'message']);
-
-                    return;
-                }
-
-                return $this->redirect(['action' => 'index']);
-            }
+            // Auto-fill patient data from authenticated patient
+            $data['patient_id'] = $patient->id;
+            $data['patient_name'] = $patient->full_name;
+            $data['patient_email'] = $patient->email;
+            $data['patient_phone'] = $patient->phone;
 
             try {
                 $appointmentDate = new Date($data['appointment_date']);
@@ -598,67 +608,6 @@ class AppointmentsController extends AppController
         }
 
         $this->set(compact('appointment'));
-    }
-
-    /**
-     * Generate CAPTCHA question and store answer in session
-     *
-     * @return array
-     */
-    public function generateCaptcha(): array
-    {
-        $this->request->allowMethod(['post']);
-        $this->viewBuilder()->setClassName('Json');
-
-        $num1 = rand(1, 10);
-        $num2 = rand(1, 10);
-        $operation = rand(0, 1) ? '+' : '-';
-
-        if ($operation === '-' && $num1 < $num2) {
-            // Ensure positive result
-            $temp = $num1;
-            $num1 = $num2;
-            $num2 = $temp;
-        }
-
-        $question = "$num1 $operation $num2 = ?";
-        $answer = $operation === '+' ? $num1 + $num2 : $num1 - $num2;
-
-        // Store answer in session
-        $session = $this->request->getSession();
-        $session->write('captcha_answer', $answer);
-
-        $this->set([
-            'success' => true,
-            'question' => $question,
-        ]);
-        $this->viewBuilder()->setOption('serialize', ['success', 'question']);
-
-        return [
-            'question' => $question,
-            'answer' => $answer,
-        ];
-    }
-
-    /**
-     * Validate CAPTCHA answer
-     *
-     * @param string $userAnswer
-     * @return bool
-     */
-    private function validateCaptcha(string $userAnswer): bool
-    {
-        $session = $this->request->getSession();
-        $correctAnswer = $session->read('captcha_answer');
-
-        if ($correctAnswer === null) {
-            return false;
-        }
-
-        // Clean up session after validation
-        $session->delete('captcha_answer');
-
-        return (int)$userAnswer === (int)$correctAnswer;
     }
 
     /**

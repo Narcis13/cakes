@@ -1,6 +1,7 @@
 <?php
 /**
  * @var \App\View\AppView $this
+ * @var \App\Model\Entity\Patient $patient
  * @var array $specializations
  * @var array $services
  */
@@ -175,82 +176,59 @@
             </div>
         </div>
 
-        <!-- Step 4: Enter Patient Details -->
+        <!-- Step 4: Verify Patient Details -->
         <div class="form-step" data-step="4">
-            <h2>Pasul 4: Introduceți Datele Personale</h2>
-            <p class="step-description">Vă rugăm să completați datele dumneavoastră de contact.</p>
-            
-            <div class="row">
-                <div class="col-md-6">
-                    <?= $this->Form->control('patient_name', [
-                        'label' => 'Nume și Prenume *',
-                        'class' => 'form-control',
-                        'required' => true,
-                        'maxlength' => 100
-                    ]) ?>
+            <h2>Pasul 4: Verificați Datele Personale</h2>
+            <p class="step-description">Datele dumneavoastră de contact preluate din cont.</p>
+
+            <div class="patient-info-display">
+                <div class="patient-info-card">
+                    <div class="patient-info-row">
+                        <div class="patient-info-item">
+                            <i class="fas fa-user"></i>
+                            <div>
+                                <span class="info-label">Nume complet</span>
+                                <span class="info-value" id="display-patient-name"><?= h($patient->full_name) ?></span>
+                            </div>
+                        </div>
+                        <div class="patient-info-item">
+                            <i class="fas fa-envelope"></i>
+                            <div>
+                                <span class="info-label">Email</span>
+                                <span class="info-value" id="display-patient-email"><?= h($patient->email) ?></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="patient-info-row">
+                        <div class="patient-info-item">
+                            <i class="fas fa-phone"></i>
+                            <div>
+                                <span class="info-label">Telefon</span>
+                                <span class="info-value" id="display-patient-phone"><?= h($patient->phone) ?></span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-md-6">
-                    <?= $this->Form->control('patient_email', [
-                        'type' => 'email',
-                        'label' => 'Adresă Email *',
-                        'class' => 'form-control',
-                        'required' => true,
-                        'maxlength' => 100
-                    ]) ?>
-                </div>
+                <p class="patient-info-note">
+                    <i class="fas fa-info-circle"></i>
+                    Pentru a modifica datele de contact, accesați <a href="/portal/profile">profilul dumneavoastră</a>.
+                </p>
             </div>
-            
-            <div class="row">
-                <div class="col-md-6">
-                    <?= $this->Form->control('patient_phone', [
-                        'label' => 'Număr de Telefon *',
-                        'class' => 'form-control',
-                        'required' => true,
-                        'maxlength' => 20,
-                        'placeholder' => 'Ex: 0722 123 456'
-                    ]) ?>
-                </div>
-                <div class="col-md-6">
-                    <?= $this->Form->control('patient_cnp', [
-                        'label' => 'CNP (opțional)',
-                        'class' => 'form-control',
-                        'maxlength' => 13
-                    ]) ?>
-                </div>
-            </div>
-            
+
+            <!-- Hidden fields for patient data -->
+            <?= $this->Form->hidden('patient_id', ['value' => $patient->id, 'id' => 'patient-id']) ?>
+
             <div class="form-group">
                 <?= $this->Form->control('notes', [
                     'type' => 'textarea',
                     'label' => 'Observații (opțional)',
                     'class' => 'form-control',
                     'rows' => 3,
+                    'id' => 'notes',
                     'placeholder' => 'Menționați aici orice informații relevante pentru consultație'
                 ]) ?>
             </div>
-            
-            <!-- CAPTCHA -->
-            <div class="form-group captcha-group">
-                <label class="form-label">Verificare de Securitate *</label>
-                <div class="captcha-container">
-                    <p class="captcha-question">
-                        Pentru siguranță, vă rugăm să rezolvați această operație simplă:
-                        <strong id="captcha-question"></strong>
-                    </p>
-                    <?= $this->Form->control('captcha_answer', [
-                        'type' => 'text',
-                        'label' => false,
-                        'class' => 'form-control captcha-input',
-                        'required' => true,
-                        'placeholder' => 'Introduceti răspunsul',
-                        'autocomplete' => 'off'
-                    ]) ?>
-                    <button type="button" class="btn btn-sm btn-outline-secondary refresh-captcha" title="Generează o nouă întrebare">
-                        <i class="fas fa-sync-alt"></i>
-                    </button>
-                </div>
-            </div>
-            
+
             <div class="step-actions">
                 <button type="button" class="btn btn-secondary prev-step">
                     <i class="fas fa-arrow-left"></i> Pasul Anterior
@@ -293,17 +271,14 @@
                     <h4>Date Personale</h4>
                     <dl class="row">
                         <dt class="col-sm-4">Nume:</dt>
-                        <dd class="col-sm-8" id="summary-name"></dd>
-                        
+                        <dd class="col-sm-8" id="summary-name"><?= h($patient->full_name) ?></dd>
+
                         <dt class="col-sm-4">Email:</dt>
-                        <dd class="col-sm-8" id="summary-email"></dd>
-                        
+                        <dd class="col-sm-8" id="summary-email"><?= h($patient->email) ?></dd>
+
                         <dt class="col-sm-4">Telefon:</dt>
-                        <dd class="col-sm-8" id="summary-phone"></dd>
-                        
-                        <dt class="col-sm-4">CNP:</dt>
-                        <dd class="col-sm-8" id="summary-cnp"></dd>
-                        
+                        <dd class="col-sm-8" id="summary-phone"><?= h($patient->phone) ?></dd>
+
                         <dt class="col-sm-4">Observații:</dt>
                         <dd class="col-sm-8" id="summary-notes"></dd>
                     </dl>
@@ -906,6 +881,92 @@
     text-transform: uppercase;
 }
 
+/* Patient Info Display Styles */
+.patient-info-display {
+    margin-bottom: 30px;
+}
+
+.patient-info-card {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 12px;
+    padding: 25px;
+    border: 1px solid #dee2e6;
+}
+
+.patient-info-row {
+    display: flex;
+    gap: 30px;
+    margin-bottom: 20px;
+}
+
+.patient-info-row:last-child {
+    margin-bottom: 0;
+}
+
+.patient-info-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex: 1;
+}
+
+.patient-info-item i {
+    font-size: 24px;
+    color: #007bff;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 123, 255, 0.1);
+    border-radius: 50%;
+}
+
+.patient-info-item .info-label {
+    display: block;
+    font-size: 12px;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 2px;
+}
+
+.patient-info-item .info-value {
+    display: block;
+    font-size: 16px;
+    font-weight: 600;
+    color: #212529;
+}
+
+.patient-info-note {
+    margin-top: 15px;
+    font-size: 14px;
+    color: #6c757d;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.patient-info-note i {
+    color: #17a2b8;
+}
+
+.patient-info-note a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.patient-info-note a:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+    .patient-info-row {
+        flex-direction: column;
+        gap: 20px;
+    }
+}
+
 .booking-summary {
     background: #f8f9fa;
     padding: 20px;
@@ -1467,29 +1528,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function validatePatientData() {
-        const name = document.getElementById('patient-name').value.trim();
-        const email = document.getElementById('patient-email').value.trim();
-        const phone = document.getElementById('patient-phone').value.trim();
-        
-        if (!name || !email || !phone) {
-            alert('Vă rugăm să completați toate câmpurile obligatorii.');
-            return false;
-        }
-        
-        // Basic email validation
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
-            alert('Vă rugăm să introduceți o adresă de email validă.');
-            return false;
-        }
-        
-        // Basic phone validation
-        const phoneRegex = /^[\d\s\-\+\(\)]+$/;
-        if (!phoneRegex.test(phone)) {
-            alert('Vă rugăm să introduceți un număr de telefon valid.');
-            return false;
-        }
-        
+        // Patient data is already validated and stored in session
+        // No additional validation needed as data comes from authenticated patient
         return true;
     }
 
@@ -1498,17 +1538,14 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('summary-specialty').textContent = bookingData.specialty;
         document.getElementById('summary-doctor').textContent = bookingData.doctorName;
         document.getElementById('summary-service').textContent = bookingData.serviceName;
-        
+
         const date = new Date(bookingData.appointmentDate);
         const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
         document.getElementById('summary-date').textContent = date.toLocaleDateString('ro-RO', dateOptions);
         document.getElementById('summary-time').textContent = bookingData.appointmentTime;
-        
-        // Personal details
-        document.getElementById('summary-name').textContent = document.getElementById('patient-name').value;
-        document.getElementById('summary-email').textContent = document.getElementById('patient-email').value;
-        document.getElementById('summary-phone').textContent = document.getElementById('patient-phone').value;
-        document.getElementById('summary-cnp').textContent = document.getElementById('patient-cnp').value || 'Necompletat';
+
+        // Personal details - patient name, email, phone are pre-filled via PHP
+        // Only notes needs to be updated from the form
         document.getElementById('summary-notes').textContent = document.getElementById('notes').value || 'Fără observații';
     }
 
@@ -1539,10 +1576,7 @@ document.addEventListener('DOMContentLoaded', function() {
             service_id: document.getElementById('selected-service').value,
             appointment_date: document.getElementById('appointment-date').value,
             appointment_time: document.getElementById('selected-time').value,
-            patient_name: document.getElementById('patient-name').value,
-            patient_email: document.getElementById('patient-email').value,
-            patient_phone: document.getElementById('patient-phone').value,
-            patient_cnp: document.getElementById('patient-cnp').value,
+            patient_id: document.getElementById('patient-id').value,
             notes: document.getElementById('notes').value
         };
         
@@ -1688,78 +1722,10 @@ document.addEventListener('DOMContentLoaded', function() {
         if (token) {
             return token.getAttribute('content');
         }
-        
+
         // If not found, get it from the form
         const csrfField = document.querySelector('input[name="_csrfToken"]');
         return csrfField ? csrfField.value : '';
     }
-
-    // CAPTCHA functionality
-    function generateCaptcha() {
-        fetch('/appointments/generate-captcha', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-Token': getCsrfToken()
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                document.getElementById('captcha-question').textContent = data.question;
-                document.querySelector('input[name="captcha_answer"]').value = '';
-            }
-        })
-        .catch(error => {
-            console.error('CAPTCHA generation error:', error);
-        });
-    }
-
-    // Generate initial CAPTCHA when page loads
-    generateCaptcha();
-
-    // Handle CAPTCHA refresh button
-    document.querySelector('.refresh-captcha').addEventListener('click', function() {
-        generateCaptcha();
-        this.style.transform = 'rotate(360deg)';
-        setTimeout(() => {
-            this.style.transform = '';
-        }, 500);
-    });
 });
 </script>
-
-<style>
-.captcha-group {
-    margin: 20px 0;
-    padding: 15px;
-    border: 1px solid #dee2e6;
-    border-radius: 8px;
-    background-color: #f8f9fa;
-}
-
-.captcha-container {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.captcha-question {
-    margin: 0 0 10px 0;
-    font-size: 16px;
-}
-
-.captcha-input {
-    width: 100px !important;
-    text-align: center;
-}
-
-.refresh-captcha {
-    transition: transform 0.5s ease;
-    flex-shrink: 0;
-}
-
-.refresh-captcha:hover {
-    transform: rotate(180deg);
-}
-</style>
