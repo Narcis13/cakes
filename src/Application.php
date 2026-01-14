@@ -106,9 +106,17 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
 
             // Cross Site Request Forgery (CSRF) Protection Middleware
             // https://book.cakephp.org/5/en/security/csrf.html#cross-site-request-forgery-csrf-middleware
-            ->add(new CsrfProtectionMiddleware([
-                'httponly' => true,
-            ]));
+            ->add((new CsrfProtectionMiddleware(['httponly' => true]))
+                ->skipCheckCallback(function ($request) {
+                    // Skip CSRF check for AJAX API endpoints used in appointment booking
+                    $path = $request->getUri()->getPath();
+                    $ajaxRoutes = [
+                        '/appointments/check-availability',
+                        '/appointments/get-available-slots',
+                    ];
+
+                    return in_array($path, $ajaxRoutes);
+                }));
 
         return $middlewareQueue;
     }

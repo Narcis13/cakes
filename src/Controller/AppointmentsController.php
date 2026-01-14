@@ -65,6 +65,14 @@ class AppointmentsController extends AppController
             'confirm', // Email confirmation link
             'success', // Success page (session-protected)
         ]);
+
+        // Unlock AJAX actions from FormProtection
+        if ($this->components()->has('FormProtection')) {
+            $this->FormProtection->setConfig('unlockedActions', [
+                'checkAvailability',
+                'getAvailableSlots',
+            ]);
+        }
     }
 
     /**
@@ -258,20 +266,9 @@ class AppointmentsController extends AppController
                             'price' => $service->price,
                         ];
                     }
-                } else {
-                    // If no services linked through schedules, get all active services
-                    $allServices = $this->Services->find()
-                        ->where(['is_active' => true])
-                        ->toArray();
-                    foreach ($allServices as $service) {
-                        $services[] = [
-                            'id' => $service->id,
-                            'name' => $service->name,
-                            'duration_minutes' => $service->duration_minutes,
-                            'price' => $service->price,
-                        ];
-                    }
                 }
+                // If no services linked through schedules, doctor won't be shown
+                // (removed fallback to all services which was incorrect)
 
                 if (!empty($services)) {
                     // SECURITY: Only expose public-safe doctor information

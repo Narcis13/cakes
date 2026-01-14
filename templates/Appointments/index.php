@@ -143,23 +143,28 @@
 
         <!-- Step 2: View Available Doctors -->
         <div class="form-step" data-step="2">
-            <h2>Pasul 2: Selectați Medicul</h2>
-            <p class="step-description">Alegeți medicul la care doriți să vă programați.</p>
-            
-            <div class="selected-specialty-info">
-                <strong>Specialitate selectată:</strong> <span id="display-specialty"></span>
+            <div class="step-header">
+                <h2><i class="fas fa-user-md"></i> Selectați Medicul</h2>
+                <p class="step-description">Alegeți medicul la care doriți să vă programați.</p>
             </div>
-            
-            <div id="doctors-loading" class="text-center" style="display: none;">
-                <i class="fas fa-spinner fa-spin fa-3x"></i>
-                <p>Se încarcă medicii disponibili...</p>
+
+            <div class="selected-specialty-badge">
+                <i class="fas fa-stethoscope"></i>
+                <span>Specialitate selectată: <strong id="display-specialty"></strong></span>
             </div>
-            
+
+            <div id="doctors-loading" class="loading-indicator" style="display: none;">
+                <div class="spinner-wrapper">
+                    <i class="fas fa-spinner fa-spin fa-3x"></i>
+                    <p>Se încarcă medicii disponibili...</p>
+                </div>
+            </div>
+
             <div id="doctors-list" class="doctors-grid"></div>
-            
+
             <?= $this->Form->hidden('doctor_id', ['id' => 'selected-doctor']) ?>
             <?= $this->Form->hidden('service_id', ['id' => 'selected-service']) ?>
-            
+
             <div class="step-actions">
                 <button type="button" class="btn btn-secondary prev-step">
                     <i class="fas fa-arrow-left"></i> Pasul Anterior
@@ -796,76 +801,229 @@
     }
 }
 
-.doctors-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 20px;
-    margin: 20px 0;
-}
-
-.doctor-card {
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    padding: 20px;
-    cursor: pointer;
-    transition: all 0.3s;
-}
-
-.doctor-card:hover {
-    border-color: #007bff;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-}
-
-.doctor-card.selected {
-    border-color: #007bff;
-    background: #f0f8ff;
-}
-
-.doctor-info {
-    display: flex;
+/* ===== SELECTED SPECIALTY BADGE ===== */
+.selected-specialty-badge {
+    display: inline-flex;
     align-items: center;
-    margin-bottom: 15px;
-}
-
-.doctor-photo {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    margin-right: 15px;
-    object-fit: cover;
-}
-
-.doctor-details h4 {
-    margin: 0 0 5px 0;
-    color: #333;
-}
-
-.doctor-details p {
-    margin: 0;
-    color: #666;
+    gap: 10px;
+    background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+    padding: 12px 20px;
+    border-radius: 30px;
+    margin-bottom: 25px;
+    color: #0284c7;
     font-size: 14px;
 }
 
-.service-list {
+.selected-specialty-badge i {
+    font-size: 18px;
+}
+
+.selected-specialty-badge strong {
+    color: #0369a1;
+}
+
+/* ===== LOADING INDICATOR ===== */
+.loading-indicator {
+    text-align: center;
+    padding: 60px 20px;
+}
+
+.loading-indicator .spinner-wrapper {
+    color: #3b82f6;
+}
+
+.loading-indicator .spinner-wrapper p {
     margin-top: 15px;
+    color: #64748b;
+    font-size: 15px;
+}
+
+/* ===== DOCTORS GRID - MATCHING SPECIALTY STYLE ===== */
+.doctors-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+    margin: 25px 0;
+}
+
+.doctor-card {
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.doctor-card-inner {
+    display: flex;
+    align-items: flex-start;
+    padding: 20px;
+    border: 2px solid #e2e8f0;
+    border-radius: 14px;
+    background: #fff;
+    transition: all 0.3s ease;
+    gap: 18px;
+}
+
+.doctor-card:hover .doctor-card-inner {
+    border-color: #3b82f6;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.15);
+}
+
+.doctor-card.selected .doctor-card-inner {
+    border-color: #3b82f6;
+    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.2);
+}
+
+.doctor-photo-container {
+    flex-shrink: 0;
+}
+
+.doctor-photo {
+    width: 70px;
+    height: 70px;
+    border-radius: 14px;
+    object-fit: cover;
+    background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+    transition: all 0.3s ease;
+}
+
+.doctor-card:hover .doctor-photo {
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.doctor-card.selected .doctor-photo {
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.doctor-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.doctor-name {
+    font-size: 17px;
+    font-weight: 600;
+    color: #1e293b;
+    margin: 0 0 8px 0;
+    line-height: 1.3;
+}
+
+.doctor-meta {
+    margin-bottom: 12px;
+}
+
+.services-count {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: #10b981;
+    font-weight: 500;
+    background: #ecfdf5;
+    padding: 5px 12px;
+    border-radius: 20px;
+}
+
+.services-count i {
+    font-size: 12px;
+}
+
+.service-list {
+    margin-top: 12px;
 }
 
 .service-item {
-    padding: 8px 12px;
-    background: #f8f9fa;
-    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 14px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
     margin-bottom: 8px;
     cursor: pointer;
-    transition: all 0.3s;
+    transition: all 0.2s ease;
+}
+
+.service-item:last-child {
+    margin-bottom: 0;
 }
 
 .service-item:hover {
-    background: #e9ecef;
+    background: #f1f5f9;
+    border-color: #cbd5e1;
 }
 
 .service-item.selected {
-    background: #007bff;
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    border-color: #3b82f6;
     color: #fff;
+}
+
+.service-name {
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.service-details {
+    font-size: 12px;
+    color: #64748b;
+}
+
+.service-item.selected .service-details {
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.doctor-card-arrow {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #f1f5f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #94a3b8;
+    transition: all 0.3s ease;
+    align-self: center;
+}
+
+.doctor-card:hover .doctor-card-arrow {
+    background: #3b82f6;
+    color: #fff;
+    transform: translateX(3px);
+}
+
+.doctor-card.selected .doctor-card-arrow {
+    background: #3b82f6;
+    color: #fff;
+}
+
+/* Mobile responsive for doctor cards */
+@media (max-width: 768px) {
+    .doctors-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .doctor-card-inner {
+        padding: 16px;
+        flex-wrap: wrap;
+    }
+
+    .doctor-photo {
+        width: 60px;
+        height: 60px;
+    }
+
+    .doctor-card-arrow {
+        display: none;
+    }
+
+    .service-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
 }
 
 .time-slots-grid {
@@ -1429,24 +1587,35 @@ document.addEventListener('DOMContentLoaded', function() {
         const card = document.createElement('div');
         card.className = 'doctor-card';
         card.dataset.doctorId = doctor.id;
-        
+
         const photoUrl = doctor.photo || '/img/default-doctor.png';
-        
+        const serviceCount = doctor.services.length;
+
         card.innerHTML = `
-            <div class="doctor-info">
-                <img src="${photoUrl}" alt="${doctor.name}" class="doctor-photo">
-                <div class="doctor-details">
-                    <h4>${doctor.name}</h4>
-                    <p>${doctor.specialization}</p>
+            <div class="doctor-card-inner">
+                <div class="doctor-photo-container">
+                    <img src="${photoUrl}" alt="${doctor.name}" class="doctor-photo" onerror="this.src='/img/default-doctor.png'">
                 </div>
-            </div>
-            <div class="service-list">
-                <p><strong>Servicii disponibile:</strong></p>
-                ${doctor.services.map(service => `
-                    <div class="service-item" data-service-id="${service.id}" data-service-name="${service.name}">
-                        ${service.name} - ${service.duration_minutes} min - ${service.price} RON
+                <div class="doctor-content">
+                    <h3 class="doctor-name">${doctor.name}</h3>
+                    <div class="doctor-meta">
+                        <span class="services-count">
+                            <i class="fas fa-briefcase-medical"></i>
+                            ${serviceCount} ${serviceCount === 1 ? 'serviciu disponibil' : 'servicii disponibile'}
+                        </span>
                     </div>
-                `).join('')}
+                    <div class="service-list">
+                        ${doctor.services.map(service => `
+                            <div class="service-item" data-service-id="${service.id}" data-service-name="${service.name}">
+                                <span class="service-name">${service.name}</span>
+                                <span class="service-details">${service.duration_minutes} min${service.price ? ' • ' + service.price + ' RON' : ''}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                <div class="doctor-card-arrow">
+                    <i class="fas fa-chevron-right"></i>
+                </div>
             </div>
         `;
         
