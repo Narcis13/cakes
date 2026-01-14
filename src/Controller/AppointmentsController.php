@@ -87,6 +87,9 @@ class AppointmentsController extends AppController
 
                 return $this->redirect(['controller' => 'Patients', 'action' => 'login']);
             }
+
+            // Use portal layout for authenticated appointment pages
+            $this->viewBuilder()->setLayout('portal');
         }
     }
 
@@ -100,19 +103,63 @@ class AppointmentsController extends AppController
         // Get authenticated patient
         $patient = $this->Authentication->getIdentity()->getOriginalData();
 
-        // Get all active specializations
-        $specializations = $this->fetchTable('Specializations')->find()
-            ->select(['id', 'name'])
+        // Get specialization IDs that have doctors with active schedules
+        $doctorSchedules = $this->fetchTable('DoctorSchedules');
+        $staffWithSchedules = $doctorSchedules->find()
+            ->select(['staff_id'])
             ->where(['is_active' => true])
-            ->orderAsc('name')
+            ->distinct(['staff_id'])
             ->all()
-            ->map(function ($spec) {
-                return [
-                    'value' => $spec->name,
-                    'text' => $spec->name,
-                ];
-            })
+            ->extract('staff_id')
             ->toArray();
+
+        // Get specialization IDs from staff who have active schedules
+        $specializationIds = [];
+        if (!empty($staffWithSchedules)) {
+            $specializationIds = $this->Staff->find()
+                ->select(['specialization_id'])
+                ->where([
+                    'id IN' => $staffWithSchedules,
+                    'is_active' => true,
+                    'staff_type' => 'doctor',
+                ])
+                ->distinct(['specialization_id'])
+                ->all()
+                ->extract('specialization_id')
+                ->toArray();
+        }
+
+        // Get specializations with available doctors (those who have schedules)
+        $specializations = [];
+        if (!empty($specializationIds)) {
+            $specializations = $this->fetchTable('Specializations')->find()
+                ->select(['id', 'name', 'description'])
+                ->where([
+                    'is_active' => true,
+                    'id IN' => $specializationIds,
+                ])
+                ->orderAsc('name')
+                ->all()
+                ->map(function ($spec) use ($staffWithSchedules) {
+                    // Count doctors with schedules for this specialization
+                    $doctorCount = $this->Staff->find()
+                        ->where([
+                            'specialization_id' => $spec->id,
+                            'is_active' => true,
+                            'staff_type' => 'doctor',
+                            'id IN' => $staffWithSchedules,
+                        ])
+                        ->count();
+
+                    return [
+                        'value' => $spec->name,
+                        'text' => $spec->name,
+                        'description' => $spec->description,
+                        'doctor_count' => $doctorCount,
+                    ];
+                })
+                ->toArray();
+        }
 
         // Get all active services
         $services = $this->Services->find('list', [

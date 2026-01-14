@@ -10,29 +10,73 @@
 <div class="appointments-booking">
     <div class="container">
         <h1>Programare Online</h1>
-        
-        <!-- Progress Bar -->
-        <div class="booking-progress">
-            <div class="progress-bar">
+
+        <!-- Progress Bar - Modern Design -->
+        <div class="booking-progress-wrapper">
+            <div class="progress-steps-container">
                 <div class="progress-step active" data-step="1">
-                    <div class="step-number">1</div>
-                    <div class="step-label">Specialitate</div>
+                    <div class="step-icon-wrapper">
+                        <div class="step-icon">
+                            <i class="fas fa-stethoscope"></i>
+                        </div>
+                        <div class="step-number-badge">1</div>
+                    </div>
+                    <div class="step-info">
+                        <span class="step-title">Specialitate</span>
+                        <span class="step-subtitle">Alegeți domeniul</span>
+                    </div>
                 </div>
+                <div class="progress-connector"></div>
                 <div class="progress-step" data-step="2">
-                    <div class="step-number">2</div>
-                    <div class="step-label">Medic</div>
+                    <div class="step-icon-wrapper">
+                        <div class="step-icon">
+                            <i class="fas fa-user-md"></i>
+                        </div>
+                        <div class="step-number-badge">2</div>
+                    </div>
+                    <div class="step-info">
+                        <span class="step-title">Medic</span>
+                        <span class="step-subtitle">Selectați doctorul</span>
+                    </div>
                 </div>
+                <div class="progress-connector"></div>
                 <div class="progress-step" data-step="3">
-                    <div class="step-number">3</div>
-                    <div class="step-label">Data și Ora</div>
+                    <div class="step-icon-wrapper">
+                        <div class="step-icon">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <div class="step-number-badge">3</div>
+                    </div>
+                    <div class="step-info">
+                        <span class="step-title">Data și Ora</span>
+                        <span class="step-subtitle">Alegeți momentul</span>
+                    </div>
                 </div>
+                <div class="progress-connector"></div>
                 <div class="progress-step" data-step="4">
-                    <div class="step-number">4</div>
-                    <div class="step-label">Date Personale</div>
+                    <div class="step-icon-wrapper">
+                        <div class="step-icon">
+                            <i class="fas fa-id-card"></i>
+                        </div>
+                        <div class="step-number-badge">4</div>
+                    </div>
+                    <div class="step-info">
+                        <span class="step-title">Date Personale</span>
+                        <span class="step-subtitle">Verificați datele</span>
+                    </div>
                 </div>
+                <div class="progress-connector"></div>
                 <div class="progress-step" data-step="5">
-                    <div class="step-number">5</div>
-                    <div class="step-label">Confirmare</div>
+                    <div class="step-icon-wrapper">
+                        <div class="step-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="step-number-badge">5</div>
+                    </div>
+                    <div class="step-info">
+                        <span class="step-title">Confirmare</span>
+                        <span class="step-subtitle">Finalizați</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -43,25 +87,53 @@
             'id' => 'booking-form',
             'class' => 'multi-step-form'
         ]) ?>
-        
+
         <!-- Step 1: Select Medical Specialty -->
         <div class="form-step active" data-step="1">
-            <h2>Pasul 1: Selectați Specialitatea Medicală</h2>
-            <p class="step-description">Vă rugăm să selectați specialitatea medicală de care aveți nevoie.</p>
-            
-            <div class="specialty-grid">
-                <?php foreach ($specializations as $spec): ?>
-                    <div class="specialty-card" data-specialty="<?= h($spec['value']) ?>">
-                        <div class="specialty-icon">
-                            <i class="fas fa-user-md"></i>
-                        </div>
-                        <h3><?= h($spec['text']) ?></h3>
-                    </div>
-                <?php endforeach; ?>
+            <div class="step-header">
+                <h2><i class="fas fa-stethoscope"></i> Selectați Specialitatea Medicală</h2>
+                <p class="step-description">Alegeți specialitatea de care aveți nevoie. Sunt afișate doar specialitățile cu medici disponibili pentru programare.</p>
             </div>
-            
+
+            <?php if (empty($specializations)): ?>
+                <div class="no-specializations-message">
+                    <i class="fas fa-calendar-times fa-3x"></i>
+                    <h3>Nicio specialitate disponibilă</h3>
+                    <p>Momentan nu există medici cu program de consultații definit. Vă rugăm să reveniți mai târziu sau să ne contactați telefonic.</p>
+                </div>
+            <?php else: ?>
+                <div class="specialty-grid">
+                    <?php foreach ($specializations as $spec): ?>
+                        <div class="specialty-card" data-specialty="<?= h($spec['value']) ?>">
+                            <div class="specialty-card-inner">
+                                <div class="specialty-icon-container">
+                                    <div class="specialty-icon">
+                                        <?= $this->element('specialty_icon', ['specialty' => $spec['text']]) ?>
+                                    </div>
+                                </div>
+                                <div class="specialty-content">
+                                    <h3 class="specialty-name"><?= h($spec['text']) ?></h3>
+                                    <?php if (!empty($spec['description'])): ?>
+                                        <p class="specialty-description"><?= h(mb_strimwidth($spec['description'], 0, 100, '...')) ?></p>
+                                    <?php endif; ?>
+                                    <div class="specialty-meta">
+                                        <span class="doctors-available">
+                                            <i class="fas fa-user-md"></i>
+                                            <?= $spec['doctor_count'] ?> <?= $spec['doctor_count'] == 1 ? 'medic disponibil' : 'medici disponibili' ?>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="specialty-card-arrow">
+                                    <i class="fas fa-chevron-right"></i>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
+
             <?= $this->Form->hidden('specialty', ['id' => 'selected-specialty']) ?>
-            
+
             <div class="step-actions">
                 <button type="button" class="btn btn-primary next-step" disabled>
                     Următorul Pas <i class="fas fa-arrow-right"></i>
@@ -310,6 +382,7 @@
 .appointments-booking {
     padding: 40px 0;
     min-height: 80vh;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e9f2 100%);
 }
 
 /* Ensure container uses full width */
@@ -320,140 +393,183 @@
     margin: 0 auto;
 }
 
-/* Clearfix for progress bar */
-.booking-progress::after {
-    content: "";
-    display: table;
-    clear: both;
-}
-
 .appointments-booking h1 {
     text-align: center;
-    margin-bottom: 40px;
-    color: #333;
+    margin-bottom: 30px;
+    color: #1a365d;
     font-size: 32px;
-    font-weight: 600;
+    font-weight: 700;
+    letter-spacing: -0.5px;
 }
 
-.booking-progress {
-    margin-bottom: 40px;
-    background: #f8f9fa;
-    padding: 30px 20px;
-    border-radius: 8px;
-    overflow: hidden;
-}
-
-.progress-bar {
-    display: flex !important;
-    flex-direction: row !important;
-    justify-content: space-between;
-    align-items: center;
-    position: relative;
-    max-width: 900px;
-    margin: 0 auto;
+/* ===== NEW PROGRESS BAR STYLES ===== */
+.booking-progress-wrapper {
+    margin-bottom: 35px;
     padding: 20px;
-    width: 100%;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
-.progress-bar::before {
-    content: '';
-    position: absolute;
-    top: 40px;
-    left: 10%;
-    right: 10%;
-    height: 2px;
-    background: #e0e0e0;
-    z-index: 0;
+.progress-steps-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1000px;
+    margin: 0 auto;
 }
 
 .progress-step {
+    display: flex;
+    align-items: center;
+    gap: 12px;
     position: relative;
-    flex: 1;
-    text-align: center;
-    z-index: 1;
+    flex-shrink: 0;
 }
 
-.progress-step:first-child {
-    flex: 1;
+.step-icon-wrapper {
+    position: relative;
 }
 
-.progress-step:last-child {
-    flex: 1;
-}
-
-.step-number {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: #e0e0e0;
-    color: #666;
+.step-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    background: #e8eef4;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 10px;
-    font-weight: bold;
-    border: 3px solid #fff;
-    position: relative;
-    z-index: 2;
-    box-shadow: 0 0 0 4px #f8f9fa;
+    font-size: 20px;
+    color: #8896a6;
+    transition: all 0.3s ease;
 }
 
-.progress-step.active .step-number,
-.progress-step.completed .step-number {
-    background: #007bff;
+.progress-step.active .step-icon {
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+}
+
+.progress-step.completed .step-icon {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+}
+
+.step-number-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #cbd5e1;
+    color: #64748b;
+    font-size: 11px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #fff;
+}
+
+.progress-step.active .step-number-badge {
+    background: #1d4ed8;
     color: #fff;
 }
 
-.progress-step.completed .step-number {
-    background: #28a745;
-}
-
-.progress-step.completed .step-number::after {
-    content: '✓';
-    position: absolute;
-    font-size: 16px;
+.progress-step.completed .step-number-badge {
+    background: #059669;
     color: #fff;
 }
 
-.progress-step.completed::after {
-    content: '';
-    position: absolute;
-    width: 100%;
-    height: 2px;
-    background: #28a745;
-    left: 50%;
-    top: 20px;
-    z-index: 0;
+.step-info {
+    display: flex;
+    flex-direction: column;
 }
 
-.progress-step:last-child.completed::after {
-    display: none;
-}
-
-.step-label {
-    font-size: 13px;
-    color: #666;
-    line-height: 1.2;
-    max-width: 90px;
-    word-wrap: break-word;
-}
-
-.progress-step.active .step-label {
-    color: #007bff;
+.step-title {
+    font-size: 14px;
     font-weight: 600;
+    color: #334155;
+    line-height: 1.2;
 }
 
-.progress-step.completed .step-label {
-    color: #28a745;
-    font-weight: 500;
+.step-subtitle {
+    font-size: 11px;
+    color: #94a3b8;
+    margin-top: 2px;
 }
 
+.progress-step.active .step-title {
+    color: #1d4ed8;
+}
+
+.progress-step.completed .step-title {
+    color: #059669;
+}
+
+.progress-connector {
+    flex: 1;
+    height: 3px;
+    background: #e2e8f0;
+    margin: 0 8px;
+    border-radius: 2px;
+    position: relative;
+}
+
+.progress-connector.completed {
+    background: linear-gradient(90deg, #10b981 0%, #10b981 100%);
+}
+
+/* Mobile responsive for progress bar */
+@media (max-width: 900px) {
+    .step-info {
+        display: none;
+    }
+
+    .progress-step {
+        gap: 0;
+    }
+
+    .step-icon {
+        width: 44px;
+        height: 44px;
+        font-size: 18px;
+    }
+}
+
+@media (max-width: 600px) {
+    .progress-steps-container {
+        padding: 0 10px;
+    }
+
+    .step-icon {
+        width: 38px;
+        height: 38px;
+        font-size: 16px;
+        border-radius: 10px;
+    }
+
+    .step-number-badge {
+        width: 18px;
+        height: 18px;
+        font-size: 10px;
+    }
+
+    .progress-connector {
+        height: 2px;
+        margin: 0 4px;
+    }
+}
+
+/* ===== FORM STEP STYLES ===== */
 .form-step {
     display: none;
     background: #fff;
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    padding: 35px;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     margin-bottom: 20px;
 }
 
@@ -461,42 +577,223 @@
     display: block;
 }
 
-.step-actions {
-    margin-top: 30px;
-    display: flex;
-    justify-content: space-between;
+.step-header {
+    margin-bottom: 30px;
+    text-align: center;
 }
 
+.step-header h2 {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1a365d;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.step-header h2 i {
+    color: #3b82f6;
+}
+
+.step-header .step-description {
+    color: #64748b;
+    font-size: 15px;
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+.step-actions {
+    margin-top: 35px;
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+/* ===== SPECIALTY CARDS ===== */
 .specialty-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 20px;
-    margin: 20px 0;
+    margin: 25px 0;
 }
 
 .specialty-card {
-    border: 2px solid #e0e0e0;
-    border-radius: 8px;
-    padding: 20px;
-    text-align: center;
     cursor: pointer;
-    transition: all 0.3s;
+    transition: all 0.3s ease;
 }
 
-.specialty-card:hover {
-    border-color: #007bff;
-    transform: translateY(-2px);
+.specialty-card-inner {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    border: 2px solid #e2e8f0;
+    border-radius: 14px;
+    background: #fff;
+    transition: all 0.3s ease;
+    gap: 18px;
 }
 
-.specialty-card.selected {
-    border-color: #007bff;
-    background: #f0f8ff;
+.specialty-card:hover .specialty-card-inner {
+    border-color: #3b82f6;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.15);
+}
+
+.specialty-card.selected .specialty-card-inner {
+    border-color: #3b82f6;
+    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.2);
+}
+
+.specialty-icon-container {
+    flex-shrink: 0;
 }
 
 .specialty-icon {
-    font-size: 40px;
-    color: #007bff;
+    width: 60px;
+    height: 60px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    color: #0284c7;
+    transition: all 0.3s ease;
+}
+
+.specialty-card:hover .specialty-icon {
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    color: #fff;
+}
+
+.specialty-card.selected .specialty-icon {
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.specialty-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.specialty-name {
+    font-size: 17px;
+    font-weight: 600;
+    color: #1e293b;
+    margin: 0 0 6px 0;
+    line-height: 1.3;
+}
+
+.specialty-description {
+    font-size: 13px;
+    color: #64748b;
+    margin: 0 0 10px 0;
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.specialty-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.doctors-available {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: #10b981;
+    font-weight: 500;
+    background: #ecfdf5;
+    padding: 5px 12px;
+    border-radius: 20px;
+}
+
+.doctors-available i {
+    font-size: 12px;
+}
+
+.specialty-card-arrow {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #f1f5f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #94a3b8;
+    transition: all 0.3s ease;
+}
+
+.specialty-card:hover .specialty-card-arrow {
+    background: #3b82f6;
+    color: #fff;
+    transform: translateX(3px);
+}
+
+.specialty-card.selected .specialty-card-arrow {
+    background: #3b82f6;
+    color: #fff;
+}
+
+/* No specializations message */
+.no-specializations-message {
+    text-align: center;
+    padding: 60px 20px;
+    background: #fef3cd;
+    border-radius: 12px;
+    border: 1px solid #ffc107;
+}
+
+.no-specializations-message i {
+    color: #856404;
+    margin-bottom: 20px;
+}
+
+.no-specializations-message h3 {
+    color: #856404;
+    font-size: 20px;
     margin-bottom: 10px;
+}
+
+.no-specializations-message p {
+    color: #856404;
+    font-size: 15px;
+}
+
+/* Mobile responsive for specialty cards */
+@media (max-width: 768px) {
+    .specialty-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .specialty-card-inner {
+        padding: 16px;
+    }
+
+    .specialty-icon {
+        width: 52px;
+        height: 52px;
+        font-size: 22px;
+    }
+
+    .specialty-name {
+        font-size: 16px;
+    }
+
+    .specialty-card-arrow {
+        display: none;
+    }
 }
 
 .doctors-grid {
@@ -591,78 +888,18 @@
     background: #f0f8ff;
 }
 
-/* Responsive Styles for Progress Bar */
-@media (max-width: 768px) {
-    .progress-bar {
-        padding: 0 5px;
-        display: flex !important;
-        flex-wrap: nowrap !important;
-        overflow-x: auto;
-        overflow-y: hidden;
-        -webkit-overflow-scrolling: touch;
-    }
-    
-    .progress-bar::before {
-        display: none;
-    }
-    
-    .progress-step {
-        min-width: 80px;
-        flex: 0 0 auto;
-        display: inline-flex !important;
-        padding: 0 5px;
-    }
-    
-    .progress-step:first-child,
-    .progress-step:last-child {
-        flex: 0 0 auto;
-    }
-    
-    .step-number {
-        width: 35px;
-        height: 35px;
-        font-size: 14px;
-        box-shadow: 0 0 0 2px #f8f9fa;
-    }
-    
-    .step-label {
-        font-size: 11px;
-        max-width: 70px;
-    }
-    
-    .progress-step.completed::after {
-        display: none;
-    }
-}
-
-@media (max-width: 480px) {
-    .progress-step .step-label {
-        display: none;
-    }
-    
-    .progress-step.active .step-label {
-        display: block;
-        position: absolute;
-        top: 50px;
-        white-space: nowrap;
-        background: #fff;
-        padding: 2px 5px;
-        border-radius: 3px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    }
-}
-
+/* Responsive Styles for Date-Time Selection */
 @media (max-width: 768px) {
     .date-time-selection {
         grid-template-columns: 1fr;
         gap: 20px;
     }
-    
+
     .selected-info-card {
         flex-direction: column;
         gap: 15px;
     }
-    
+
     .time-slots-grid {
         grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
     }
@@ -1492,18 +1729,34 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function goToStep(step) {
         steps.forEach(s => s.classList.remove('active'));
-        progressSteps.forEach(p => p.classList.remove('active'));
-        
+        progressSteps.forEach(p => {
+            p.classList.remove('active');
+            p.classList.remove('completed');
+        });
+
+        // Also reset connectors
+        document.querySelectorAll('.progress-connector').forEach(c => {
+            c.classList.remove('completed');
+        });
+
         currentStep = step;
         steps[step - 1].classList.add('active');
-        
-        for (let i = 0; i < step; i++) {
-            progressSteps[i].classList.add('active');
-            if (i < step - 1) {
-                progressSteps[i].classList.add('completed');
+
+        // Update progress steps and connectors
+        const connectors = document.querySelectorAll('.progress-connector');
+        for (let i = 0; i < progressSteps.length; i++) {
+            if (i < step) {
+                progressSteps[i].classList.add('active');
+                if (i < step - 1) {
+                    progressSteps[i].classList.add('completed');
+                    // Mark the connector after this step as completed
+                    if (connectors[i]) {
+                        connectors[i].classList.add('completed');
+                    }
+                }
             }
         }
-        
+
         // Update display info when entering step 3
         if (step === 3) {
             updateDisplayInfo();
