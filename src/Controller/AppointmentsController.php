@@ -62,6 +62,7 @@ class AppointmentsController extends AppController
         $this->Authentication->allowUnauthenticated([
             'checkAvailability',
             'getAvailableSlots',
+            'getCalendarAvailability',
             'confirm', // Email confirmation link
             'success', // Success page (session-protected)
         ]);
@@ -71,6 +72,7 @@ class AppointmentsController extends AppController
             $this->FormProtection->setConfig('unlockedActions', [
                 'checkAvailability',
                 'getAvailableSlots',
+                'getCalendarAvailability',
             ]);
         }
     }
@@ -345,6 +347,52 @@ class AppointmentsController extends AppController
             $this->set([
                 'success' => false,
                 'message' => 'A apărut o eroare la încărcarea sloturilor disponibile.',
+            ]);
+            $this->viewBuilder()->setOption('serialize', ['success', 'message']);
+        }
+    }
+
+    /**
+     * Get calendar availability - AJAX endpoint
+     *
+     * Returns availability status for each day in a date range
+     *
+     * @return \Cake\Http\Response|null|void
+     */
+    public function getCalendarAvailability()
+    {
+        $this->request->allowMethod(['post', 'ajax']);
+        $this->viewBuilder()->setClassName('Json');
+
+        $doctorId = (int)$this->request->getData('doctor_id');
+        $serviceId = (int)$this->request->getData('service_id');
+        $startDate = $this->request->getData('start_date', date('Y-m-d'));
+        $days = min((int)$this->request->getData('days', 31), 31);
+
+        if (!$doctorId || !$serviceId) {
+            $this->set([
+                'success' => false,
+                'message' => 'Doctor și serviciu obligatorii',
+            ]);
+            $this->viewBuilder()->setOption('serialize', ['success', 'message']);
+
+            return;
+        }
+
+        try {
+            $result = $this->availabilityService->getCalendarAvailability($doctorId, $serviceId, $startDate, $days);
+
+            $this->set([
+                'success' => true,
+                'calendar' => $result['calendar'],
+                'first_available_date' => $result['first_available_date'],
+            ]);
+            $this->viewBuilder()->setOption('serialize', ['success', 'calendar', 'first_available_date']);
+        } catch (Exception $e) {
+            Log::error('Calendar availability error: ' . $e->getMessage());
+            $this->set([
+                'success' => false,
+                'message' => 'A apărut o eroare la încărcarea calendarului.',
             ]);
             $this->viewBuilder()->setOption('serialize', ['success', 'message']);
         }

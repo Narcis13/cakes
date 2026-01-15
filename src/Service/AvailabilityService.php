@@ -723,4 +723,113 @@ class AvailabilityService
 
         return $slots;
     }
+
+    /**
+     * Get calendar availability for a date range
+     *
+     * Returns availability status for each day in the range, including:
+     * - past: Day is in the past
+     * - weekend: Day is a weekend (if weekend appointments not allowed)
+     * - holiday: Hospital holiday
+     * - unavailable: Doctor unavailable or no schedule
+     * - full: All slots booked
+     * - partial: Less than 30% slots available
+     * - available: Slots available
+     *
+     * @param int $doctorId Doctor ID
+     * @param int $serviceId Service ID
+     * @param string $startDate Start date (Y-m-d format)
+     * @param int $days Number of days to check (max 31)
+     * @return array Calendar data with first_available_date
+     */
+    public function getCalendarAvailability(
+        int $doctorId,
+        int $serviceId,
+        string $startDate,
+        int $days = 31
+    ): array {
+        $calendar = [];
+        $currentDate = new \DateTime($startDate);
+        $today = new \DateTime();
+        $today->setTime(0, 0, 0);
+        $firstAvailable = null;
+
+        for ($i = 0; $i < $days; $i++) {
+            $dateStr = $currentDate->format('Y-m-d');
+            $dayOfWeek = (int)$currentDate->format('N');
+
+            // Check past
+            if ($currentDate < $today) {
+                $calendar[$dateStr] = ['status' => 'past', 'slots_count' => 0, 'available_count' => 0, 'label' => null];
+                $currentDate->modify('+1 day');
+                continue;
+            }
+
+            // Check weekend
+            if (in_array($dayOfWeek, [6, 7]) && !Configure::read('Appointments.allow_weekend_appointments', false)) {
+                $calendar[$dateStr] = ['status' => 'weekend', 'slots_count' => 0, 'available_count' => 0, 'label' => null];
+                $currentDate->modify('+1 day');
+                continue;
+            }
+
+            // Check hospital holiday
+            if ($this->hospitalHolidaysTable) {
+                $holiday = $this->hospitalHolidaysTable->find()
+                    ->where(['date' => $dateStr])
+                    ->first();
+                if ($holiday) {
+                    $calendar[$dateStr] = ['status' => 'holiday', 'slots_count' => 0, 'available_count' => 0, 'label' => $holiday->name];
+                    $currentDate->modify('+1 day');
+                    continue;
+                }
+            }
+
+            // Check staff unavailability
+            if ($this->staffUnavailabilitiesTable) {
+                $unavailability = $this->staffUnavailabilitiesTable->find()
+                    ->where([
+                        'staff_id' => $doctorId,
+                        'date_from <=' => $dateStr,
+                        'date_to >=' => $dateStr,
+                    ])
+                    ->first();
+                if ($unavailability) {
+                    $calendar[$dateStr] = ['status' => 'unavailable', 'slots_count' => 0, 'available_count' => 0, 'label' => $unavailability->reason ?? 'Indisponibil'];
+                    $currentDate->modify('+1 day');
+                    continue;
+                }
+            }
+
+            // Get slot counts
+            $cakeDate = new Date($dateStr);
+            $slots = $this->getAvailableSlots($doctorId, $cakeDate, $serviceId);
+            $totalCount = count($slots);
+            $availableCount = count(array_filter($slots, fn($s) => $s['available']));
+
+            if ($totalCount === 0) {
+                $status = 'unavailable';
+            } elseif ($availableCount === 0) {
+                $status = 'full';
+            } elseif ($availableCount <= $totalCount * 0.3) {
+                $status = 'partial';
+            } else {
+                $status = 'available';
+            }
+
+            if (!$firstAvailable && ($status === 'available' || $status === 'partial')) {
+                $firstAvailable = $dateStr;
+            }
+
+            $calendar[$dateStr] = [
+                'status' => $status,
+                'slots_count' => $totalCount,
+                'available_count' => $availableCount,
+                'label' => null,
+            ];
+
+            $currentDate->modify('+1 day');
+        }
+
+        return ['calendar' => $calendar, 'first_available_date' => $firstAvailable];
+    }
 }

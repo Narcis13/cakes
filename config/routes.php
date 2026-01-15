@@ -42,6 +42,7 @@ return static function (RouteBuilder $routes) {
         $builder->connect('/appointments/book', ['controller' => 'Appointments', 'action' => 'book']);
         $builder->connect('/appointments/check-availability', ['controller' => 'Appointments', 'action' => 'checkAvailability']);
         $builder->connect('/appointments/get-available-slots', ['controller' => 'Appointments', 'action' => 'getAvailableSlots']);
+        $builder->connect('/appointments/get-calendar-availability', ['controller' => 'Appointments', 'action' => 'getCalendarAvailability']);
         $builder->connect('/appointments/success/{id}', ['controller' => 'Appointments', 'action' => 'success'])
             ->setPass(['id'])
             ->setPatterns(['id' => '\d+']);
