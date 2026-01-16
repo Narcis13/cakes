@@ -12,8 +12,6 @@ $this->Html->css('appointments', ['block' => true]);
 
 <div class="appointments-booking">
     <div class="container">
-        <h1>Programare Online</h1>
-
         <!-- Progress Bar - Modern Design -->
         <div class="booking-progress-wrapper">
             <div class="progress-steps-container">
@@ -111,14 +109,11 @@ $this->Html->css('appointments', ['block' => true]);
                             <div class="specialty-card-inner">
                                 <div class="specialty-icon-container">
                                     <div class="specialty-icon">
-                                        <?= $this->element('specialty_icon', ['specialty' => $spec['text']]) ?>
+                                        <i class="fas fa-stethoscope"></i>
                                     </div>
                                 </div>
                                 <div class="specialty-content">
                                     <h3 class="specialty-name"><?= h($spec['text']) ?></h3>
-                                    <?php if (!empty($spec['description'])): ?>
-                                        <p class="specialty-description"><?= h(mb_strimwidth($spec['description'], 0, 100, '...')) ?></p>
-                                    <?php endif; ?>
                                     <div class="specialty-meta">
                                         <span class="doctors-available">
                                             <i class="fas fa-user-md"></i>

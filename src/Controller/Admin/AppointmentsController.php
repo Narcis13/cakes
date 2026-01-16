@@ -3,8 +3,10 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Service\AppointmentEmailService;
 use Cake\I18n\Date;
 use Cake\I18n\Time;
+use Cake\Log\Log;
 
 /**
  * Appointments Controller
@@ -177,7 +179,9 @@ class AppointmentsController extends AppController
     public function cancel(?string $id = null)
     {
         $this->request->allowMethod(['post']);
-        $appointment = $this->Appointments->get($id);
+        $appointment = $this->Appointments->get($id, [
+            'contain' => ['Doctors', 'Services'],
+        ]);
 
         $appointment->status = 'cancelled';
         $appointment->cancelled_at = Time::now();
@@ -189,6 +193,17 @@ class AppointmentsController extends AppController
 
         if ($this->Appointments->save($appointment)) {
             $this->Flash->success(__('Programarea a fost anulată.'));
+
+            // Send cancellation email to patient
+            if ($appointment->patient_email) {
+                try {
+                    $emailService = new AppointmentEmailService();
+                    $emailService->sendCancellation($appointment, $reason);
+                } catch (\Exception $e) {
+                    Log::error('Failed to send cancellation email: ' . $e->getMessage());
+                    $this->Flash->warning(__('Programarea a fost anulată, dar emailul de notificare nu a putut fi trimis.'));
+                }
+            }
         } else {
             $this->Flash->error(__('Programarea nu a putut fi anulată. Vă rugăm să încercați din nou.'));
         }

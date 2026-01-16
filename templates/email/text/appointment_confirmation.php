@@ -1,11 +1,15 @@
 <?= $hospital['name'] ?>
 ========================================
 
-CONFIRMARE PROGRAMARE NECESARĂ
+<?= $token ? 'CONFIRMARE PROGRAMARE NECESARĂ' : 'PROGRAMARE CONFIRMATĂ' ?>
 
 Bună ziua <?= $appointment->patient_name ?>,
 
+<?php if ($token) : ?>
 Ați făcut o programare la <?= $hospital['name'] ?>. Pentru a finaliza procesul de programare, vă rugăm să confirmați programarea accesând link-ul de mai jos.
+<?php else : ?>
+Programarea dumneavoastră la <?= $hospital['name'] ?> a fost confirmată cu succes.
+<?php endif; ?>
 
 DETALIILE PROGRAMĂRII:
 ----------------------------------------
@@ -17,26 +21,26 @@ Email: <?= $appointment->patient_email ?>
 
 Data și ora: <?= $appointment->appointment_date->format('d.m.Y') ?> la <?= $appointment->appointment_time->format('H:i') ?>
 
-<?php if (!empty($appointment->doctors)): ?>
+<?php if (!empty($appointment->doctors)) : ?>
 Doctor: <?= $appointment->doctors->first_name . ' ' . $appointment->doctors->last_name ?>
 
 <?php endif; ?>
-<?php if (!empty($appointment->doctors->departments)): ?>
+<?php if (!empty($appointment->doctors->departments)) : ?>
 Departament: <?= $appointment->doctors->departments->name ?>
 
 <?php endif; ?>
-<?php if (!empty($appointment->service)): ?>
+<?php if (!empty($appointment->service)) : ?>
 Serviciu: <?= $appointment->service->name ?>
 
 <?php endif; ?>
-<?php if (!empty($appointment->notes)): ?>
+<?php if (!empty($appointment->notes)) : ?>
 Observații: <?= $appointment->notes ?>
 
 <?php endif; ?>
 
-<?php if ($token): ?>
+<?php if ($token) : ?>
 LINK CONFIRMARE:
-<?= $confirmationUrl ?>
+    <?= $confirmationUrl ?>
 
 ⚠️  IMPORTANT: Această programare trebuie confirmată în termen de 24 de ore. 
 Dacă nu confirmați programarea în acest interval, aceasta va fi anulată automat.

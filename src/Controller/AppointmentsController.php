@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Mailer\AppointmentMailer;
 use App\Model\Table\ServicesTable;
 use App\Model\Table\StaffTable;
+use App\Service\AppointmentEmailService;
 use App\Service\AvailabilityService;
 use Cake\Cache\Cache;
 use Cake\Core\Configure;
@@ -13,10 +13,10 @@ use Cake\Event\EventInterface;
 use Cake\Http\Exception\ForbiddenException;
 use Cake\Http\Exception\NotFoundException;
 use Cake\I18n\Date;
+use Cake\I18n\DateTime;
 use Cake\I18n\Time;
 use Cake\Log\Log;
 use Cake\Routing\Router;
-use Cake\Utility\Security;
 use Exception;
 
 /**
@@ -68,11 +68,13 @@ class AppointmentsController extends AppController
         ]);
 
         // Unlock AJAX actions from FormProtection
+        // Note: 'book' is unlocked because form fields are populated dynamically via JS
         if ($this->components()->has('FormProtection')) {
             $this->FormProtection->setConfig('unlockedActions', [
                 'checkAvailability',
                 'getAvailableSlots',
                 'getCalendarAvailability',
+                'book',
             ]);
         }
     }
@@ -89,17 +91,19 @@ class AppointmentsController extends AppController
 
         $action = $this->request->getParam('action');
 
-        // Require patient auth for booking
-        if (in_array($action, ['index', 'book'])) {
-            $identity = $this->Authentication->getIdentity();
-            if (!$identity) {
-                $this->Flash->error('Trebuie să fiți autentificat pentru a face o programare.');
-
-                return $this->redirect(['controller' => 'Patients', 'action' => 'login']);
-            }
-
-            // Use portal layout for authenticated appointment pages
+        // Use portal layout for all patient-facing appointment pages
+        if (in_array($action, ['index', 'book', 'confirm', 'success'])) {
             $this->viewBuilder()->setLayout('portal');
+
+            // Require auth only for index and book
+            if (in_array($action, ['index', 'book'])) {
+                $identity = $this->Authentication->getIdentity();
+                if (!$identity) {
+                    $this->Flash->error('Trebuie să fiți autentificat pentru a face o programare.');
+
+                    return $this->redirect(['controller' => 'Patients', 'action' => 'login']);
+                }
+            }
         }
     }
 
@@ -482,11 +486,10 @@ class AppointmentsController extends AppController
 
                 $appointment = $this->Appointments->patchEntity($appointment, $data);
 
-                // Set status and confirmation_token directly on entity
-                // These fields have mass-assignment protection ($_accessible = false)
-                // and must be set directly, not through patchEntity()
-                $appointment->status = 'pending';
-                $appointment->confirmation_token = Security::randomString(64);
+                // Set status directly on entity (mass-assignment protected)
+                // Appointment is confirmed immediately - no email confirmation needed
+                $appointment->status = 'confirmed';
+                $appointment->confirmed_at = DateTime::now();
 
                 // Log validation errors for debugging
                 if ($appointment->hasErrors()) {
@@ -503,15 +506,15 @@ class AppointmentsController extends AppController
                 // This prevents ID enumeration attacks on the success page
                 $this->request->getSession()->write('last_booked_appointment_id', $appointment->id);
 
-                // Send confirmation email
-                try {
-                    $mailer = new AppointmentMailer();
-                    $mailer->confirmation($appointment, $appointment->confirmation_token)->send();
+                // Send emails via Resend API
+                $emailService = new AppointmentEmailService();
 
-                    $this->Flash->success('Programarea a fost creată cu succes. Vă rugăm să verificați emailul pentru confirmare.');
+                // Send confirmation email to patient
+                try {
+                    $emailService->sendConfirmation($appointment);
                 } catch (Exception $e) {
                     Log::error('Email error: ' . $e->getMessage());
-                    $this->Flash->warning('Programarea a fost creată, dar emailul de confirmare nu a putut fi trimis.');
+                    // Don't fail the booking if email fails
                 }
 
                 // Send admin notification email
@@ -524,8 +527,7 @@ class AppointmentsController extends AppController
                         ],
                     ]);
 
-                    $adminMailer = new AppointmentMailer();
-                    $adminMailer->adminNotification($appointmentForAdmin)->send();
+                    $emailService->sendAdminNotification($appointmentForAdmin);
                 } catch (Exception $e) {
                     Log::error('Admin notification email error: ' . $e->getMessage());
                     // Don't show error to user as this is internal
@@ -732,23 +734,33 @@ class AppointmentsController extends AppController
         $clientIp = $this->request->clientIp();
         $cacheKey = 'appointment_rate_limit_' . md5($clientIp);
 
-        // Get current attempt count from cache
-        $attempts = Cache::read($cacheKey, 'default');
+        // Get current attempt data from cache
+        $data = Cache::read($cacheKey, 'default');
 
-        if ($attempts === false) {
-            // First attempt, initialize counter
-            Cache::write($cacheKey, 1, $timeWindow);
+        $now = time();
+
+        if ($data === null) {
+            // First attempt, initialize counter with timestamp
+            Cache::write($cacheKey, ['attempts' => 1, 'started_at' => $now], 'default');
 
             return true;
         }
 
-        if ($attempts >= $maxAttempts) {
+        // Check if time window has expired
+        if ($now - $data['started_at'] > $timeWindow) {
+            // Reset counter
+            Cache::write($cacheKey, ['attempts' => 1, 'started_at' => $now], 'default');
+
+            return true;
+        }
+
+        if ($data['attempts'] >= $maxAttempts) {
             // Rate limit exceeded
             return false;
         }
 
         // Increment counter
-        Cache::write($cacheKey, $attempts + 1, $timeWindow);
+        Cache::write($cacheKey, ['attempts' => $data['attempts'] + 1, 'started_at' => $data['started_at']], 'default');
 
         return true;
     }

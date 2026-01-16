@@ -170,7 +170,7 @@ $this->assign('title', 'Panou de control');
                                     <td>
                                         <?= $this->Form->postLink(
                                             '<i class="fas fa-times"></i> Anulează',
-                                            ['action' => 'cancelAppointment', $appointment->id],
+                                            '/portal/appointments/cancel/' . $appointment->id,
                                             [
                                                 'class' => 'btn btn-sm btn-outline-danger',
                                                 'escape' => false,

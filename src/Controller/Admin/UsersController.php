@@ -32,6 +32,13 @@ class UsersController extends AppController
             // Explicitly allow login/logout without authentication
             $this->Authentication->allowUnauthenticated(['login', 'logout']);
 
+            // Unlock login action from FormProtection to prevent token expiry errors
+            // when the login form is left open for extended periods.
+            // CSRF protection is still active via CsrfProtectionMiddleware.
+            if ($this->components()->has('FormProtection')) {
+                $this->FormProtection->setConfig('unlockedActions', ['login']);
+            }
+
             return;
         }
 

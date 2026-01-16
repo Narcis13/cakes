@@ -20,14 +20,6 @@ class AppointmentMailer extends Mailer
         return ['noreply@smupitesti.online' => 'Spitalul Militar Pitesti'];
     }
 
-    public static function getConfig(): array
-    {
-        return [
-            'transport' => 'default',
-            'from' => [Configure::read('Email.default.from')],
-        ];
-    }
-
     public function confirmation($appointment, $token = null)
     {
         $hospitalConfig = Configure::read('Hospital');

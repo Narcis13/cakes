@@ -54,6 +54,10 @@
             background-color: #fff3cd;
             color: #856404;
         }
+        .status-confirmed {
+            background-color: #d4edda;
+            color: #155724;
+        }
     </style>
 </head>
 <body>
@@ -67,21 +71,21 @@
         
         <div class="appointment-details">
             <h3>Detaliile programării:</h3>
-            <p><strong>Status:</strong> <span class="status-badge status-pending"><?= h($appointment->status) ?></span></p>
+            <p><strong>Status:</strong> <span class="status-badge status-<?= h($appointment->status) ?>"><?= h($appointment->status) ?></span></p>
             <p><strong>Pacient:</strong> <?= h($appointment->patient_name) ?></p>
             <p><strong>Telefon:</strong> <?= h($appointment->phone) ?></p>
             <p><strong>Email:</strong> <?= h($appointment->email) ?></p>
             <p><strong>Data și ora:</strong> <?= $appointment->appointment_date->format('d.m.Y') ?> la <?= $appointment->appointment_time->format('H:i') ?></p>
-            <?php if (!empty($appointment->staff)): ?>
+            <?php if (!empty($appointment->staff)) : ?>
                 <p><strong>Doctor:</strong> <?= h($appointment->staff->full_name) ?></p>
             <?php endif; ?>
-            <?php if (!empty($appointment->department)): ?>
+            <?php if (!empty($appointment->department)) : ?>
                 <p><strong>Departament:</strong> <?= h($appointment->department->name) ?></p>
             <?php endif; ?>
-            <?php if (!empty($appointment->service)): ?>
+            <?php if (!empty($appointment->service)) : ?>
                 <p><strong>Serviciu:</strong> <?= h($appointment->service->name) ?></p>
             <?php endif; ?>
-            <?php if (!empty($appointment->notes)): ?>
+            <?php if (!empty($appointment->notes)) : ?>
                 <p><strong>Observații:</strong> <?= nl2br(h($appointment->notes)) ?></p>
             <?php endif; ?>
             <p><strong>Data creării:</strong> <?= $appointment->created->format('d.m.Y H:i') ?></p>
@@ -91,7 +95,7 @@
             <a href="<?= $adminUrl ?>" class="button">VIZUALIZEAZĂ ÎN ADMIN</a>
         </div>
         
-        <p><strong>Notă:</strong> Dacă statusul programării este "pending", pacientul trebuie să confirme programarea prin email în termen de 24 de ore.</p>
+        <p><strong>Notă:</strong> Programarea a fost confirmată automat.</p>
     </div>
     
     <div style="background-color: #6c757d; color: white; padding: 20px; text-align: center; border-radius: 0 0 8px 8px; font-size: 14px;">

@@ -49,6 +49,17 @@ class PatientsController extends AppController
             'resetPassword',
             'verifyEmail',
         ]);
+
+        // Disable FormProtection for auth forms (tokens expire when page stays open)
+        // These actions have their own security: rate limiting, CSRF protection via middleware
+        if ($this->components()->has('FormProtection')) {
+            $this->FormProtection->setConfig('unlockedActions', [
+                'login',
+                'register',
+                'forgotPassword',
+                'resetPassword',
+            ]);
+        }
     }
 
     /**

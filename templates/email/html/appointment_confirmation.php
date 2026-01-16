@@ -66,13 +66,17 @@
 <body>
     <div class="header">
         <h1><?= h($hospital['name']) ?></h1>
-        <h2>Confirmare programare necesară</h2>
+        <h2><?= $token ? 'Confirmare programare necesară' : 'Programare confirmată' ?></h2>
     </div>
-    
+
     <div class="content">
         <p>Bună ziua <strong><?= h($appointment->patient_name) ?></strong>,</p>
-        
+
+        <?php if ($token) : ?>
         <p>Ați făcut o programare la <?= h($hospital['name']) ?>. Pentru a finaliza procesul de programare, vă rugăm să confirmați programarea accesând link-ul de mai jos.</p>
+        <?php else : ?>
+        <p>Programarea dumneavoastră la <?= h($hospital['name']) ?> a fost confirmată cu succes.</p>
+        <?php endif; ?>
         
         <div class="appointment-details">
             <h3>Detaliile programării:</h3>
@@ -80,21 +84,21 @@
             <p><strong>Telefon:</strong> <?= h($appointment->patient_phone) ?></p>
             <p><strong>Email:</strong> <?= h($appointment->patient_email) ?></p>
             <p><strong>Data și ora:</strong> <?= $appointment->appointment_date->format('d.m.Y') ?> la <?= $appointment->appointment_time->format('H:i') ?></p>
-            <?php if (!empty($appointment->doctors)): ?>
+            <?php if (!empty($appointment->doctors)) : ?>
                 <p><strong>Doctor:</strong> <?= h($appointment->doctors->first_name . ' ' . $appointment->doctors->last_name) ?></p>
             <?php endif; ?>
-            <?php if (!empty($appointment->doctors->departments)): ?>
+            <?php if (!empty($appointment->doctors->departments)) : ?>
                 <p><strong>Departament:</strong> <?= h($appointment->doctors->departments->name) ?></p>
             <?php endif; ?>
-            <?php if (!empty($appointment->service)): ?>
+            <?php if (!empty($appointment->service)) : ?>
                 <p><strong>Serviciu:</strong> <?= h($appointment->service->name) ?></p>
             <?php endif; ?>
-            <?php if (!empty($appointment->notes)): ?>
+            <?php if (!empty($appointment->notes)) : ?>
                 <p><strong>Observații:</strong> <?= h($appointment->notes) ?></p>
             <?php endif; ?>
         </div>
         
-        <?php if ($token): ?>
+        <?php if ($token) : ?>
             <div style="text-align: center;">
                 <a href="<?= $confirmationUrl ?>" class="button">CONFIRMĂ PROGRAMAREA</a>
             </div>

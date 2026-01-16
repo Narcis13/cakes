@@ -135,7 +135,7 @@ $statusText = [
                                                 </button>
                                                 <?= $this->Form->postLink(
                                                     '<i class="fas fa-times"></i> Anulează programarea',
-                                                    ['action' => 'cancelAppointment', $appointment->id],
+                                                    '/portal/appointments/cancel/' . $appointment->id,
                                                     [
                                                         'class' => 'btn btn-danger',
                                                         'escape' => false
