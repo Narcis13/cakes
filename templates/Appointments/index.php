@@ -5,6 +5,9 @@
  * @var array $specializations
  * @var array $services
  */
+
+// Include appointments CSS
+$this->Html->css('appointments', ['block' => true]);
 ?>
 
 <div class="appointments-booking">
@@ -328,54 +331,73 @@
 
         <!-- Step 4: Verify Patient Details -->
         <div class="form-step" data-step="4">
-            <h2>Pasul 4: Verificați Datele Personale</h2>
-            <p class="step-description">Datele dumneavoastră de contact preluate din cont.</p>
+            <div class="step-header">
+                <h2><i class="fas fa-id-card"></i> Verificați Datele Personale</h2>
+                <p class="step-description">Datele dumneavoastră preluate din contul de pacient.</p>
+            </div>
 
-            <div class="patient-info-display">
-                <div class="patient-info-card">
-                    <div class="patient-info-row">
-                        <div class="patient-info-item">
-                            <i class="fas fa-user"></i>
-                            <div>
-                                <span class="info-label">Nume complet</span>
-                                <span class="info-value" id="display-patient-name"><?= h($patient->full_name) ?></span>
+            <div class="verification-card">
+                <div class="verification-card-header">
+                    <div class="verification-icon">
+                        <i class="fas fa-user-check"></i>
+                    </div>
+                    <div class="verification-title">
+                        <h3>Date Pacient Verificate</h3>
+                        <span class="verification-badge">
+                            <i class="fas fa-shield-alt"></i> Din contul dumneavoastră
+                        </span>
+                    </div>
+                </div>
+
+                <div class="verification-details">
+                    <div class="detail-row">
+                        <div class="detail-item">
+                            <div class="detail-icon"><i class="fas fa-user"></i></div>
+                            <div class="detail-content">
+                                <span class="detail-label">Nume complet</span>
+                                <span class="detail-value" id="display-patient-name"><?= h($patient->full_name) ?></span>
                             </div>
                         </div>
-                        <div class="patient-info-item">
-                            <i class="fas fa-envelope"></i>
-                            <div>
-                                <span class="info-label">Email</span>
-                                <span class="info-value" id="display-patient-email"><?= h($patient->email) ?></span>
+                        <div class="detail-item">
+                            <div class="detail-icon"><i class="fas fa-envelope"></i></div>
+                            <div class="detail-content">
+                                <span class="detail-label">Email</span>
+                                <span class="detail-value" id="display-patient-email"><?= h($patient->email) ?></span>
                             </div>
                         </div>
                     </div>
-                    <div class="patient-info-row">
-                        <div class="patient-info-item">
-                            <i class="fas fa-phone"></i>
-                            <div>
-                                <span class="info-label">Telefon</span>
-                                <span class="info-value" id="display-patient-phone"><?= h($patient->phone) ?></span>
+                    <div class="detail-row">
+                        <div class="detail-item">
+                            <div class="detail-icon"><i class="fas fa-phone"></i></div>
+                            <div class="detail-content">
+                                <span class="detail-label">Telefon</span>
+                                <span class="detail-value" id="display-patient-phone"><?= h($patient->phone) ?></span>
                             </div>
                         </div>
                     </div>
                 </div>
-                <p class="patient-info-note">
+
+                <div class="verification-note">
                     <i class="fas fa-info-circle"></i>
-                    Pentru a modifica datele de contact, accesați <a href="/portal/profile">profilul dumneavoastră</a>.
-                </p>
+                    <span>Pentru a modifica datele, accesați <a href="/portal/profile">profilul dumneavoastră</a>.</span>
+                </div>
             </div>
 
-            <!-- Hidden fields for patient data -->
+            <!-- Hidden field pentru patient_id -->
             <?= $this->Form->hidden('patient_id', ['value' => $patient->id, 'id' => 'patient-id']) ?>
 
-            <div class="form-group">
+            <div class="notes-card">
+                <div class="notes-header">
+                    <i class="fas fa-sticky-note"></i>
+                    <span>Observații pentru Medic (opțional)</span>
+                </div>
                 <?= $this->Form->control('notes', [
                     'type' => 'textarea',
-                    'label' => 'Observații (opțional)',
-                    'class' => 'form-control',
+                    'label' => false,
+                    'class' => 'form-control notes-textarea',
                     'rows' => 3,
                     'id' => 'notes',
-                    'placeholder' => 'Menționați aici orice informații relevante pentru consultație'
+                    'placeholder' => 'Menționați aici orice informații relevante pentru consultație...'
                 ]) ?>
             </div>
 
@@ -389,65 +411,155 @@
             </div>
         </div>
 
-        <!-- Step 5: Review and Confirm -->
+        <!-- Step 5: Review and Confirm - REDESIGNED -->
         <div class="form-step" data-step="5">
-            <h2>Pasul 5: Verificați și Confirmați</h2>
-            <p class="step-description">Vă rugăm să verificați toate detaliile programării înainte de confirmare.</p>
-            
-            <div class="booking-summary">
-                <h3>Rezumat Programare</h3>
-                
-                <div class="summary-section">
-                    <h4>Detalii Medicale</h4>
-                    <dl class="row">
-                        <dt class="col-sm-4">Specialitate:</dt>
-                        <dd class="col-sm-8" id="summary-specialty"></dd>
-                        
-                        <dt class="col-sm-4">Medic:</dt>
-                        <dd class="col-sm-8" id="summary-doctor"></dd>
-                        
-                        <dt class="col-sm-4">Serviciu:</dt>
-                        <dd class="col-sm-8" id="summary-service"></dd>
-                        
-                        <dt class="col-sm-4">Data:</dt>
-                        <dd class="col-sm-8" id="summary-date"></dd>
-                        
-                        <dt class="col-sm-4">Ora:</dt>
-                        <dd class="col-sm-8" id="summary-time"></dd>
-                    </dl>
+            <div class="step-header">
+                <h2><i class="fas fa-clipboard-check"></i> Verificare și Confirmare</h2>
+                <p class="step-description">Verificați toate detaliile programării înainte de a confirma.</p>
+            </div>
+
+            <!-- Summary Cards Container -->
+            <div class="confirmation-summary">
+                <!-- Appointment Card -->
+                <div class="summary-card appointment-card">
+                    <div class="summary-card-header">
+                        <div class="summary-card-icon appointment-icon">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <h3>Detalii Programare</h3>
+                    </div>
+                    <div class="summary-card-body">
+                        <div class="summary-grid">
+                            <div class="summary-item">
+                                <div class="summary-item-icon">
+                                    <i class="fas fa-stethoscope"></i>
+                                </div>
+                                <div class="summary-item-content">
+                                    <span class="summary-label">Specialitate</span>
+                                    <span class="summary-value" id="summary-specialty">-</span>
+                                </div>
+                            </div>
+                            <div class="summary-item">
+                                <div class="summary-item-icon">
+                                    <i class="fas fa-user-md"></i>
+                                </div>
+                                <div class="summary-item-content">
+                                    <span class="summary-label">Medic</span>
+                                    <span class="summary-value" id="summary-doctor">-</span>
+                                </div>
+                            </div>
+                            <div class="summary-item">
+                                <div class="summary-item-icon">
+                                    <i class="fas fa-briefcase-medical"></i>
+                                </div>
+                                <div class="summary-item-content">
+                                    <span class="summary-label">Serviciu</span>
+                                    <span class="summary-value" id="summary-service">-</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="datetime-highlight">
+                            <div class="datetime-item date-item">
+                                <i class="fas fa-calendar-day"></i>
+                                <div class="datetime-content">
+                                    <span class="datetime-label">Data</span>
+                                    <span class="datetime-value" id="summary-date">-</span>
+                                </div>
+                            </div>
+                            <div class="datetime-divider"></div>
+                            <div class="datetime-item time-item">
+                                <i class="fas fa-clock"></i>
+                                <div class="datetime-content">
+                                    <span class="datetime-label">Ora</span>
+                                    <span class="datetime-value" id="summary-time">-</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                
-                <div class="summary-section">
-                    <h4>Date Personale</h4>
-                    <dl class="row">
-                        <dt class="col-sm-4">Nume:</dt>
-                        <dd class="col-sm-8" id="summary-name"><?= h($patient->full_name) ?></dd>
 
-                        <dt class="col-sm-4">Email:</dt>
-                        <dd class="col-sm-8" id="summary-email"><?= h($patient->email) ?></dd>
-
-                        <dt class="col-sm-4">Telefon:</dt>
-                        <dd class="col-sm-8" id="summary-phone"><?= h($patient->phone) ?></dd>
-
-                        <dt class="col-sm-4">Observații:</dt>
-                        <dd class="col-sm-8" id="summary-notes"></dd>
-                    </dl>
+                <!-- Patient Card -->
+                <div class="summary-card patient-card">
+                    <div class="summary-card-header">
+                        <div class="summary-card-icon patient-icon">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <h3>Date Pacient</h3>
+                        <span class="verified-badge">
+                            <i class="fas fa-shield-alt"></i> Verificat
+                        </span>
+                    </div>
+                    <div class="summary-card-body">
+                        <div class="patient-details">
+                            <div class="patient-detail-row">
+                                <div class="patient-detail">
+                                    <i class="fas fa-user-circle"></i>
+                                    <div class="detail-text">
+                                        <span class="detail-label">Nume complet</span>
+                                        <span class="detail-value" id="summary-name"><?= h($patient->full_name) ?></span>
+                                    </div>
+                                </div>
+                                <div class="patient-detail">
+                                    <i class="fas fa-envelope"></i>
+                                    <div class="detail-text">
+                                        <span class="detail-label">Email</span>
+                                        <span class="detail-value" id="summary-email"><?= h($patient->email) ?></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="patient-detail-row">
+                                <div class="patient-detail">
+                                    <i class="fas fa-phone-alt"></i>
+                                    <div class="detail-text">
+                                        <span class="detail-label">Telefon</span>
+                                        <span class="detail-value" id="summary-phone"><?= h($patient->phone) ?></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="notes-section" id="summary-notes-container">
+                            <div class="notes-header-mini">
+                                <i class="fas fa-sticky-note"></i>
+                                <span>Observații</span>
+                            </div>
+                            <p class="notes-text" id="summary-notes">Fără observații</p>
+                        </div>
+                    </div>
                 </div>
             </div>
-            
-            <div class="form-check">
-                <input type="checkbox" class="form-check-input" id="terms-agree" required>
-                <label class="form-check-label" for="terms-agree">
-                    Sunt de acord cu <a href="/pages/terms" target="_blank">termenii și condițiile</a> și confirm că datele furnizate sunt corecte.
+
+            <!-- Terms Agreement -->
+            <div class="terms-agreement-card">
+                <label class="terms-checkbox-wrapper">
+                    <input type="checkbox" id="terms-agree" required>
+                    <span class="custom-checkbox">
+                        <i class="fas fa-check"></i>
+                    </span>
+                    <span class="terms-text">
+                        Sunt de acord cu <a href="/pages/terms" target="_blank">termenii și condițiile</a>
+                        și confirm că datele furnizate sunt corecte.
+                    </span>
                 </label>
             </div>
-            
-            <div class="step-actions">
+
+            <!-- Confirmation Notice -->
+            <div class="confirmation-notice">
+                <i class="fas fa-info-circle"></i>
+                <p>După confirmare, veți primi un email cu detaliile programării și un link pentru confirmarea finală.</p>
+            </div>
+
+            <!-- Step Actions -->
+            <div class="step-actions step-5-actions">
                 <button type="button" class="btn btn-secondary prev-step">
                     <i class="fas fa-arrow-left"></i> Pasul Anterior
                 </button>
-                <button type="submit" class="btn btn-success" id="confirm-booking" disabled>
-                    <i class="fas fa-check"></i> Confirmă Programarea
+                <button type="submit" class="btn btn-confirm" id="confirm-booking" disabled>
+                    <span class="btn-text">
+                        <i class="fas fa-check-circle"></i> Confirmă Programarea
+                    </span>
+                    <span class="btn-loading" style="display: none;">
+                        <i class="fas fa-spinner fa-spin"></i> Se procesează...
+                    </span>
                 </button>
             </div>
         </div>
@@ -490,1819 +602,7 @@
     </div>
 </div>
 
-<style>
-.appointments-booking {
-    padding: 40px 0;
-    min-height: 80vh;
-    background: linear-gradient(135deg, #f5f7fa 0%, #e4e9f2 100%);
-}
-
-/* Ensure container uses full width */
-.appointments-booking .container {
-    max-width: 1200px;
-    width: 100%;
-    padding: 0 15px;
-    margin: 0 auto;
-}
-
-.appointments-booking h1 {
-    text-align: center;
-    margin-bottom: 30px;
-    color: #1a365d;
-    font-size: 32px;
-    font-weight: 700;
-    letter-spacing: -0.5px;
-}
-
-/* ===== NEW PROGRESS BAR STYLES ===== */
-.booking-progress-wrapper {
-    margin-bottom: 35px;
-    padding: 20px;
-    background: #fff;
-    border-radius: 16px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-}
-
-.progress-steps-container {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    max-width: 1000px;
-    margin: 0 auto;
-}
-
-.progress-step {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    position: relative;
-    flex-shrink: 0;
-}
-
-.step-icon-wrapper {
-    position: relative;
-}
-
-.step-icon {
-    width: 50px;
-    height: 50px;
-    border-radius: 12px;
-    background: #e8eef4;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 20px;
-    color: #8896a6;
-    transition: all 0.3s ease;
-}
-
-.progress-step.active .step-icon {
-    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-    color: #fff;
-    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
-}
-
-.progress-step.completed .step-icon {
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-    color: #fff;
-    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
-}
-
-.step-number-badge {
-    position: absolute;
-    top: -5px;
-    right: -5px;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: #cbd5e1;
-    color: #64748b;
-    font-size: 11px;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 2px solid #fff;
-}
-
-.progress-step.active .step-number-badge {
-    background: #1d4ed8;
-    color: #fff;
-}
-
-.progress-step.completed .step-number-badge {
-    background: #059669;
-    color: #fff;
-}
-
-.step-info {
-    display: flex;
-    flex-direction: column;
-}
-
-.step-title {
-    font-size: 14px;
-    font-weight: 600;
-    color: #334155;
-    line-height: 1.2;
-}
-
-.step-subtitle {
-    font-size: 11px;
-    color: #94a3b8;
-    margin-top: 2px;
-}
-
-.progress-step.active .step-title {
-    color: #1d4ed8;
-}
-
-.progress-step.completed .step-title {
-    color: #059669;
-}
-
-.progress-connector {
-    flex: 1;
-    height: 3px;
-    background: #e2e8f0;
-    margin: 0 8px;
-    border-radius: 2px;
-    position: relative;
-}
-
-.progress-connector.completed {
-    background: linear-gradient(90deg, #10b981 0%, #10b981 100%);
-}
-
-/* Mobile responsive for progress bar */
-@media (max-width: 900px) {
-    .step-info {
-        display: none;
-    }
-
-    .progress-step {
-        gap: 0;
-    }
-
-    .step-icon {
-        width: 44px;
-        height: 44px;
-        font-size: 18px;
-    }
-}
-
-@media (max-width: 600px) {
-    .progress-steps-container {
-        padding: 0 10px;
-    }
-
-    .step-icon {
-        width: 38px;
-        height: 38px;
-        font-size: 16px;
-        border-radius: 10px;
-    }
-
-    .step-number-badge {
-        width: 18px;
-        height: 18px;
-        font-size: 10px;
-    }
-
-    .progress-connector {
-        height: 2px;
-        margin: 0 4px;
-    }
-}
-
-/* ===== FORM STEP STYLES ===== */
-.form-step {
-    display: none;
-    background: #fff;
-    padding: 35px;
-    border-radius: 16px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    margin-bottom: 20px;
-}
-
-.form-step.active {
-    display: block;
-}
-
-.step-header {
-    margin-bottom: 30px;
-    text-align: center;
-}
-
-.step-header h2 {
-    font-size: 24px;
-    font-weight: 700;
-    color: #1a365d;
-    margin-bottom: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-}
-
-.step-header h2 i {
-    color: #3b82f6;
-}
-
-.step-header .step-description {
-    color: #64748b;
-    font-size: 15px;
-    max-width: 600px;
-    margin: 0 auto;
-    line-height: 1.6;
-}
-
-.step-actions {
-    margin-top: 35px;
-    display: flex;
-    justify-content: space-between;
-    gap: 15px;
-}
-
-/* ===== SPECIALTY CARDS ===== */
-.specialty-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 20px;
-    margin: 25px 0;
-}
-
-.specialty-card {
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.specialty-card-inner {
-    display: flex;
-    align-items: center;
-    padding: 20px;
-    border: 2px solid #e2e8f0;
-    border-radius: 14px;
-    background: #fff;
-    transition: all 0.3s ease;
-    gap: 18px;
-}
-
-.specialty-card:hover .specialty-card-inner {
-    border-color: #3b82f6;
-    transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.15);
-}
-
-.specialty-card.selected .specialty-card-inner {
-    border-color: #3b82f6;
-    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.2);
-}
-
-.specialty-icon-container {
-    flex-shrink: 0;
-}
-
-.specialty-icon {
-    width: 60px;
-    height: 60px;
-    border-radius: 14px;
-    background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 26px;
-    color: #0284c7;
-    transition: all 0.3s ease;
-}
-
-.specialty-card:hover .specialty-icon {
-    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-    color: #fff;
-}
-
-.specialty-card.selected .specialty-icon {
-    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-    color: #fff;
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-}
-
-.specialty-content {
-    flex: 1;
-    min-width: 0;
-}
-
-.specialty-name {
-    font-size: 17px;
-    font-weight: 600;
-    color: #1e293b;
-    margin: 0 0 6px 0;
-    line-height: 1.3;
-}
-
-.specialty-description {
-    font-size: 13px;
-    color: #64748b;
-    margin: 0 0 10px 0;
-    line-height: 1.5;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-
-.specialty-meta {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.doctors-available {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 13px;
-    color: #10b981;
-    font-weight: 500;
-    background: #ecfdf5;
-    padding: 5px 12px;
-    border-radius: 20px;
-}
-
-.doctors-available i {
-    font-size: 12px;
-}
-
-.specialty-card-arrow {
-    flex-shrink: 0;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background: #f1f5f9;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #94a3b8;
-    transition: all 0.3s ease;
-}
-
-.specialty-card:hover .specialty-card-arrow {
-    background: #3b82f6;
-    color: #fff;
-    transform: translateX(3px);
-}
-
-.specialty-card.selected .specialty-card-arrow {
-    background: #3b82f6;
-    color: #fff;
-}
-
-/* No specializations message */
-.no-specializations-message {
-    text-align: center;
-    padding: 60px 20px;
-    background: #fef3cd;
-    border-radius: 12px;
-    border: 1px solid #ffc107;
-}
-
-.no-specializations-message i {
-    color: #856404;
-    margin-bottom: 20px;
-}
-
-.no-specializations-message h3 {
-    color: #856404;
-    font-size: 20px;
-    margin-bottom: 10px;
-}
-
-.no-specializations-message p {
-    color: #856404;
-    font-size: 15px;
-}
-
-/* Mobile responsive for specialty cards */
-@media (max-width: 768px) {
-    .specialty-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .specialty-card-inner {
-        padding: 16px;
-    }
-
-    .specialty-icon {
-        width: 52px;
-        height: 52px;
-        font-size: 22px;
-    }
-
-    .specialty-name {
-        font-size: 16px;
-    }
-
-    .specialty-card-arrow {
-        display: none;
-    }
-}
-
-/* ===== SELECTED SPECIALTY BADGE ===== */
-.selected-specialty-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
-    padding: 12px 20px;
-    border-radius: 30px;
-    margin-bottom: 25px;
-    color: #0284c7;
-    font-size: 14px;
-}
-
-.selected-specialty-badge i {
-    font-size: 18px;
-}
-
-.selected-specialty-badge strong {
-    color: #0369a1;
-}
-
-/* ===== LOADING INDICATOR ===== */
-.loading-indicator {
-    text-align: center;
-    padding: 60px 20px;
-}
-
-.loading-indicator .spinner-wrapper {
-    color: #3b82f6;
-}
-
-.loading-indicator .spinner-wrapper p {
-    margin-top: 15px;
-    color: #64748b;
-    font-size: 15px;
-}
-
-/* ===== DOCTORS GRID - MATCHING SPECIALTY STYLE ===== */
-.doctors-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 20px;
-    margin: 25px 0;
-}
-
-.doctor-card {
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.doctor-card-inner {
-    display: flex;
-    align-items: flex-start;
-    padding: 20px;
-    border: 2px solid #e2e8f0;
-    border-radius: 14px;
-    background: #fff;
-    transition: all 0.3s ease;
-    gap: 18px;
-}
-
-.doctor-card:hover .doctor-card-inner {
-    border-color: #3b82f6;
-    transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.15);
-}
-
-.doctor-card.selected .doctor-card-inner {
-    border-color: #3b82f6;
-    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.2);
-}
-
-.doctor-photo-container {
-    flex-shrink: 0;
-}
-
-.doctor-photo {
-    width: 70px;
-    height: 70px;
-    border-radius: 14px;
-    object-fit: cover;
-    background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
-    transition: all 0.3s ease;
-}
-
-.doctor-card:hover .doctor-photo {
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-}
-
-.doctor-card.selected .doctor-photo {
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-}
-
-.doctor-content {
-    flex: 1;
-    min-width: 0;
-}
-
-.doctor-name {
-    font-size: 17px;
-    font-weight: 600;
-    color: #1e293b;
-    margin: 0 0 8px 0;
-    line-height: 1.3;
-}
-
-.doctor-meta {
-    margin-bottom: 12px;
-}
-
-.services-count {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 13px;
-    color: #10b981;
-    font-weight: 500;
-    background: #ecfdf5;
-    padding: 5px 12px;
-    border-radius: 20px;
-}
-
-.services-count i {
-    font-size: 12px;
-}
-
-.service-list {
-    margin-top: 12px;
-}
-
-.service-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 14px;
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    margin-bottom: 8px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.service-item:last-child {
-    margin-bottom: 0;
-}
-
-.service-item:hover {
-    background: #f1f5f9;
-    border-color: #cbd5e1;
-}
-
-.service-item.selected {
-    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-    border-color: #3b82f6;
-    color: #fff;
-}
-
-.service-name {
-    font-weight: 500;
-    font-size: 14px;
-}
-
-.service-details {
-    font-size: 12px;
-    color: #64748b;
-}
-
-.service-item.selected .service-details {
-    color: rgba(255, 255, 255, 0.85);
-}
-
-.doctor-card-arrow {
-    flex-shrink: 0;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background: #f1f5f9;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #94a3b8;
-    transition: all 0.3s ease;
-    align-self: center;
-}
-
-.doctor-card:hover .doctor-card-arrow {
-    background: #3b82f6;
-    color: #fff;
-    transform: translateX(3px);
-}
-
-.doctor-card.selected .doctor-card-arrow {
-    background: #3b82f6;
-    color: #fff;
-}
-
-/* Mobile responsive for doctor cards */
-@media (max-width: 768px) {
-    .doctors-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .doctor-card-inner {
-        padding: 16px;
-        flex-wrap: wrap;
-    }
-
-    .doctor-photo {
-        width: 60px;
-        height: 60px;
-    }
-
-    .doctor-card-arrow {
-        display: none;
-    }
-
-    .service-item {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 4px;
-    }
-}
-
-.time-slots-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    gap: 12px;
-}
-
-.time-slot {
-    padding: 10px;
-    text-align: center;
-    border: 1px solid #e0e0e0;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: all 0.3s;
-}
-
-.time-slot:hover:not(.unavailable) {
-    border-color: #007bff;
-    background: #f0f8ff;
-}
-
-/* Responsive Styles for Date-Time Selection */
-@media (max-width: 768px) {
-    .date-time-selection {
-        grid-template-columns: 1fr;
-        gap: 20px;
-    }
-
-    .selected-info-card {
-        flex-direction: column;
-        gap: 15px;
-    }
-
-    .time-slots-grid {
-        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-    }
-}
-
-/* Date and Time Selection Styles */
-.selected-info-card {
-    display: flex;
-    gap: 20px;
-    margin-bottom: 30px;
-    padding: 20px;
-    background: #f8f9fa;
-    border-radius: 10px;
-    border: 1px solid #e9ecef;
-}
-
-.selected-doctor-info,
-.selected-service-info {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    flex: 1;
-}
-
-.selected-info-card i {
-    font-size: 30px;
-    color: #007bff;
-    opacity: 0.8;
-}
-
-.info-label {
-    margin: 0;
-    font-size: 12px;
-    color: #6c757d;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.info-value {
-    margin: 0;
-    font-size: 16px;
-    font-weight: 600;
-    color: #212529;
-}
-
-.date-time-selection {
-    display: grid;
-    grid-template-columns: 1fr 2fr;
-    gap: 30px;
-    align-items: start;
-}
-
-.date-selection-section,
-.time-selection-section {
-    background: #fff;
-    padding: 25px;
-    border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-}
-
-.date-selection-section h4,
-.time-selection-section h4 {
-    margin: 0 0 20px 0;
-    color: #212529;
-    font-size: 18px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.calendar-wrapper {
-    position: relative;
-}
-
-.date-input {
-    width: 100%;
-    padding: 12px;
-    font-size: 16px;
-    border: 2px solid #e9ecef;
-    border-radius: 8px;
-    transition: border-color 0.3s;
-}
-
-.date-input:focus {
-    border-color: #007bff;
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
-}
-
-.date-helper-text {
-    margin-top: 8px;
-    font-size: 13px;
-    color: #6c757d;
-}
-
-.slots-loading {
-    padding: 60px 20px;
-    text-align: center;
-}
-
-.spinner-wrapper {
-    color: #007bff;
-}
-
-.spinner-wrapper p {
-    margin-top: 15px;
-    color: #6c757d;
-}
-
-.no-slots-message {
-    padding: 40px 20px;
-    text-align: center;
-    color: #6c757d;
-}
-
-.no-slots-message i {
-    color: #dee2e6;
-    margin-bottom: 15px;
-}
-
-.time-slot {
-    padding: 15px 10px;
-    text-align: center;
-    border: 2px solid #e9ecef;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s;
-    background: #fff;
-    position: relative;
-    overflow: hidden;
-}
-
-.time-slot::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(45deg, transparent, rgba(0,123,255,0.1), transparent);
-    transform: translateX(-100%);
-    transition: transform 0.6s;
-}
-
-.time-slot:hover:not(.unavailable)::before {
-    transform: translateX(100%);
-}
-
-.time-slot:hover:not(.unavailable) {
-    border-color: #007bff;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,123,255,0.15);
-}
-
-.time-slot.selected {
-    background: #007bff;
-    color: #fff;
-    border-color: #007bff;
-    transform: scale(1.05);
-    box-shadow: 0 4px 12px rgba(0,123,255,0.3);
-}
-
-.time-slot.selected::after {
-    content: '\f00c';
-    font-family: 'Font Awesome 5 Free';
-    font-weight: 900;
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    font-size: 12px;
-}
-
-.time-slot.unavailable {
-    background: #f8f9fa;
-    color: #6c757d;
-    cursor: not-allowed;
-    border-color: #dee2e6;
-    opacity: 0.7;
-    position: relative;
-    overflow: hidden;
-}
-
-.time-slot.unavailable::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: -10%;
-    right: -10%;
-    height: 1px;
-    background: #dc3545;
-    transform: rotate(-15deg);
-    opacity: 0.5;
-}
-
-.time-slot.unavailable::after {
-    content: 'Ocupat';
-    position: absolute;
-    top: 2px;
-    right: 5px;
-    font-size: 10px;
-    color: #dc3545;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.time-slot .time-text {
-    font-size: 16px;
-    font-weight: 600;
-    margin-bottom: 5px;
-}
-
-.time-slot .time-period {
-    font-size: 12px;
-    opacity: 0.8;
-    text-transform: uppercase;
-}
-
-/* Patient Info Display Styles */
-.patient-info-display {
-    margin-bottom: 30px;
-}
-
-.patient-info-card {
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-    border-radius: 12px;
-    padding: 25px;
-    border: 1px solid #dee2e6;
-}
-
-.patient-info-row {
-    display: flex;
-    gap: 30px;
-    margin-bottom: 20px;
-}
-
-.patient-info-row:last-child {
-    margin-bottom: 0;
-}
-
-.patient-info-item {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    flex: 1;
-}
-
-.patient-info-item i {
-    font-size: 24px;
-    color: #007bff;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(0, 123, 255, 0.1);
-    border-radius: 50%;
-}
-
-.patient-info-item .info-label {
-    display: block;
-    font-size: 12px;
-    color: #6c757d;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 2px;
-}
-
-.patient-info-item .info-value {
-    display: block;
-    font-size: 16px;
-    font-weight: 600;
-    color: #212529;
-}
-
-.patient-info-note {
-    margin-top: 15px;
-    font-size: 14px;
-    color: #6c757d;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.patient-info-note i {
-    color: #17a2b8;
-}
-
-.patient-info-note a {
-    color: #007bff;
-    text-decoration: none;
-}
-
-.patient-info-note a:hover {
-    text-decoration: underline;
-}
-
-@media (max-width: 768px) {
-    .patient-info-row {
-        flex-direction: column;
-        gap: 20px;
-    }
-}
-
-.booking-summary {
-    background: #f8f9fa;
-    padding: 20px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-}
-
-.summary-section {
-    margin-bottom: 20px;
-}
-
-.summary-section h4 {
-    color: #007bff;
-    margin-bottom: 15px;
-}
-
-.selected-info,
-.selected-specialty-info {
-    background: #f0f8ff;
-    padding: 15px;
-    border-radius: 4px;
-    margin-bottom: 20px;
-}
-
-/* Tooltip animation for unavailable slots */
-@keyframes fadeInOut {
-    0% {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    15% {
-        opacity: 1;
-        transform: translateY(0);
-    }
-    85% {
-        opacity: 1;
-        transform: translateY(0);
-    }
-    100% {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-}
-
-.slot-tooltip {
-    pointer-events: none;
-}
-
-.slot-tooltip::after {
-    content: '';
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    border: 6px solid transparent;
-    border-top-color: #dc3545;
-}
-
-/* Enhanced unavailable slot indication */
-.time-slot.unavailable .time-text {
-    text-decoration: line-through;
-    opacity: 0.6;
-}
-
-/* Additional visual cues for unavailable slots */
-.time-slot.unavailable:hover {
-    transform: none !important;
-    box-shadow: none !important;
-}
-
-/* Legend for time slots */
-.time-slots-legend {
-    display: flex;
-    gap: 20px;
-    margin-bottom: 15px;
-    font-size: 13px;
-    color: #6c757d;
-    flex-wrap: wrap;
-}
-
-.legend-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.legend-box {
-    width: 20px;
-    height: 20px;
-    border: 2px solid #e9ecef;
-    border-radius: 4px;
-}
-
-.legend-box.available {
-    background: #fff;
-    border-color: #007bff;
-}
-
-.legend-box.unavailable {
-    background: #f8f9fa;
-    border-color: #dee2e6;
-    position: relative;
-    overflow: hidden;
-}
-
-.legend-box.unavailable::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: -5px;
-    right: -5px;
-    height: 1px;
-    background: #dc3545;
-    transform: rotate(-15deg);
-}
-
-/* Expiring soon slots */
-.time-slot.expiring-soon {
-    border-color: #ffc107;
-    background: #fff8e1;
-}
-
-.time-slot.expiring-soon:hover {
-    border-color: #ff9800;
-    background: #fff3cd;
-}
-
-.time-slot.expiring-soon::after {
-    content: 'Urgent';
-    position: absolute;
-    top: 2px;
-    left: 5px;
-    font-size: 9px;
-    color: #ff6f00;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.3px;
-}
-
-.legend-box.expiring {
-    background: #fff8e1;
-    border-color: #ffc107;
-}
-
-/* ===== CALENDAR PANEL STYLES (V2) ===== */
-.date-time-selection-v2 {
-    display: grid;
-    grid-template-columns: 380px 1fr;
-    gap: 30px;
-    align-items: start;
-}
-
-.calendar-panel {
-    background: #fff;
-    border-radius: 16px;
-    padding: 24px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    border: 1px solid #e2e8f0;
-}
-
-.calendar-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 20px;
-}
-
-.calendar-nav-btn {
-    width: 36px;
-    height: 36px;
-    border-radius: 10px;
-    border: 1px solid #e2e8f0;
-    background: #fff;
-    color: #64748b;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.calendar-nav-btn:hover:not(:disabled) {
-    background: #3b82f6;
-    color: #fff;
-    border-color: #3b82f6;
-}
-
-.calendar-nav-btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
-.calendar-title {
-    font-size: 18px;
-    font-weight: 600;
-    color: #1e293b;
-}
-
-.calendar-weekdays {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 4px;
-    margin-bottom: 8px;
-    text-align: center;
-}
-
-.calendar-weekdays span {
-    font-size: 12px;
-    font-weight: 600;
-    color: #94a3b8;
-    padding: 8px 0;
-}
-
-.calendar-days {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 4px;
-}
-
-/* Calendar Day Cell */
-.calendar-day {
-    aspect-ratio: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: all 0.2s;
-    position: relative;
-    font-weight: 500;
-    font-size: 14px;
-}
-
-.calendar-day .day-number {
-    font-weight: 600;
-    line-height: 1;
-}
-
-.calendar-day .day-indicator {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    margin-top: 4px;
-}
-
-/* Day Status Styles */
-.calendar-day.available {
-    background: #ecfdf5;
-    color: #059669;
-    border: 1px solid #a7f3d0;
-}
-
-.calendar-day.available:hover {
-    background: #d1fae5;
-    transform: scale(1.05);
-    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
-}
-
-.calendar-day.available .day-indicator {
-    background: #10b981;
-}
-
-.calendar-day.partial {
-    background: #fef9c3;
-    color: #a16207;
-    border: 1px solid #fde047;
-}
-
-.calendar-day.partial:hover {
-    background: #fef08a;
-    transform: scale(1.05);
-}
-
-.calendar-day.partial .day-indicator {
-    background: #eab308;
-}
-
-.calendar-day.full {
-    background: #f1f5f9;
-    color: #94a3b8;
-    border: 1px solid #e2e8f0;
-    cursor: not-allowed;
-}
-
-.calendar-day.full .day-indicator {
-    background: #cbd5e1;
-}
-
-.calendar-day.holiday {
-    background: #fef2f2;
-    color: #dc2626;
-    border: 1px solid #fecaca;
-    cursor: not-allowed;
-}
-
-.calendar-day.holiday .day-indicator {
-    background: #ef4444;
-}
-
-.calendar-day.weekend {
-    background: #f8fafc;
-    color: #cbd5e1;
-    border: 1px solid #f1f5f9;
-    cursor: not-allowed;
-}
-
-.calendar-day.unavailable {
-    background: #fef2f2;
-    color: #fca5a5;
-    border: 1px solid #fecaca;
-    cursor: not-allowed;
-}
-
-.calendar-day.selected {
-    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%) !important;
-    color: #fff !important;
-    border: 2px solid #1d4ed8 !important;
-    transform: scale(1.08);
-    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
-}
-
-.calendar-day.selected .day-indicator {
-    background: #fff !important;
-}
-
-.calendar-day.today {
-    border: 2px solid #3b82f6;
-}
-
-.calendar-day.today::after {
-    content: 'Azi';
-    position: absolute;
-    top: 2px;
-    right: 2px;
-    font-size: 8px;
-    font-weight: 700;
-    color: #3b82f6;
-    text-transform: uppercase;
-}
-
-.calendar-day.past {
-    opacity: 0.4;
-    cursor: not-allowed;
-}
-
-.calendar-day.out-of-range {
-    background: #f8fafc;
-    color: #cbd5e1;
-    border: 1px solid #f1f5f9;
-    cursor: not-allowed;
-    opacity: 0.5;
-}
-
-.calendar-day.disabled {
-    pointer-events: none;
-}
-
-/* Quick Navigation */
-.calendar-quick-nav {
-    margin-top: 16px;
-    text-align: center;
-}
-
-.btn-quick-nav {
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-    color: #fff;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 25px;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s;
-}
-
-.btn-quick-nav:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
-}
-
-/* Calendar Legend */
-.calendar-legend {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    margin-top: 20px;
-    padding-top: 16px;
-    border-top: 1px solid #e2e8f0;
-}
-
-.calendar-legend .legend-item {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 11px;
-    color: #64748b;
-}
-
-.legend-dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-}
-
-.legend-dot.available { background: #10b981; }
-.legend-dot.partial { background: #eab308; }
-.legend-dot.full { background: #cbd5e1; }
-.legend-dot.holiday { background: #ef4444; }
-.legend-dot.weekend { background: #e2e8f0; }
-
-/* ===== TIME SLOTS PANEL STYLES (V2) ===== */
-.time-slots-panel {
-    background: #fff;
-    border-radius: 16px;
-    padding: 24px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    border: 1px solid #e2e8f0;
-    min-height: 400px;
-}
-
-.time-slots-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 20px;
-    padding-bottom: 16px;
-    border-bottom: 1px solid #e2e8f0;
-}
-
-.time-slots-header h4 {
-    margin: 0;
-    font-size: 18px;
-    font-weight: 600;
-    color: #1e293b;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.time-slots-header h4 i {
-    color: #3b82f6;
-}
-
-.selected-date-badge {
-    background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
-    color: #0284c7;
-    padding: 8px 16px;
-    border-radius: 20px;
-    font-size: 13px;
-    font-weight: 600;
-}
-
-.slots-placeholder {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 60px 20px;
-    color: #94a3b8;
-    text-align: center;
-}
-
-.slots-placeholder i {
-    font-size: 48px;
-    margin-bottom: 20px;
-    opacity: 0.5;
-}
-
-.slots-placeholder p {
-    font-size: 15px;
-    max-width: 280px;
-}
-
-.slots-loading {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 60px 20px;
-    color: #64748b;
-    text-align: center;
-}
-
-.slots-loading .spinner-wrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 16px;
-}
-
-.slots-loading i {
-    color: #3b82f6;
-}
-
-.no-slots-message {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 60px 20px;
-    color: #94a3b8;
-    text-align: center;
-}
-
-.no-slots-message i {
-    font-size: 48px;
-    margin-bottom: 20px;
-    color: #cbd5e1;
-}
-
-.btn-suggestion {
-    margin-top: 20px;
-    background: #f1f5f9;
-    color: #475569;
-    border: 1px solid #e2e8f0;
-    padding: 10px 20px;
-    border-radius: 8px;
-    font-size: 14px;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.btn-suggestion:hover {
-    background: #e2e8f0;
-    color: #1e293b;
-}
-
-.time-slots-grid-v2 {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-    gap: 10px;
-}
-
-/* Time Slot Styles */
-.time-slot-v2 {
-    padding: 14px 8px;
-    text-align: center;
-    border: 2px solid #e2e8f0;
-    border-radius: 12px;
-    cursor: pointer;
-    transition: all 0.2s;
-    background: #fff;
-    position: relative;
-}
-
-.time-slot-v2:hover:not(.occupied) {
-    border-color: #3b82f6;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
-}
-
-.time-slot-v2.selected {
-    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-    color: #fff;
-    border-color: #1d4ed8;
-    transform: scale(1.05);
-    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
-}
-
-.time-slot-v2.selected::after {
-    content: '\f00c';
-    font-family: 'Font Awesome 6 Free';
-    font-weight: 900;
-    position: absolute;
-    top: 4px;
-    right: 6px;
-    font-size: 10px;
-}
-
-.time-slot-v2.occupied {
-    background: #f8fafc;
-    color: #cbd5e1;
-    border-color: #e2e8f0;
-    cursor: not-allowed;
-    text-decoration: line-through;
-}
-
-.time-slot-v2 .slot-time {
-    font-size: 16px;
-    font-weight: 700;
-    line-height: 1.2;
-}
-
-.time-slot-v2 .slot-period {
-    font-size: 11px;
-    text-transform: uppercase;
-    opacity: 0.8;
-    margin-top: 2px;
-}
-
-/* Slots Legend */
-.slots-legend {
-    display: flex;
-    gap: 20px;
-    margin-top: 20px;
-    padding-top: 16px;
-    border-top: 1px solid #e2e8f0;
-}
-
-.slots-legend .legend-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 12px;
-    color: #64748b;
-}
-
-.legend-slot {
-    width: 28px;
-    height: 20px;
-    border-radius: 6px;
-    border: 2px solid;
-}
-
-.legend-slot.available {
-    background: #fff;
-    border-color: #e2e8f0;
-}
-
-.legend-slot.selected {
-    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-    border-color: #1d4ed8;
-}
-
-.legend-slot.occupied {
-    background: #f8fafc;
-    border-color: #e2e8f0;
-}
-
-/* ===== STICKY SUMMARY BAR STYLES ===== */
-.booking-sticky-bar {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-    padding: 16px 20px;
-    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
-    z-index: 1000;
-    transform: translateY(100%);
-    transition: transform 0.3s ease;
-}
-
-.booking-sticky-bar.visible {
-    transform: translateY(0);
-}
-
-.sticky-bar-content {
-    max-width: 1200px;
-    margin: 0 auto;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 20px;
-}
-
-.sticky-bar-items {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    flex: 1;
-}
-
-.sticky-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    color: #fff;
-}
-
-.sticky-item i {
-    font-size: 24px;
-    color: #3b82f6;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(59, 130, 246, 0.15);
-    border-radius: 10px;
-}
-
-.sticky-item-content {
-    display: flex;
-    flex-direction: column;
-}
-
-.sticky-label {
-    font-size: 11px;
-    color: #94a3b8;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.sticky-value {
-    font-size: 14px;
-    font-weight: 600;
-    color: #fff;
-}
-
-.sticky-divider {
-    width: 1px;
-    height: 40px;
-    background: rgba(255, 255, 255, 0.1);
-}
-
-.btn-sticky-continue {
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-    color: #fff;
-    border: none;
-    padding: 14px 28px;
-    border-radius: 12px;
-    font-size: 15px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    white-space: nowrap;
-}
-
-.btn-sticky-continue:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
-}
-
-.btn-sticky-continue:disabled {
-    background: #475569;
-    cursor: not-allowed;
-    opacity: 0.7;
-}
-
-/* Week Navigation Indicator */
-.week-indicator {
-    text-align: center;
-    margin-top: 12px;
-    font-size: 13px;
-    color: #64748b;
-}
-
-.week-dots {
-    display: flex;
-    justify-content: center;
-    gap: 6px;
-    margin-top: 8px;
-}
-
-.week-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: #e2e8f0;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.week-dot.active {
-    background: #3b82f6;
-    transform: scale(1.2);
-}
-
-.week-dot:hover {
-    background: #94a3b8;
-}
-
-/* ===== RESPONSIVE BREAKPOINTS ===== */
-@media (max-width: 900px) {
-    .date-time-selection-v2 {
-        grid-template-columns: 1fr;
-    }
-
-    .calendar-panel {
-        max-width: 100%;
-    }
-
-    .time-slots-grid-v2 {
-        grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-    }
-
-    .sticky-bar-items {
-        flex-wrap: wrap;
-        gap: 12px;
-    }
-
-    .sticky-divider {
-        display: none;
-    }
-}
-
-@media (max-width: 480px) {
-    .calendar-day {
-        font-size: 12px;
-    }
-
-    .calendar-legend {
-        justify-content: center;
-    }
-
-    .time-slots-header {
-        flex-direction: column;
-        gap: 12px;
-        text-align: center;
-    }
-
-    .booking-sticky-bar {
-        padding: 12px 16px;
-    }
-
-    .sticky-bar-content {
-        flex-direction: column;
-        gap: 12px;
-    }
-
-    .sticky-bar-items {
-        width: 100%;
-        justify-content: space-around;
-    }
-
-    .sticky-item i {
-        width: 32px;
-        height: 32px;
-        font-size: 18px;
-    }
-
-    .sticky-value {
-        font-size: 13px;
-    }
-
-    .btn-sticky-continue {
-        width: 100%;
-        justify-content: center;
-    }
-}
-</style>
-
+<!-- Inline styles moved to webroot/css/appointments.css -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('booking-form');
@@ -3081,18 +1381,31 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function updateSummary() {
         // Medical details
-        document.getElementById('summary-specialty').textContent = bookingData.specialty;
-        document.getElementById('summary-doctor').textContent = bookingData.doctorName;
-        document.getElementById('summary-service').textContent = bookingData.serviceName;
+        document.getElementById('summary-specialty').textContent = bookingData.specialty || '-';
+        document.getElementById('summary-doctor').textContent = bookingData.doctorName || '-';
+        document.getElementById('summary-service').textContent = bookingData.serviceName || '-';
 
+        // Format date nicely in Romanian
         const date = new Date(bookingData.appointmentDate);
         const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
         document.getElementById('summary-date').textContent = date.toLocaleDateString('ro-RO', dateOptions);
-        document.getElementById('summary-time').textContent = bookingData.appointmentTime;
 
-        // Personal details - patient name, email, phone are pre-filled via PHP
-        // Only notes needs to be updated from the form
-        document.getElementById('summary-notes').textContent = document.getElementById('notes').value || 'Fără observații';
+        // Format time to be user-friendly
+        document.getElementById('summary-time').textContent = bookingData.appointmentTime || '-';
+
+        // Update notes section
+        const notesValue = document.getElementById('notes').value;
+        const summaryNotes = document.getElementById('summary-notes');
+        const notesContainer = document.getElementById('summary-notes-container');
+
+        if (notesValue && notesValue.trim()) {
+            summaryNotes.textContent = notesValue;
+            if (notesContainer) notesContainer.style.display = 'block';
+        } else {
+            summaryNotes.textContent = 'Fără observații';
+            // Still show the section but with default text
+            if (notesContainer) notesContainer.style.display = 'block';
+        }
     }
 
     // Terms agreement checkbox
@@ -3103,17 +1416,20 @@ document.addEventListener('DOMContentLoaded', function() {
     // Form submission
     form.addEventListener('submit', function(e) {
         e.preventDefault(); // Always prevent default first
-        
+
         const submitButton = document.getElementById('confirm-booking');
-        
+        const btnText = submitButton.querySelector('.btn-text');
+        const btnLoading = submitButton.querySelector('.btn-loading');
+
         if (!document.getElementById('terms-agree').checked) {
             alert('Vă rugăm să acceptați termenii și condițiile.');
             return;
         }
-        
+
         // Disable submit button and show loading state
         submitButton.disabled = true;
-        submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Se procesează...';
+        if (btnText) btnText.style.display = 'none';
+        if (btnLoading) btnLoading.style.display = 'inline-flex';
         
         // Log form data for debugging
         const formData = {
@@ -3206,16 +1522,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                     console.error('Full response:', data.html);
                     // Restore button state on error
-                    submitButton.disabled = false;
-                    submitButton.innerHTML = '<i class="fas fa-check"></i> Confirmă Programarea';
+                    resetSubmitButton();
                 } else {
                     // Unknown HTML response - log it and show error
                     console.error('Unexpected HTML response, not success or error page');
                     console.log('Full HTML:', data.html);
                     alert('A apărut o eroare neașteptată. Vă rugăm să încercați din nou.');
                     // Restore button state
-                    submitButton.disabled = false;
-                    submitButton.innerHTML = '<i class="fas fa-check"></i> Confirmă Programarea';
+                    resetSubmitButton();
                 }
             } else {
                 // JSON response
@@ -3248,8 +1562,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                     alert(errorMessage);
                     // Restore button state on error
-                    submitButton.disabled = false;
-                    submitButton.innerHTML = '<i class="fas fa-check"></i> Confirmă Programarea';
+                    resetSubmitButton();
                 }
             }
         })
@@ -3257,9 +1570,18 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error('Fetch error:', error);
             alert('Eroare de rețea: ' + error.message);
             // Restore button state on error
-            submitButton.disabled = false;
-            submitButton.innerHTML = '<i class="fas fa-check"></i> Confirmă Programarea';
+            resetSubmitButton();
         });
+
+        // Helper function to reset submit button state
+        function resetSubmitButton() {
+            const submitBtn = document.getElementById('confirm-booking');
+            const btnTextEl = submitBtn.querySelector('.btn-text');
+            const btnLoadingEl = submitBtn.querySelector('.btn-loading');
+            submitBtn.disabled = false;
+            if (btnTextEl) btnTextEl.style.display = 'inline-flex';
+            if (btnLoadingEl) btnLoadingEl.style.display = 'none';
+        }
     });
 
     function getCsrfToken() {

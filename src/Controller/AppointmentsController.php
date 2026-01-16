@@ -480,11 +480,18 @@ class AppointmentsController extends AppController
                 $service = $this->Services->get($data['service_id']);
                 $data['end_time'] = $this->availabilityService->calculateEndTime($appointmentTime, $service->duration_minutes);
 
-                // Generate confirmation token
-                $data['confirmation_token'] = Security::randomString(64);
-                $data['status'] = 'pending';
-
                 $appointment = $this->Appointments->patchEntity($appointment, $data);
+
+                // Set status and confirmation_token directly on entity
+                // These fields have mass-assignment protection ($_accessible = false)
+                // and must be set directly, not through patchEntity()
+                $appointment->status = 'pending';
+                $appointment->confirmation_token = Security::randomString(64);
+
+                // Log validation errors for debugging
+                if ($appointment->hasErrors()) {
+                    Log::error('Appointment validation errors: ' . json_encode($appointment->getErrors()));
+                }
             } catch (Exception $e) {
                 $this->Flash->error('Date invalide. Vă rugăm să încercați din nou.');
 
@@ -548,8 +555,17 @@ class AppointmentsController extends AppController
 
                 return $this->redirect(['action' => 'success', $appointment->id]);
             } else {
-                // Log validation errors (without patient PII)
-                Log::error('Appointment save failed - validation errors occurred');
+                // Log detailed validation errors for debugging
+                Log::error('Appointment save failed - validation errors: ' . json_encode($appointment->getErrors()));
+                Log::debug('Appointment entity data at save time: ' . json_encode([
+                    'patient_id' => $appointment->patient_id,
+                    'doctor_id' => $appointment->doctor_id,
+                    'service_id' => $appointment->service_id,
+                    'appointment_date' => $appointment->appointment_date,
+                    'appointment_time' => $appointment->appointment_time,
+                    'status' => $appointment->status,
+                    'has_confirmation_token' => !empty($appointment->confirmation_token),
+                ]));
                 $this->Flash->error('Programarea nu a putut fi salvată. Vă rugăm să încercați din nou.');
 
                 // For AJAX requests, return JSON error response
