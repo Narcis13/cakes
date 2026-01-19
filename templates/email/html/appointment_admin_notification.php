@@ -8,98 +8,151 @@
         body {
             font-family: Arial, sans-serif;
             line-height: 1.6;
-            color: #333;
+            color: #1a1a1a;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+        }
+        .email-container {
             max-width: 600px;
             margin: 0 auto;
-            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
         }
         .header {
-            background-color: #007bff;
-            color: white;
-            padding: 20px;
+            background-color: #ffffff;
+            padding: 30px;
             text-align: center;
-            border-radius: 8px 8px 0 0;
+            border-bottom: 1px solid #e5e5e5;
+        }
+        .hospital-name {
+            font-size: 12px;
+            font-weight: 600;
+            color: #1e3a5f;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 0 0 8px 0;
+        }
+        .email-title {
+            font-size: 24px;
+            font-weight: 400;
+            color: #1a1a1a;
+            margin: 0;
         }
         .content {
-            background-color: #f8f9fa;
             padding: 30px;
-            border: 1px solid #dee2e6;
         }
-        .appointment-details {
-            background-color: white;
+        .content p {
+            margin: 0 0 16px 0;
+            color: #1a1a1a;
+        }
+        .details-box {
+            background-color: #fafafa;
+            border: 1px solid #e5e5e5;
+            border-radius: 6px;
             padding: 20px;
-            border-radius: 8px;
-            margin: 20px 0;
-            border-left: 4px solid #007bff;
+            margin: 24px 0;
         }
-        .button {
-            display: inline-block;
-            background-color: #007bff;
-            color: white;
-            padding: 12px 30px;
-            text-decoration: none;
-            border-radius: 5px;
-            margin: 20px 0;
-            font-weight: bold;
+        .details-box h3 {
+            font-size: 11px;
+            font-weight: 600;
+            color: #666666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin: 0 0 16px 0;
+        }
+        .details-row {
+            margin: 10px 0;
+        }
+        .details-row:last-child {
+            margin-bottom: 0;
         }
         .status-badge {
             display: inline-block;
-            padding: 4px 12px;
-            border-radius: 20px;
+            padding: 4px 10px;
+            border-radius: 4px;
             font-size: 12px;
-            font-weight: bold;
+            font-weight: 600;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background-color: #fafafa;
+            border: 1px solid #e5e5e5;
+            color: #666666;
         }
-        .status-pending {
-            background-color: #fff3cd;
-            color: #856404;
+        .button-container {
+            text-align: center;
+            margin: 24px 0;
         }
-        .status-confirmed {
-            background-color: #d4edda;
-            color: #155724;
+        .button {
+            display: inline-block;
+            background-color: #1e3a5f;
+            color: #ffffff;
+            padding: 14px 32px;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .footer {
+            background-color: #fafafa;
+            padding: 24px 30px;
+            text-align: center;
+            border-top: 1px solid #e5e5e5;
+        }
+        .footer p {
+            margin: 0 0 8px 0;
+            font-size: 13px;
+            color: #888888;
+        }
+        .footer p:last-child {
+            margin-bottom: 0;
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1><?= h($hospital['name']) ?></h1>
-        <h2>📅 Programare nouă</h2>
-    </div>
-    
-    <div class="content">
-        <p>O programare nouă a fost făcută în sistem.</p>
-        
-        <div class="appointment-details">
-            <h3>Detaliile programării:</h3>
-            <p><strong>Status:</strong> <span class="status-badge status-<?= h($appointment->status) ?>"><?= h($appointment->status) ?></span></p>
-            <p><strong>Pacient:</strong> <?= h($appointment->patient_name) ?></p>
-            <p><strong>Telefon:</strong> <?= h($appointment->phone) ?></p>
-            <p><strong>Email:</strong> <?= h($appointment->email) ?></p>
-            <p><strong>Data și ora:</strong> <?= $appointment->appointment_date->format('d.m.Y') ?> la <?= $appointment->appointment_time->format('H:i') ?></p>
-            <?php if (!empty($appointment->staff)) : ?>
-                <p><strong>Doctor:</strong> <?= h($appointment->staff->full_name) ?></p>
-            <?php endif; ?>
-            <?php if (!empty($appointment->department)) : ?>
-                <p><strong>Departament:</strong> <?= h($appointment->department->name) ?></p>
-            <?php endif; ?>
-            <?php if (!empty($appointment->service)) : ?>
-                <p><strong>Serviciu:</strong> <?= h($appointment->service->name) ?></p>
-            <?php endif; ?>
-            <?php if (!empty($appointment->notes)) : ?>
-                <p><strong>Observații:</strong> <?= nl2br(h($appointment->notes)) ?></p>
-            <?php endif; ?>
-            <p><strong>Data creării:</strong> <?= $appointment->created->format('d.m.Y H:i') ?></p>
+    <div class="email-container">
+        <div class="header">
+            <p class="hospital-name"><?= h($hospital['name']) ?></p>
+            <h1 class="email-title">Programare nouă</h1>
         </div>
-        
-        <div style="text-align: center;">
-            <a href="<?= $adminUrl ?>" class="button">VIZUALIZEAZĂ ÎN ADMIN</a>
+
+        <div class="content">
+            <p>O programare nouă a fost făcută în sistem.</p>
+
+            <div class="details-box">
+                <h3>Detaliile programării</h3>
+                <div class="details-row"><strong>Status:</strong> <span class="status-badge"><?= h($appointment->status) ?></span></div>
+                <div class="details-row"><strong>Pacient:</strong> <?= h($appointment->patient_name) ?></div>
+                <div class="details-row"><strong>Telefon:</strong> <?= h($appointment->phone) ?></div>
+                <div class="details-row"><strong>Email:</strong> <?= h($appointment->email) ?></div>
+                <div class="details-row"><strong>Data și ora:</strong> <?= $appointment->appointment_date->format('d.m.Y') ?> la <?= $appointment->appointment_time->format('H:i') ?></div>
+                <?php if (!empty($appointment->staff)) : ?>
+                    <div class="details-row"><strong>Doctor:</strong> <?= h($appointment->staff->full_name) ?></div>
+                <?php endif; ?>
+                <?php if (!empty($appointment->department)) : ?>
+                    <div class="details-row"><strong>Departament:</strong> <?= h($appointment->department->name) ?></div>
+                <?php endif; ?>
+                <?php if (!empty($appointment->service)) : ?>
+                    <div class="details-row"><strong>Serviciu:</strong> <?= h($appointment->service->name) ?></div>
+                <?php endif; ?>
+                <?php if (!empty($appointment->notes)) : ?>
+                    <div class="details-row"><strong>Observații:</strong> <?= nl2br(h($appointment->notes)) ?></div>
+                <?php endif; ?>
+                <div class="details-row"><strong>Data creării:</strong> <?= $appointment->created->format('d.m.Y H:i') ?></div>
+            </div>
+
+            <div class="button-container">
+                <a href="<?= $adminUrl ?>" class="button">Vizualizează în admin</a>
+            </div>
+
+            <p><strong>Notă:</strong> Programarea a fost confirmată automat.</p>
         </div>
-        
-        <p><strong>Notă:</strong> Programarea a fost confirmată automat.</p>
-    </div>
-    
-    <div style="background-color: #6c757d; color: white; padding: 20px; text-align: center; border-radius: 0 0 8px 8px; font-size: 14px;">
-        <p>&copy; <?= date('Y') ?> <?= h($hospital['name']) ?> - Admin Panel</p>
+
+        <div class="footer">
+            <p>&copy; <?= date('Y') ?> <?= h($hospital['name']) ?> — Admin Panel</p>
+            <p>Acest email a fost generat automat.</p>
+        </div>
     </div>
 </body>
 </html>

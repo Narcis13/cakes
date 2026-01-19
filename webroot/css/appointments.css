@@ -623,7 +623,7 @@
 --------------------------------------------------------------*/
 .doctor-card-inner {
     display: flex;
-    align-items: flex-start;
+    align-items: stretch;
     gap: 20px;
     padding: 25px;
 }
@@ -631,16 +631,32 @@
 .doctor-photo-container {
     flex-shrink: 0;
     width: 100px;
-    height: 100px;
+    min-height: 100px;
     border-radius: 12px;
     overflow: hidden;
     border: 3px solid #e8f4f8;
+    display: flex;
+    align-items: stretch;
 }
 
 .doctor-photo {
     width: 100%;
     height: 100%;
     object-fit: cover;
+}
+
+.doctor-photo-placeholder {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #e8f4f8 0%, #d6e9fa 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.doctor-photo-placeholder i {
+    font-size: 3rem;
+    color: #1977cc;
 }
 
 .doctor-content {
@@ -682,8 +698,9 @@
 
 .service-item {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
+    gap: 16px;
     padding: 12px 16px;
     background: #f8f9fa;
     border: 2px solid transparent;
@@ -703,12 +720,16 @@
 }
 
 .service-item .service-name {
+    flex: 1;
+    min-width: 0;
     font-size: 0.95rem;
     font-weight: 500;
     color: #2c4964;
 }
 
 .service-item .service-details {
+    flex-shrink: 0;
+    white-space: nowrap;
     font-size: 0.8rem;
     color: #6c757d;
 }

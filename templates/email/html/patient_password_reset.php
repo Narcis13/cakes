@@ -8,109 +8,158 @@
         body {
             font-family: Arial, sans-serif;
             line-height: 1.6;
-            color: #333;
+            color: #1a1a1a;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+        }
+        .email-container {
             max-width: 600px;
             margin: 0 auto;
-            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
         }
         .header {
-            background-color: #2c5282;
-            color: white;
-            padding: 20px;
+            background-color: #ffffff;
+            padding: 30px;
             text-align: center;
-            border-radius: 8px 8px 0 0;
+            border-bottom: 1px solid #e5e5e5;
+        }
+        .hospital-name {
+            font-size: 12px;
+            font-weight: 600;
+            color: #1e3a5f;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 0 0 8px 0;
+        }
+        .email-title {
+            font-size: 24px;
+            font-weight: 400;
+            color: #1a1a1a;
+            margin: 0;
         }
         .content {
-            background-color: #f8f9fa;
             padding: 30px;
-            border: 1px solid #dee2e6;
         }
-        .info-box {
-            background-color: white;
+        .content p {
+            margin: 0 0 16px 0;
+            color: #1a1a1a;
+        }
+        .details-box {
+            background-color: #fafafa;
+            border: 1px solid #e5e5e5;
+            border-radius: 6px;
             padding: 20px;
-            border-radius: 8px;
-            margin: 20px 0;
-            border-left: 4px solid #dc3545;
+            margin: 24px 0;
+        }
+        .details-box h3 {
+            font-size: 11px;
+            font-weight: 600;
+            color: #666666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin: 0 0 16px 0;
+        }
+        .details-row {
+            margin: 10px 0;
+        }
+        .details-row:last-child {
+            margin-bottom: 0;
+        }
+        .button-container {
+            text-align: center;
+            margin: 24px 0;
         }
         .button {
             display: inline-block;
-            background-color: #dc3545;
-            color: white;
-            padding: 12px 30px;
+            background-color: #1e3a5f;
+            color: #ffffff;
+            padding: 14px 32px;
             text-decoration: none;
-            border-radius: 5px;
-            margin: 20px 0;
-            font-weight: bold;
-        }
-        .button:hover {
-            background-color: #c82333;
-        }
-        .footer {
-            background-color: #6c757d;
-            color: white;
-            padding: 20px;
-            text-align: center;
-            border-radius: 0 0 8px 8px;
+            border-radius: 6px;
+            font-weight: 600;
             font-size: 14px;
         }
-        .warning {
-            background-color: #fff3cd;
-            border: 1px solid #ffeaa7;
-            color: #856404;
-            padding: 15px;
-            border-radius: 5px;
-            margin: 20px 0;
+        .notice {
+            background-color: #fafafa;
+            border: 1px solid #e5e5e5;
+            border-left: 3px solid #1e3a5f;
+            border-radius: 0 6px 6px 0;
+            padding: 16px 20px;
+            margin: 24px 0;
         }
-        .security-notice {
-            background-color: #f8d7da;
-            border: 1px solid #f5c6cb;
-            color: #721c24;
-            padding: 15px;
-            border-radius: 5px;
-            margin: 20px 0;
+        .notice strong {
+            color: #1a1a1a;
+        }
+        .contact-list {
+            margin: 16px 0;
+            padding-left: 0;
+            list-style: none;
+        }
+        .contact-list li {
+            margin: 8px 0;
+            color: #1a1a1a;
+        }
+        .footer {
+            background-color: #fafafa;
+            padding: 24px 30px;
+            text-align: center;
+            border-top: 1px solid #e5e5e5;
+        }
+        .footer p {
+            margin: 0 0 8px 0;
+            font-size: 13px;
+            color: #888888;
+        }
+        .footer p:last-child {
+            margin-bottom: 0;
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1><?= h($hospital['name']) ?></h1>
-        <h2>Resetare parolă</h2>
-    </div>
-
-    <div class="content">
-        <p>Bună ziua <strong><?= h($patient->full_name) ?></strong>,</p>
-
-        <p>Am primit o solicitare de resetare a parolei pentru contul dumneavoastră de pe portalul pacienților.</p>
-
-        <div class="info-box">
-            <h3>Cont asociat:</h3>
-            <p><strong>Email:</strong> <?= h($patient->email) ?></p>
+    <div class="email-container">
+        <div class="header">
+            <p class="hospital-name"><?= h($hospital['name']) ?></p>
+            <h1 class="email-title">Resetare parolă</h1>
         </div>
 
-        <p>Pentru a vă schimba parola, accesați butonul de mai jos:</p>
+        <div class="content">
+            <p>Bună ziua <strong><?= h($patient->full_name) ?></strong>,</p>
 
-        <div style="text-align: center;">
-            <a href="<?= $resetUrl ?>" class="button">RESETEAZĂ PAROLA</a>
+            <p>Am primit o solicitare de resetare a parolei pentru contul dumneavoastră de pe portalul pacienților.</p>
+
+            <div class="details-box">
+                <h3>Cont asociat</h3>
+                <div class="details-row"><strong>Email:</strong> <?= h($patient->email) ?></div>
+            </div>
+
+            <p>Pentru a vă schimba parola, accesați butonul de mai jos:</p>
+
+            <div class="button-container">
+                <a href="<?= $resetUrl ?>" class="button">Resetează parola</a>
+            </div>
+
+            <div class="notice">
+                <strong>Important:</strong> Acest link de resetare este valabil doar 1 oră. După expirare, va trebui să solicitați un nou link de resetare.
+            </div>
+
+            <div class="notice">
+                <strong>Atenție la securitate:</strong> Dacă nu ați solicitat resetarea parolei, vă rugăm să ignorați acest email. Contul dumneavoastră rămâne în siguranță. Pentru orice suspiciune, contactați-ne imediat.
+            </div>
+
+            <p>Pentru asistență, ne puteți contacta la:</p>
+            <ul class="contact-list">
+                <li><strong>Telefon:</strong> <?= h($hospital['phone']) ?></li>
+                <li><strong>Email:</strong> <?= h($hospital['email']) ?></li>
+            </ul>
         </div>
 
-        <div class="warning">
-            <strong>Important:</strong> Acest link de resetare este valabil doar 1 oră. După expirare, va trebui să solicitați un nou link de resetare.
+        <div class="footer">
+            <p>&copy; <?= date('Y') ?> <?= h($hospital['name']) ?></p>
+            <p>Acest email a fost generat automat. Vă rugăm să nu răspundeți la acest mesaj.</p>
         </div>
-
-        <div class="security-notice">
-            <strong>Atenție la securitate:</strong> Dacă nu ați solicitat resetarea parolei, vă rugăm să ignorați acest email. Contul dumneavoastră rămâne în siguranță. Pentru orice suspiciune, contactați-ne imediat.
-        </div>
-
-        <p>Pentru asistență, ne puteți contacta la:</p>
-        <ul>
-            <li><strong>Telefon:</strong> <?= h($hospital['phone']) ?></li>
-            <li><strong>Email:</strong> <?= h($hospital['email']) ?></li>
-        </ul>
-    </div>
-
-    <div class="footer">
-        <p>&copy; <?= date('Y') ?> <?= h($hospital['name']) ?></p>
-        <p>Acest email a fost generat automat. Vă rugăm să nu răspundeți la acest mesaj.</p>
     </div>
 </body>
 </html>

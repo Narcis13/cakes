@@ -537,12 +537,6 @@ $this->Html->css('appointments', ['block' => true]);
                 </label>
             </div>
 
-            <!-- Confirmation Notice -->
-            <div class="confirmation-notice">
-                <i class="fas fa-info-circle"></i>
-                <p>După confirmare, veți primi un email cu detaliile programării și un link pentru confirmarea finală.</p>
-            </div>
-
             <!-- Step Actions -->
             <div class="step-actions step-5-actions">
                 <button type="button" class="btn btn-secondary prev-step">
@@ -688,13 +682,22 @@ document.addEventListener('DOMContentLoaded', function() {
         card.className = 'doctor-card';
         card.dataset.doctorId = doctor.id;
 
-        const photoUrl = doctor.photo || '/img/default-doctor.png';
         const serviceCount = doctor.services.length;
+
+        // Icon placeholder for doctors without photo
+        const iconPlaceholder = `<div class="doctor-photo-placeholder">
+            <i class="fas fa-user-md"></i>
+        </div>`;
+
+        // Use photo if available, otherwise use icon placeholder
+        const photoHtml = doctor.photo
+            ? `<img src="${doctor.photo}" alt="${doctor.name}" class="doctor-photo" onerror="this.parentElement.innerHTML=\`${iconPlaceholder.replace(/`/g, '\\`')}\`">`
+            : iconPlaceholder;
 
         card.innerHTML = `
             <div class="doctor-card-inner">
                 <div class="doctor-photo-container">
-                    <img src="${photoUrl}" alt="${doctor.name}" class="doctor-photo" onerror="this.src='/img/default-doctor.png'">
+                    ${photoHtml}
                 </div>
                 <div class="doctor-content">
                     <h3 class="doctor-name">${doctor.name}</h3>
@@ -745,7 +748,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 enableNextButton(2);
             });
         });
-        
+
+        // Add card-level click handler for better UX
+        card.addEventListener('click', function(e) {
+            // Only trigger if not clicking on a service item
+            if (e.target.closest('.service-item')) return;
+
+            // Auto-select first service
+            const firstService = card.querySelector('.service-item');
+            if (firstService) {
+                firstService.click();
+            }
+        });
+
         return card;
     }
 

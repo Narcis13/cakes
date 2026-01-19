@@ -74,9 +74,12 @@ class PatientsTable extends Table
 
         $validator
             ->scalar('phone')
-            ->maxLength('phone', 20)
             ->requirePresence('phone', 'create')
-            ->notEmptyString('phone');
+            ->notEmptyString('phone')
+            ->add('phone', 'validRomanianMobile', [
+                'rule' => ['custom', '/^07[0-9]{8}$/'],
+                'message' => 'Numărul de telefon trebuie să aibă 10 cifre și să înceapă cu 07 (ex: 0722123321).',
+            ]);
 
         $validator
             ->scalar('password')
