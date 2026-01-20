@@ -517,21 +517,6 @@ class AppointmentsController extends AppController
                     // Don't fail the booking if email fails
                 }
 
-                // Send admin notification email
-                try {
-                    // Reload appointment with associations for admin email
-                    $appointmentForAdmin = $this->Appointments->get($appointment->id, [
-                        'contain' => [
-                            'Doctors' => ['Departments'],
-                            'Services',
-                        ],
-                    ]);
-
-                    $emailService->sendAdminNotification($appointmentForAdmin);
-                } catch (Exception $e) {
-                    Log::error('Admin notification email error: ' . $e->getMessage());
-                    // Don't show error to user as this is internal
-                }
 
                 // Log successful save for debugging
                 Log::debug('Appointment saved successfully with ID: ' . $appointment->id);

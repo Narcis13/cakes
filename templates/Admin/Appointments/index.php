@@ -11,6 +11,7 @@
         <h3><?= __('Programări') ?></h3>
         <div>
             <?= $this->Html->link(__('Programări de Azi'), ['action' => 'today'], ['class' => 'btn btn-info']) ?>
+            <?= $this->Html->link(__('Raport'), ['action' => 'report', '?' => $this->request->getQuery()], ['class' => 'btn btn-secondary', 'target' => '_blank']) ?>
             <?= $this->Html->link(__('Export CSV'), ['action' => 'export', '?' => $this->request->getQuery()], ['class' => 'btn btn-success']) ?>
         </div>
     </div>

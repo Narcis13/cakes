@@ -7,6 +7,7 @@ use App\Service\AppointmentEmailService;
 use Cake\I18n\Date;
 use Cake\I18n\Time;
 use Cake\Log\Log;
+use Exception;
 
 /**
  * Appointments Controller
@@ -199,7 +200,7 @@ class AppointmentsController extends AppController
                 try {
                     $emailService = new AppointmentEmailService();
                     $emailService->sendCancellation($appointment, $reason);
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     Log::error('Failed to send cancellation email: ' . $e->getMessage());
                     $this->Flash->warning(__('Programarea a fost anulată, dar emailul de notificare nu a putut fi trimis.'));
                 }
@@ -242,6 +243,86 @@ class AppointmentsController extends AppController
 
         $this->set(compact('appointments', 'doctors', 'statuses'));
         $this->render('index');
+    }
+
+    /**
+     * Report method - generates a printable report
+     *
+     * @return \Cake\Http\Response|null|void Renders view
+     */
+    public function report()
+    {
+        $query = $this->Appointments->find()
+            ->contain(['Doctors', 'Services']);
+
+        $activeFilters = [];
+        $statuses = [
+            'pending' => 'În așteptare',
+            'confirmed' => 'Confirmată',
+            'cancelled' => 'Anulată',
+            'completed' => 'Finalizată',
+            'no-show' => 'Neprezentare',
+        ];
+
+        // Filter by date
+        $date = $this->request->getQuery('date');
+        if ($date) {
+            $query->where(['Appointments.appointment_date' => $date]);
+            $activeFilters['Data'] = Date::parse($date)->format('d.m.Y');
+        }
+
+        // Filter by date range
+        $dateFrom = $this->request->getQuery('date_from');
+        $dateTo = $this->request->getQuery('date_to');
+        if ($dateFrom && $dateTo) {
+            $query->where([
+                'Appointments.appointment_date >=' => $dateFrom,
+                'Appointments.appointment_date <=' => $dateTo,
+            ]);
+            $activeFilters['Perioada'] = Date::parse($dateFrom)->format('d.m.Y') . ' - ' . Date::parse($dateTo)->format('d.m.Y');
+        } elseif ($dateFrom) {
+            $query->where(['Appointments.appointment_date >=' => $dateFrom]);
+            $activeFilters['De la data'] = Date::parse($dateFrom)->format('d.m.Y');
+        } elseif ($dateTo) {
+            $query->where(['Appointments.appointment_date <=' => $dateTo]);
+            $activeFilters['Până la data'] = Date::parse($dateTo)->format('d.m.Y');
+        }
+
+        // Filter by doctor
+        $doctorId = $this->request->getQuery('doctor_id');
+        if ($doctorId) {
+            $query->where(['Appointments.doctor_id' => $doctorId]);
+            $doctor = $this->Appointments->Doctors->get($doctorId);
+            $activeFilters['Medic'] = $doctor->first_name . ' ' . $doctor->last_name;
+        }
+
+        // Filter by status
+        $status = $this->request->getQuery('status');
+        if ($status) {
+            $query->where(['Appointments.status' => $status]);
+            $activeFilters['Status'] = $statuses[$status] ?? $status;
+        }
+
+        // Filter by patient name
+        $patientName = $this->request->getQuery('patient_name');
+        if ($patientName) {
+            $query->where(['Appointments.patient_name LIKE' => '%' . $patientName . '%']);
+            $activeFilters['Pacient'] = $patientName;
+        }
+
+        // Order by doctor, then date and time
+        $query->orderBy([
+            'Doctors.last_name' => 'ASC',
+            'Doctors.first_name' => 'ASC',
+            'Appointments.appointment_date' => 'DESC',
+            'Appointments.appointment_time' => 'DESC',
+        ]);
+
+        // Get all results without pagination
+        $appointments = $query->all();
+
+        $this->set(compact('appointments', 'activeFilters', 'statuses'));
+        $this->viewBuilder()->setLayout('print');
     }
 
     /**

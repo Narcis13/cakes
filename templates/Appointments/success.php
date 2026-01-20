@@ -81,9 +81,8 @@ use Cake\Core\Configure;
                 <h2>Următorii Pași</h2>
                 <ol>
                     <li>Salvați codul programării pentru referință</li>
-                    <li>Veți fi contactat telefonic pentru confirmare</li>
                     <li>Prezentați-vă cu 10 minute înainte de ora programată</li>
-                    <li>Aduceți un document de identitate și cardul de sănătate</li>
+                    <li>Vă rugăm să aveți la dumneavoastră documentul de identitate, cardul de sănătate, bilet de trimitere și alte documente din istoricul dumneavoastră medical</li>
                 </ol>
             </div>
             
@@ -246,12 +245,112 @@ use Cake\Core\Configure;
 @media print {
     .action-buttons,
     .navbar,
-    .footer {
-        display: none;
+    .footer,
+    .success-icon,
+    .alert {
+        display: none !important;
     }
-    
+
+    .appointment-success {
+        padding: 0 !important;
+        min-height: auto !important;
+    }
+
     .success-content {
         max-width: 100%;
+    }
+
+    .appointment-success h1 {
+        font-size: 18px !important;
+        margin-bottom: 10px !important;
+        color: #000 !important;
+    }
+
+    .appointment-details {
+        margin: 10px 0 !important;
+    }
+
+    .appointment-details h2,
+    .next-steps h2,
+    .important-info h3 {
+        font-size: 14px !important;
+        margin-bottom: 8px !important;
+    }
+
+    .detail-card {
+        padding: 10px !important;
+        box-shadow: none !important;
+        border: 1px solid #ccc;
+    }
+
+    .detail-card h3 {
+        font-size: 12px !important;
+        margin-bottom: 5px !important;
+        color: #000 !important;
+    }
+
+    .detail-card dt {
+        margin-top: 3px !important;
+        font-size: 11px !important;
+    }
+
+    .detail-card dd {
+        margin-bottom: 3px !important;
+        font-size: 11px !important;
+    }
+
+    .row {
+        display: flex !important;
+        gap: 20px;
+    }
+
+    .col-md-6 {
+        flex: 1;
+    }
+
+    .appointment-code {
+        padding: 10px !important;
+        margin: 10px 0 !important;
+        background: #f0f0f0 !important;
+        color: #000 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .appointment-code h3 {
+        font-size: 20px !important;
+        margin: 5px 0 !important;
+    }
+
+    .appointment-code p {
+        font-size: 10px !important;
+        margin: 2px 0 !important;
+    }
+
+    .next-steps,
+    .important-info {
+        padding: 10px !important;
+        margin: 10px 0 !important;
+        background: #f9f9f9 !important;
+        border: 1px solid #ccc !important;
+    }
+
+    .next-steps ol,
+    .important-info ul {
+        margin: 0 !important;
+        padding-left: 15px !important;
+        font-size: 11px !important;
+    }
+
+    .next-steps li,
+    .important-info li {
+        margin-bottom: 3px !important;
+        line-height: 1.3 !important;
+    }
+
+    * {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
     }
 }
 </style>
