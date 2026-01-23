@@ -4,116 +4,17 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Model\Entity\Patient;
+use App\Service\Email\AbstractEmailService;
 use Cake\Core\Configure;
-use Cake\Log\Log;
 use Cake\Routing\Router;
-use Cake\View\View;
-use Exception;
-use Resend;
 
 /**
  * Patient Email Service
  *
- * Handles sending patient emails via Resend API.
+ * Handles sending patient-related emails.
  */
-class PatientEmailService
+class PatientEmailService extends AbstractEmailService
 {
-    /**
-     * Sender email address
-     */
-    private const SENDER_EMAIL = 'noreply@smupitesti.online';
-
-    /**
-     * Sender name
-     */
-    private const SENDER_NAME = 'Spitalul Militar Pitesti';
-
-    /**
-     * @var \Resend\Client|null
-     */
-    private $resendClient = null;
-
-    /**
-     * Initialize the Resend client
-     *
-     * @return \Resend\Client
-     * @throws \Exception If API key is not configured
-     */
-    private function getClient()
-    {
-        if ($this->resendClient === null) {
-            $apiKey = Configure::read('ApiKeys.resend');
-
-            if (!$apiKey || $apiKey === 'your-resend-api-key-here') {
-                throw new Exception('Resend API key not configured');
-            }
-
-            $this->resendClient = Resend::client($apiKey);
-        }
-
-        return $this->resendClient;
-    }
-
-    /**
-     * Render an email template
-     *
-     * @param string $template Template name (without path)
-     * @param array<string, mixed> $viewVars Variables for the template
-     * @return array{html: string, text: string}
-     */
-    private function renderTemplate(string $template, array $viewVars): array
-    {
-        $view = new View();
-        $view->disableAutoLayout();
-
-        foreach ($viewVars as $key => $value) {
-            $view->set($key, $value);
-        }
-
-        // Render HTML version
-        $view->setTemplatePath('email/html');
-        $view->setTemplate($template);
-        $html = $view->render();
-
-        // Render text version
-        $view->setTemplatePath('email/text');
-        $view->setTemplate($template);
-        $text = $view->render();
-
-        return ['html' => $html, 'text' => $text];
-    }
-
-    /**
-     * Send an email via Resend
-     *
-     * @param string $to Recipient email
-     * @param string $subject Email subject
-     * @param string $html HTML content
-     * @param string $text Plain text content
-     * @return bool Success status
-     */
-    private function send(string $to, string $subject, string $html, string $text): bool
-    {
-        try {
-            $client = $this->getClient();
-
-            $result = $client->emails->send([
-                'from' => self::SENDER_NAME . ' <' . self::SENDER_EMAIL . '>',
-                'to' => [$to],
-                'subject' => $subject,
-                'html' => $html,
-                'text' => $text,
-            ]);
-
-            Log::info('Email sent via Resend to ' . $to . ', ID: ' . ($result->id ?? 'unknown'));
-
-            return true;
-        } catch (Exception $e) {
-            Log::error('Resend email error: ' . $e->getMessage());
-            throw $e;
-        }
-    }
-
     /**
      * Send verification email to patient
      *
@@ -141,7 +42,7 @@ class PatientEmailService
             $patient->email,
             'Verificare cont - ' . $hospitalConfig['name'],
             $content['html'],
-            $content['text']
+            $content['text'],
         );
     }
 
@@ -172,7 +73,7 @@ class PatientEmailService
             $patient->email,
             'Resetare parolă - ' . $hospitalConfig['name'],
             $content['html'],
-            $content['text']
+            $content['text'],
         );
     }
 
@@ -201,7 +102,7 @@ class PatientEmailService
             $patient->email,
             'Bine ați venit - ' . $hospitalConfig['name'],
             $content['html'],
-            $content['text']
+            $content['text'],
         );
     }
 }

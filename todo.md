@@ -7,4 +7,4 @@
 - de la ultimul pas din programare online trebuie sa scot:După confirmare, veți primi un email cu detaliile programării și un link pentru confirmarea finală. --DONE
 - revizuire printeaza detaliile dupa finalizare programare -DONE
 - vazut ce se intimpla de trimite programari si la adresa spitalului --DONE
-- lista raport programari
+- lista raport programari --DONE

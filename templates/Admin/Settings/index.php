@@ -5,7 +5,10 @@
  */
 ?>
 <div class="settings index content">
-    <?= $this->Html->link(__('Setare nouă'), ['action' => 'add'], ['class' => 'btn btn-primary float-end mb-2']) ?>
+    <div class="float-end mb-2">
+        <?= $this->Html->link(__('Setări Email'), ['action' => 'email'], ['class' => 'btn btn-success me-2']) ?>
+        <?= $this->Html->link(__('Setare nouă'), ['action' => 'add'], ['class' => 'btn btn-primary']) ?>
+    </div>
     <h3><?= __('Setări') ?></h3>
     <div class="table-responsive">
         <table class="table table-striped">
