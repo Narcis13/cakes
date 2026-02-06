@@ -24,6 +24,7 @@ use Cake\ORM\Entity;
  * @property \Cake\I18n\DateTime|null $last_login_at
  * @property string|null $last_login_ip
  * @property bool $is_active
+ * @property bool $orizont_extins_programare
  * @property \Cake\I18n\DateTime $created
  * @property \Cake\I18n\DateTime $modified
  *
@@ -54,6 +55,7 @@ class Patient extends Entity
         'last_login_at' => false,
         'last_login_ip' => false,
         'is_active' => false,
+        'orizont_extins_programare' => false,
         'created' => false,
         'modified' => false,
     ];

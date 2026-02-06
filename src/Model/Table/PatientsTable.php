@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Model\Table;
 
+use Cake\I18n\DateTime;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
@@ -12,7 +13,6 @@ use Cake\Validation\Validator;
  * Patients Model
  *
  * @property \App\Model\Table\AppointmentsTable&\Cake\ORM\Association\HasMany $Appointments
- *
  * @method \App\Model\Entity\Patient newEmptyEntity()
  * @method \App\Model\Entity\Patient newEntity(array $data, array $options = [])
  * @method array<\App\Model\Entity\Patient> newEntities(array $data, array $options = [])
@@ -26,7 +26,6 @@ use Cake\Validation\Validator;
  * @method iterable<\App\Model\Entity\Patient>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\Patient> saveManyOrFail(iterable $entities, array $options = [])
  * @method iterable<\App\Model\Entity\Patient>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\Patient>|false deleteMany(iterable $entities, array $options = [])
  * @method iterable<\App\Model\Entity\Patient>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\Patient> deleteManyOrFail(iterable $entities, array $options = [])
- *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
 class PatientsTable extends Table
@@ -92,6 +91,10 @@ class PatientsTable extends Table
             ->notEmptyString('is_active');
 
         $validator
+            ->boolean('orizont_extins_programare')
+            ->allowEmptyString('orizont_extins_programare');
+
+        $validator
             ->dateTime('email_verified_at')
             ->allowEmptyDateTime('email_verified_at');
 
@@ -125,6 +128,35 @@ class PatientsTable extends Table
             ->scalar('last_login_ip')
             ->maxLength('last_login_ip', 45)
             ->allowEmptyString('last_login_ip');
+
+        return $validator;
+    }
+
+    /**
+     * Admin validation rules.
+     *
+     * Only validates fields editable by admin (full_name, phone).
+     *
+     * @param \Cake\Validation\Validator $validator Validator instance.
+     * @return \Cake\Validation\Validator
+     */
+    public function validationAdmin(Validator $validator): Validator
+    {
+        $validator
+            ->scalar('full_name')
+            ->maxLength('full_name', 100)
+            ->notEmptyString('full_name');
+
+        $validator
+            ->scalar('phone')
+            ->notEmptyString('phone')
+            ->add('phone', 'validRomanianMobile', [
+                'rule' => ['custom', '/^07[0-9]{8}$/'],
+                'message' => 'Numărul de telefon trebuie să aibă 10 cifre și să înceapă cu 07.',
+            ]);
+
+        $validator
+            ->boolean('orizont_extins_programare');
 
         return $validator;
     }
@@ -183,7 +215,7 @@ class PatientsTable extends Table
     {
         return $query->where([
             $this->aliasField('password_reset_token') => $token,
-            $this->aliasField('password_reset_expires') . ' >=' => new \Cake\I18n\DateTime(),
+            $this->aliasField('password_reset_expires') . ' >=' => new DateTime(),
         ]);
     }
 }

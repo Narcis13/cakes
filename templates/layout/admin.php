@@ -186,6 +186,13 @@ $cakeDescription = 'SMUP Admin';
                         </li>
                         <li class="nav-item">
                             <?= $this->Html->link(
+                                '<i class="fas fa-user-injured"></i> Pacienți',
+                                ['prefix' => 'Admin', 'controller' => 'Patients', 'action' => 'index'],
+                                ['class' => 'nav-link' . ($this->request->getParam('controller') === 'Patients' ? ' active' : ''), 'escape' => false]
+                            ) ?>
+                        </li>
+                        <li class="nav-item">
+                            <?= $this->Html->link(
                                 '<i class="fas fa-envelope"></i> Mesaje',
                                 ['prefix' => 'Admin', 'controller' => 'ContactMessages', 'action' => 'index'],
                                 ['class' => 'nav-link' . ($this->request->getParam('controller') === 'ContactMessages' ? ' active' : ''), 'escape' => false]

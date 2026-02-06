@@ -117,6 +117,9 @@ class AppointmentsController extends AppController
         // Get authenticated patient
         $patient = $this->Authentication->getIdentity()->getOriginalData();
 
+        // Apply extended booking horizon if patient has it
+        $this->applyPatientBookingHorizon();
+
         // Get specialization IDs that have doctors with active schedules
         $doctorSchedules = $this->fetchTable('DoctorSchedules');
         $staffWithSchedules = $doctorSchedules->find()
@@ -333,6 +336,9 @@ class AppointmentsController extends AppController
             return;
         }
 
+        // Apply extended booking horizon if patient is logged in
+        $this->applyPatientBookingHorizon();
+
         try {
             $appointmentDate = new Date($date);
 
@@ -383,6 +389,9 @@ class AppointmentsController extends AppController
             return;
         }
 
+        // Apply extended booking horizon if patient is logged in
+        $this->applyPatientBookingHorizon();
+
         try {
             $result = $this->availabilityService->getCalendarAvailability($doctorId, $serviceId, $startDate, $days);
 
@@ -431,6 +440,9 @@ class AppointmentsController extends AppController
 
         // Get authenticated patient
         $patient = $this->Authentication->getIdentity()->getOriginalData();
+
+        // Apply extended booking horizon if patient has it
+        $this->applyPatientBookingHorizon();
 
         $appointment = $this->Appointments->newEmptyEntity();
 
@@ -703,6 +715,24 @@ class AppointmentsController extends AppController
         }
 
         $this->set(compact('appointment'));
+    }
+
+    /**
+     * Configure availability service with patient's extended booking horizon if applicable
+     *
+     * @return void
+     */
+    private function applyPatientBookingHorizon(): void
+    {
+        $identity = $this->Authentication->getIdentity();
+        if (!$identity) {
+            return;
+        }
+
+        $patient = $identity->getOriginalData();
+        if ($patient->orizont_extins_programare) {
+            $this->availabilityService->setMaxAdvanceDays(90);
+        }
     }
 
     /**

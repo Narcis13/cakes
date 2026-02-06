@@ -92,6 +92,10 @@ class UsersTable extends Table
             ]);
 
         $validator
+            ->email('email2FA')
+            ->allowEmptyString('email2FA');
+
+        $validator
             ->scalar('role')
             ->maxLength('role', 50)
             ->requirePresence('role', 'create')

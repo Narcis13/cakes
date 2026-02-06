@@ -13,6 +13,7 @@ use Cake\ORM\Entity;
  * @property string $email
  * @property string $password
  * @property string $role
+ * @property string|null $email2FA
  * @property \Cake\I18n\DateTime $created
  * @property \Cake\I18n\DateTime $modified
  */
@@ -31,6 +32,7 @@ class User extends Entity
         'email' => true,
         'password' => true,
         'role' => false,
+        'email2FA' => true,
         'created' => false,
         'modified' => false,
     ];
@@ -42,6 +44,7 @@ class User extends Entity
      */
     protected array $_hidden = [
         'password',
+        'email2FA',
     ];
 
     /**

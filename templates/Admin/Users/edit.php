@@ -56,6 +56,24 @@ $this->assign('title', 'Editează utilizator');
                 <div class="row">
                     <div class="col-md-6">
                         <div class="mb-3">
+                            <?= $this->Form->control('email2FA', [
+                                'type' => 'email',
+                                'label' => ['text' => 'Email pentru verificare 2FA (opțional)', 'class' => 'form-label'],
+                                'class' => 'form-control',
+                                'placeholder' => 'Lasă gol pentru a dezactiva 2FA',
+                                'required' => false,
+                            ]) ?>
+                            <small class="form-text text-muted">
+                                <i class="fas fa-info-circle"></i>
+                                Dacă este setat, la autentificare se va trimite un cod de verificare pe acest email.
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
                             <?= $this->Form->control('password', [
                                 'type' => 'password',
                                 'label' => ['text' => 'Parolă nouă (lasă gol pentru a păstra cea actuală)', 'class' => 'form-label'],

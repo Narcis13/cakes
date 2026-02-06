@@ -3,9 +3,11 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Mailer\AdminMailer;
 use App\Service\LoginSecurityService;
 use Cake\Controller\Controller;
 use Cake\Event\EventInterface;
+use Cake\Http\Response;
 
 /**
  * Admin Users Controller
@@ -20,26 +22,27 @@ class UsersController extends AppController
      * @param \Cake\Event\EventInterface $event Event
      * @return \Cake\Http\Response|null|void
      */
-    public function beforeFilter(EventInterface $event)
+    public function beforeFilter(EventInterface $event): ?Response
     {
         // For login/logout actions, allow unauthenticated access
         // without going through full Admin beforeFilter checks
         $action = $this->request->getParam('action');
-        if (in_array($action, ['login', 'logout'])) {
+        $unauthenticatedActions = ['login', 'logout', 'verify2fa', 'resend2fa'];
+        if (in_array($action, $unauthenticatedActions)) {
             // Call Cake base controller beforeFilter
             Controller::beforeFilter($event);
 
-            // Explicitly allow login/logout without authentication
-            $this->Authentication->allowUnauthenticated(['login', 'logout']);
+            // Explicitly allow these actions without authentication
+            $this->Authentication->allowUnauthenticated($unauthenticatedActions);
 
-            // Unlock login action from FormProtection to prevent token expiry errors
-            // when the login form is left open for extended periods.
+            // Unlock login/verify2fa/resend2fa from FormProtection to prevent token expiry errors
+            // when forms are left open for extended periods.
             // CSRF protection is still active via CsrfProtectionMiddleware.
             if ($this->components()->has('FormProtection')) {
-                $this->FormProtection->setConfig('unlockedActions', ['login']);
+                $this->FormProtection->setConfig('unlockedActions', ['login', 'verify2fa', 'resend2fa']);
             }
 
-            return;
+            return null;
         }
 
         parent::beforeFilter($event);
@@ -50,7 +53,7 @@ class UsersController extends AppController
      *
      * @return \Cake\Http\Response|null|void Redirects on successful login, renders view otherwise.
      */
-    public function login()
+    public function login(): ?Response
     {
         // Use minimal login layout without sidebar
         $this->viewBuilder()->setLayout('admin_login');
@@ -84,7 +87,39 @@ class UsersController extends AppController
                 $loginSecurity->recordLoginAttempt($email, $ipAddress, $userAgent, true);
                 $loginSecurity->clearAttemptsOnSuccess($email, $ipAddress);
 
-                // Validate redirect URL - only allow internal admin paths
+                // Load user with email2FA field from database
+                $identity = $this->Authentication->getIdentity();
+                $user = $this->Users->get($identity->getIdentifier());
+
+                // Check if 2FA is enabled for this user
+                if (!empty($user->email2FA)) {
+                    // Generate 6-digit code
+                    $code = (string)random_int(100000, 999999);
+
+                    // Store 2FA data in session (hashed code)
+                    $session = $this->request->getSession();
+                    $session->write('Auth2FA', [
+                        'user_id' => $user->id,
+                        'code_hash' => password_hash($code, PASSWORD_DEFAULT),
+                        'expires' => time() + 300,
+                        'attempts' => 0,
+                        'email' => $user->email2FA,
+                        'last_resend' => 0,
+                    ]);
+
+                    // Logout - identity will be set after 2FA verification
+                    $this->Authentication->logout();
+
+                    // Send 2FA code via email
+                    $mailer = new AdminMailer();
+                    $mailer->sendTwoFactorCode($user, $code);
+
+                    $this->Flash->success(__('Un cod de verificare a fost trimis pe email.'));
+
+                    return $this->redirect(['action' => 'verify2fa']);
+                }
+
+                // No 2FA - standard redirect to dashboard
                 $redirect = $this->validateRedirectUrl($this->request->getQuery('redirect'));
 
                 return $this->redirect($redirect);
@@ -105,6 +140,8 @@ class UsersController extends AppController
                 'prefix' => 'Admin',
             ]);
         }
+
+        return null;
     }
 
     /**
@@ -126,7 +163,7 @@ class UsersController extends AppController
      *
      * @return \Cake\Http\Response|null|void Redirects to login page.
      */
-    public function logout()
+    public function logout(): ?Response
     {
         $result = $this->Authentication->getResult();
         if ($result && $result->isValid()) {
@@ -138,16 +175,166 @@ class UsersController extends AppController
     }
 
     /**
+     * Verify 2FA code
+     *
+     * @return \Cake\Http\Response|null|void Redirects on success, renders view otherwise.
+     */
+    public function verify2fa(): ?Response
+    {
+        $this->viewBuilder()->setLayout('admin_login');
+        $this->request->allowMethod(['get', 'post']);
+
+        $session = $this->request->getSession();
+        $auth2fa = $session->read('Auth2FA');
+
+        // No 2FA session - redirect to login
+        if (empty($auth2fa) || empty($auth2fa['user_id'])) {
+            return $this->redirect(['action' => 'login']);
+        }
+
+        // Mask email for display (e.g., a****@email.com)
+        $maskedEmail = $this->maskEmail($auth2fa['email']);
+        $this->set('maskedEmail', $maskedEmail);
+
+        if ($this->request->is('post')) {
+            // Check if session has expired
+            if (time() > $auth2fa['expires']) {
+                $session->delete('Auth2FA');
+                $this->Flash->error(__('Codul de verificare a expirat. Vă rugăm să vă autentificați din nou.'));
+
+                return $this->redirect(['action' => 'login']);
+            }
+
+            // Check max attempts (5)
+            if ($auth2fa['attempts'] >= 5) {
+                $session->delete('Auth2FA');
+                $this->Flash->error(__('Prea multe încercări eșuate. Vă rugăm să vă autentificați din nou.'));
+
+                return $this->redirect(['action' => 'login']);
+            }
+
+            $submittedCode = (string)$this->request->getData('code');
+
+            // Verify code
+            if (password_verify($submittedCode, $auth2fa['code_hash'])) {
+                // Code is valid - load user and set identity
+                $user = $this->Users->get($auth2fa['user_id']);
+                $this->Authentication->setIdentity($user);
+
+                // Clean up 2FA session
+                $session->delete('Auth2FA');
+
+                $this->Flash->success(__('Autentificare reușită.'));
+
+                return $this->redirect([
+                    'controller' => 'Dashboard',
+                    'action' => 'index',
+                    'prefix' => 'Admin',
+                ]);
+            }
+
+            // Invalid code - increment attempts
+            $auth2fa['attempts']++;
+            $session->write('Auth2FA', $auth2fa);
+
+            $remainingAttempts = 5 - $auth2fa['attempts'];
+            if ($remainingAttempts > 0) {
+                $this->Flash->error(__('Cod invalid. Mai aveți {0} încercări.', $remainingAttempts));
+            } else {
+                $session->delete('Auth2FA');
+                $this->Flash->error(__('Prea multe încercări eșuate. Vă rugăm să vă autentificați din nou.'));
+
+                return $this->redirect(['action' => 'login']);
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Resend 2FA code
+     *
+     * @return \Cake\Http\Response|null|void Redirects to verify2fa.
+     */
+    public function resend2fa(): ?Response
+    {
+        $this->request->allowMethod(['post']);
+
+        $session = $this->request->getSession();
+        $auth2fa = $session->read('Auth2FA');
+
+        // No 2FA session - redirect to login
+        if (empty($auth2fa) || empty($auth2fa['user_id'])) {
+            return $this->redirect(['action' => 'login']);
+        }
+
+        // Rate limiting: max 1 resend per 60 seconds
+        $lastResend = $auth2fa['last_resend'] ?? 0;
+        if (time() - $lastResend < 60) {
+            $remaining = 60 - (time() - $lastResend);
+            $this->Flash->error(__('Vă rugăm să așteptați {0} secunde înainte de a retrimite codul.', $remaining));
+
+            return $this->redirect(['action' => 'verify2fa']);
+        }
+
+        // Generate new code
+        $code = (string)random_int(100000, 999999);
+
+        // Update session with new code, reset expiry and attempts
+        $auth2fa['code_hash'] = password_hash($code, PASSWORD_DEFAULT);
+        $auth2fa['expires'] = time() + 300;
+        $auth2fa['attempts'] = 0;
+        $auth2fa['last_resend'] = time();
+        $session->write('Auth2FA', $auth2fa);
+
+        // Send new code via email
+        $user = $this->Users->get($auth2fa['user_id']);
+        $mailer = new AdminMailer();
+        $mailer->sendTwoFactorCode($user, $code);
+
+        $this->Flash->success(__('Un cod nou de verificare a fost trimis pe email.'));
+
+        return $this->redirect(['action' => 'verify2fa']);
+    }
+
+    /**
+     * Mask email address for display (e.g., a****@email.com)
+     *
+     * @param string $email The email address to mask
+     * @return string The masked email
+     */
+    private function maskEmail(string $email): string
+    {
+        $parts = explode('@', $email);
+        if (count($parts) !== 2) {
+            return '****@****';
+        }
+
+        $local = $parts[0];
+        $domain = $parts[1];
+
+        if (strlen($local) <= 1) {
+            $masked = $local . '****';
+        } else {
+            $masked = $local[0] . str_repeat('*', min(4, strlen($local) - 1));
+        }
+
+        return $masked . '@' . $domain;
+    }
+
+    /**
      * Index method
      *
      * @return \Cake\Http\Response|null|void Renders view
      */
-    public function index()
+    public function index(): ?Response
     {
         $query = $this->Users->find();
         $users = $this->paginate($query);
 
         $this->set(compact('users'));
+
+        return null;
     }
 
     /**
@@ -157,10 +344,12 @@ class UsersController extends AppController
      * @return \Cake\Http\Response|null|void Renders view
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function view(?string $id = null)
+    public function view(?string $id = null): ?Response
     {
         $user = $this->Users->get($id);
         $this->set(compact('user'));
+
+        return null;
     }
 
     /**
@@ -168,7 +357,7 @@ class UsersController extends AppController
      *
      * @return \Cake\Http\Response|null|void Redirects on successful add, renders view otherwise.
      */
-    public function add()
+    public function add(): ?Response
     {
         $user = $this->Users->newEmptyEntity();
         if ($this->request->is('post')) {
@@ -181,6 +370,8 @@ class UsersController extends AppController
             $this->Flash->error(__('The user could not be saved. Please, try again.'));
         }
         $this->set(compact('user'));
+
+        return null;
     }
 
     /**
@@ -190,7 +381,7 @@ class UsersController extends AppController
      * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function edit(?string $id = null)
+    public function edit(?string $id = null): ?Response
     {
         $user = $this->Users->get($id);
         if ($this->request->is(['patch', 'post', 'put'])) {
@@ -203,6 +394,8 @@ class UsersController extends AppController
             $this->Flash->error(__('The user could not be saved. Please, try again.'));
         }
         $this->set(compact('user'));
+
+        return null;
     }
 
     /**
@@ -212,7 +405,7 @@ class UsersController extends AppController
      * @return \Cake\Http\Response|null|void Redirects to index.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function delete(?string $id = null)
+    public function delete(?string $id = null): ?Response
     {
         $this->request->allowMethod(['post', 'delete']);
         $user = $this->Users->get($id);

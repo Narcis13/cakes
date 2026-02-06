@@ -61,6 +61,13 @@ class AvailabilityService
     private HospitalHolidaysTable $hospitalHolidaysTable;
 
     /**
+     * Override for max advance booking days (null = use config default)
+     *
+     * @var int|null
+     */
+    private ?int $maxAdvanceDaysOverride = null;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -93,6 +100,17 @@ class AvailabilityService
         } catch (Exception $e) {
             // Table doesn't exist yet
         }
+    }
+
+    /**
+     * Set override for max advance booking days
+     *
+     * @param int $days Number of days
+     * @return void
+     */
+    public function setMaxAdvanceDays(int $days): void
+    {
+        $this->maxAdvanceDaysOverride = $days;
     }
 
     /**
@@ -331,8 +349,9 @@ class AvailabilityService
             return false;
         }
 
-        // Check maximum advance booking (default 90 days)
-        $maxAdvanceDays = Configure::read('Appointments.max_advance_days', 90);
+        // Check maximum advance booking (default 30 days, overridable per patient)
+        $maxAdvanceDays = $this->maxAdvanceDaysOverride
+            ?? Configure::read('Appointments.max_advance_days', 30);
         $maxDate = Date::now()->addDays($maxAdvanceDays);
 
         if ($date > $maxDate) {
