@@ -231,19 +231,15 @@
                         <!-- Image Fields -->
                         <div class="component-field" id="image-fields" style="display:none;">
                             <div class="mb-3">
-                                <label class="form-label">Alegeți sursa imaginii</label>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="image_source" id="image_url" value="url" checked>
-                                    <label class="form-check-label" for="image_url">
-                                        URL imagine
-                                    </label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="image_source" id="image_upload" value="upload">
-                                    <label class="form-check-label" for="image_upload">
-                                        Încarcă imagine
-                                    </label>
-                                </div>
+                                <?= $this->Form->control('image_source', [
+                                    'type' => 'radio',
+                                    'options' => [
+                                        'url' => 'URL imagine',
+                                        'upload' => 'Încarcă imagine',
+                                    ],
+                                    'default' => 'url',
+                                    'label' => ['class' => 'form-label', 'text' => 'Alegeți sursa imaginii'],
+                                ]) ?>
                             </div>
 
                             <div class="mb-3" id="url-input">
@@ -345,19 +341,15 @@
                     <!-- Image Fields -->
                     <div class="edit-field" id="edit-image-fields" style="display:none;">
                         <div class="mb-3">
-                            <label class="form-label">Alegeți sursa imaginii</label>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="image_source" id="edit_image_url" value="url" checked>
-                                <label class="form-check-label" for="edit_image_url">
-                                    URL imagine
-                                </label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="image_source" id="edit_image_upload" value="upload">
-                                <label class="form-check-label" for="edit_image_upload">
-                                    Încarcă imagine nouă
-                                </label>
-                            </div>
+                                <?= $this->Form->control('image_source', [
+                                    'type' => 'radio',
+                                    'options' => [
+                                        'url' => 'URL imagine',
+                                        'upload' => 'Încarcă imagine nouă',
+                                    ],
+                                    'default' => 'url',
+                                    'label' => ['class' => 'form-label', 'text' => 'Alegeți sursa imaginii'],
+                                ]) ?>
                         </div>
 
                         <div class="mb-3" id="edit-current-image">
@@ -528,13 +520,6 @@ document.addEventListener('DOMContentLoaded', function() {
             // Show and populate fields based on component type
             if (componentType === 'html') {
                 document.getElementById('edit-html-fields').style.display = 'block';
-                // Get content from the component display
-                const contentDiv = componentItem.querySelector('.component-content');
-                if (contentDiv) {
-                    // Convert br tags back to newlines
-                    const content = contentDiv.innerHTML.replace(/<br\s*\/?>/gi, '\n').replace(/<[^>]*>/g, '');
-                    document.getElementById('edit-content').value = content;
-                }
             } else if (componentType === 'image') {
                 document.getElementById('edit-image-fields').style.display = 'block';
                 // Get image data
@@ -581,7 +566,12 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(data => {
             if (data.success && data.component) {
                 const comp = data.component;
+                document.getElementById('edit-title').value = comp.title || '';
                 document.getElementById('edit-css-class').value = comp.css_class || '';
+
+                if (comp.type === 'html' && comp.content !== undefined) {
+                    document.getElementById('edit-content').value = comp.content || '';
+                }
 
                 if (comp.type === 'link' && comp.button_caption) {
                     document.getElementById('edit-button-caption').value = comp.button_caption;

@@ -72,8 +72,7 @@ class PagesTable extends Table
 
         $validator
             ->scalar('content')
-            ->requirePresence('content', 'create')
-            ->notEmptyString('content');
+            ->allowEmptyString('content');
 
         $validator
             ->scalar('meta_description')

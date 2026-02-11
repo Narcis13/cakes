@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use Cake\Event\EventInterface;
 use Cake\Utility\Text;
 use Exception;
 use Psr\Http\Message\UploadedFileInterface;
@@ -22,6 +23,25 @@ class PagesController extends AppController
     {
         parent::initialize();
         $this->viewBuilder()->setLayout('admin');
+    }
+
+    /**
+     * Before filter callback.
+     *
+     * @param \Cake\Event\EventInterface $event The beforeFilter event.
+     * @return \Cake\Http\Response|null|void
+     */
+    public function beforeFilter(EventInterface $event)
+    {
+        parent::beforeFilter($event);
+
+        // Unlock actions with dynamic URLs from FormProtection
+        if ($this->components()->has('FormProtection')) {
+            $this->FormProtection->setConfig('unlockedActions', [
+                'editComponent',
+                'reorderComponents',
+            ]);
+        }
     }
 
     /**
