@@ -91,14 +91,17 @@
     </div>
 </div>
 
-<?php if ($this->Paginator->total() > $this->Paginator->param('perPage')): ?>
-<nav aria-label="Navigare pagini">
-    <ul class="pagination justify-content-center">
-        <?= $this->Paginator->first('<< Prima', ['class' => 'page-link']) ?>
-        <?= $this->Paginator->prev('< Anterioară', ['class' => 'page-link']) ?>
-        <?= $this->Paginator->numbers(['class' => 'page-link']) ?>
-        <?= $this->Paginator->next('Următoarea >', ['class' => 'page-link']) ?>
-        <?= $this->Paginator->last('Ultima >>', ['class' => 'page-link']) ?>
-    </ul>
-</nav>
-<?php endif; ?>
+<div class="d-flex justify-content-between align-items-center mt-3">
+    <p class="text-muted mb-0">
+        <?= $this->Paginator->counter(__('Pagina {{page}} din {{pages}}, afișând {{current}} înregistrare(ări) din {{count}} total')) ?>
+    </p>
+    <nav aria-label="Navigare pagini">
+        <ul class="pagination mb-0">
+            <?= $this->Paginator->first('<< Prima') ?>
+            <?= $this->Paginator->prev('< Anterioară') ?>
+            <?= $this->Paginator->numbers() ?>
+            <?= $this->Paginator->next('Următoarea >') ?>
+            <?= $this->Paginator->last('Ultima >>') ?>
+        </ul>
+    </nav>
+</div>

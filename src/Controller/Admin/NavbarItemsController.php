@@ -17,7 +17,10 @@ class NavbarItemsController extends AppController
      */
     public function index()
     {
-        $navbarItems = $this->paginate($this->NavbarItems->find());
+        $query = $this->NavbarItems->find()
+            ->contain(['ParentNavbarItems'])
+            ->orderBy(['NavbarItems.sort_order' => 'ASC']);
+        $navbarItems = $this->paginate($query);
 
         $this->set(compact('navbarItems'));
     }
