@@ -39,9 +39,9 @@ class DepartmentsCell extends Cell
                 'name' => $dept->name,
                 'active' => $isFirst,
                 'title' => $dept->name,
-                'subtitle' => $dept->description ? substr(strip_tags($dept->description), 0, 100) . '...' : 'Professional healthcare services',
+                'subtitle' => $dept->description ? substr(strip_tags($dept->description), 0, 100) . '...' : '',
                 'description' => $dept->services_html ?: $dept->description ?: 'Comprehensive medical care provided by our experienced team of healthcare professionals.',
-                'image' => $dept->picture ?: '/img/departments-1.jpg',
+                'image' => $dept->picture ? '/img/departments/' . $dept->picture : '/img/departments-1.jpg',
             ];
             $isFirst = false;
         }

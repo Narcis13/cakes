@@ -11,12 +11,12 @@ DETALIILE PROGRAMĂRII:
 ----------------------------------------
 Data și ora: <?= $appointment->appointment_date->format('d.m.Y') ?> la <?= $appointment->appointment_time->format('H:i') ?>
 
-<?php if (!empty($appointment->staff)): ?>
-Doctor: <?= $appointment->staff->full_name ?>
+<?php if (!empty($appointment->doctor)): ?>
+Doctor: <?= $appointment->doctor->first_name . ' ' . $appointment->doctor->last_name ?>
 
 <?php endif; ?>
-<?php if (!empty($appointment->department)): ?>
-Departament: <?= $appointment->department->name ?>
+<?php if (!empty($appointment->doctor->department)): ?>
+Departament: <?= $appointment->doctor->department->name ?>
 
 <?php endif; ?>
 <?php if (!empty($appointment->service)): ?>

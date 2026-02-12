@@ -181,7 +181,7 @@ class AppointmentsController extends AppController
     {
         $this->request->allowMethod(['post']);
         $appointment = $this->Appointments->get($id, [
-            'contain' => ['Doctors', 'Services'],
+            'contain' => ['Doctors' => ['Departments'], 'Services'],
         ]);
 
         $appointment->status = 'cancelled';

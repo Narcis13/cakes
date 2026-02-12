@@ -140,11 +140,11 @@
                 <div class="details-row"><strong>Telefon:</strong> <?= h($appointment->patient_phone) ?></div>
                 <div class="details-row"><strong>Email:</strong> <?= h($appointment->patient_email) ?></div>
                 <div class="details-row"><strong>Data și ora:</strong> <?= $appointment->appointment_date->format('d.m.Y') ?> la <?= $appointment->appointment_time->format('H:i') ?></div>
-                <?php if (!empty($appointment->doctors)) : ?>
-                    <div class="details-row"><strong>Doctor:</strong> <?= h($appointment->doctors->first_name . ' ' . $appointment->doctors->last_name) ?></div>
+                <?php if (!empty($appointment->doctor)) : ?>
+                    <div class="details-row"><strong>Doctor:</strong> <?= h($appointment->doctor->first_name . ' ' . $appointment->doctor->last_name) ?></div>
                 <?php endif; ?>
-                <?php if (!empty($appointment->doctors->departments)) : ?>
-                    <div class="details-row"><strong>Departament:</strong> <?= h($appointment->doctors->departments->name) ?></div>
+                <?php if (!empty($appointment->doctor->department)) : ?>
+                    <div class="details-row"><strong>Departament:</strong> <?= h($appointment->doctor->department->name) ?></div>
                 <?php endif; ?>
                 <?php if (!empty($appointment->service)) : ?>
                     <div class="details-row"><strong>Serviciu:</strong> <?= h($appointment->service->name) ?></div>

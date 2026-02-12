@@ -25,7 +25,7 @@
               <div class="col-lg-8 details order-2 order-lg-1">
                 <h3><?= h($department['title']) ?></h3>
                 <p class="fst-italic"><?= h($department['subtitle']) ?></p>
-                <p><?= h($department['description']) ?></p>
+                <?= $department['description'] ?>
               </div>
               <div class="col-lg-4 text-center order-1 order-lg-2">
                 <img src="<?= $department['image'] ?>" alt="<?= h($department['name']) ?>" class="img-fluid">

@@ -518,6 +518,12 @@ class AppointmentsController extends AppController
                 // This prevents ID enumeration attacks on the success page
                 $this->request->getSession()->write('last_booked_appointment_id', $appointment->id);
 
+                // Reload appointment with associations for email templates
+                $appointment = $this->Appointments->get($appointment->id, contain: [
+                    'Doctors' => ['Departments'],
+                    'Services',
+                ]);
+
                 // Send emails via Resend API
                 $emailService = new AppointmentEmailService();
 

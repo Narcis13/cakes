@@ -126,8 +126,8 @@ class SendAppointmentRemindersCommand extends Command
                         $io->out("Would send {$hours}h reminder to: {$appointment->patient_name} <{$appointment->patient_email}>");
                         $io->out("  Appointment: {$appointment->appointment_date->format('Y-m-d')} at {$appointment->appointment_time->format('H:i')}");
 
-                        if (!empty($appointment->doctors)) {
-                            $io->out("  Doctor: {$appointment->doctors->first_name} {$appointment->doctors->last_name}");
+                        if (!empty($appointment->doctor)) {
+                            $io->out("  Doctor: {$appointment->doctor->first_name} {$appointment->doctor->last_name}");
                         }
 
                         $totalSent++;
