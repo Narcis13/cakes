@@ -18,6 +18,10 @@
 <html>
 <head>
     <?= $this->Html->charset() ?>
+
+    <!-- FewCookies Cookie Consent (beta) -->
+    <script id="cookieguard-script" src="https://fewcookies.com/widget.js" data-api-key="cg_01KTTSW8V0752Y7N0H6PWRQ67M" data-blocking-mode="auto"></script>
+
     <title>
         <?= $this->fetch('title') ?>
     </title>

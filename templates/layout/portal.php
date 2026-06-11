@@ -11,6 +11,10 @@ $cakeDescription = 'Portal Pacient - SMUP';
 <head>
     <?= $this->Html->charset() ?>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- FewCookies Cookie Consent (beta) -->
+    <script id="cookieguard-script" src="https://fewcookies.com/widget.js" data-api-key="cg_01KTTSW8V0752Y7N0H6PWRQ67M" data-blocking-mode="auto"></script>
+
     <title>
         <?= $cakeDescription ?>:
         <?= $this->fetch('title') ?>

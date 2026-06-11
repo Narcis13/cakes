@@ -12,6 +12,9 @@
     <?= $this->Html->charset() ?>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
+    <!-- FewCookies Cookie Consent (beta) -->
+    <script id="cookieguard-script" src="https://fewcookies.com/widget.js" data-api-key="cg_01KTTSW8V0752Y7N0H6PWRQ67M" data-blocking-mode="auto"></script>
+
     <title>
         <?= $cakeDescription ?? 'Medilab' ?>:
         <?= $this->fetch('title') ?>
