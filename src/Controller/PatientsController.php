@@ -24,6 +24,8 @@ use Exception;
  */
 class PatientsController extends AppController
 {
+    use PortalMaintenanceTrait;
+
     /**
      * @var \App\Service\PatientAuthService
      */
@@ -71,6 +73,12 @@ class PatientsController extends AppController
     public function beforeFilter(EventInterface $event): ?Response
     {
         parent::beforeFilter($event);
+
+        // The whole portal is closed while maintenance mode is on (logout stays available)
+        $maintenanceResponse = $this->checkPortalMaintenance($event, ['logout']);
+        if ($maintenanceResponse !== null) {
+            return $maintenanceResponse;
+        }
 
         // Use portal layout for authenticated pages
         $action = $this->request->getParam('action');

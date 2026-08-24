@@ -266,6 +266,13 @@ $cakeDescription = 'SMUP Admin';
                                 ['class' => 'nav-link' . ($this->request->getParam('controller') === 'Settings' ? ' active' : ''), 'escape' => false]
                             ) ?>
                         </li>
+                        <li class="nav-item">
+                            <?= $this->Html->link(
+                                '<i class="fas fa-tools"></i> Mentenanță Portal',
+                                ['prefix' => 'Admin', 'controller' => 'Settings', 'action' => 'portalMaintenance'],
+                                ['class' => 'nav-link' . ($this->request->getParam('action') === 'portalMaintenance' ? ' active' : ''), 'escape' => false]
+                            ) ?>
+                        </li>
                     </ul>
                 </div>
             </nav>

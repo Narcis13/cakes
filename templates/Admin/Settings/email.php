@@ -17,6 +17,11 @@
                 ['action' => 'index'],
                 ['class' => 'list-group-item list-group-item-action']
             ) ?>
+            <?= $this->Html->link(
+                __('Mentenanță portal'),
+                ['action' => 'portalMaintenance'],
+                ['class' => 'list-group-item list-group-item-action'],
+            ) ?>
         </div>
 
         <div class="list-group mt-3">

@@ -28,6 +28,8 @@ use Exception;
  */
 class AppointmentsController extends AppController
 {
+    use PortalMaintenanceTrait;
+
     /**
      * @var \App\Service\AvailabilityService
      */
@@ -88,6 +90,12 @@ class AppointmentsController extends AppController
     public function beforeFilter(EventInterface $event)
     {
         parent::beforeFilter($event);
+
+        // Online booking is unavailable while the portal is in maintenance mode
+        $maintenanceResponse = $this->checkPortalMaintenance($event);
+        if ($maintenanceResponse !== null) {
+            return $maintenanceResponse;
+        }
 
         $action = $this->request->getParam('action');
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Service\Email\EmailTransportFactory;
+use App\Service\PortalMaintenanceService;
 use Cake\Http\Response;
 use Cake\Log\Log;
 use Cake\ORM\TableRegistry;
@@ -104,6 +105,74 @@ class SettingsController extends AppController
         }
 
         return $this->redirect(['action' => 'index']);
+    }
+
+    /**
+     * Portal maintenance mode settings
+     *
+     * Lets an administrator close the patient portal (login, dashboard and
+     * online appointment booking) and show a maintenance notice instead.
+     *
+     * @return \Cake\Http\Response|null|void Renders view
+     */
+    public function portalMaintenance()
+    {
+        $maintenance = new PortalMaintenanceService();
+
+        if ($this->request->is(['patch', 'post', 'put'])) {
+            $data = $this->request->getData();
+
+            $saved = $maintenance->save(
+                (bool)($data['maintenance_mode'] ?? false),
+                (string)($data['maintenance_title'] ?? ''),
+                (string)($data['maintenance_message'] ?? ''),
+                (string)($data['maintenance_eta'] ?? ''),
+            );
+
+            if ($saved) {
+                if ($maintenance->isEnabled()) {
+                    $this->Flash->success(__('Portalul de programări a fost trecut în modul MENTENANȚĂ.'));
+                } else {
+                    $this->Flash->success(__('Portalul de programări a revenit la modul normal de funcționare.'));
+                }
+            } else {
+                $this->Flash->error(__('Setările de mentenanță nu au putut fi salvate. Încercați din nou.'));
+            }
+
+            return $this->redirect(['action' => 'portalMaintenance']);
+        }
+
+        $this->set([
+            'maintenanceEnabled' => $maintenance->isEnabled(),
+            'maintenanceTitle' => $maintenance->getTitle(),
+            'maintenanceMessage' => $maintenance->getMessage(),
+            'maintenanceEta' => $maintenance->getEta(),
+        ]);
+    }
+
+    /**
+     * Toggle maintenance mode on/off without touching the configured texts.
+     *
+     * @return \Cake\Http\Response|null Redirects back to the maintenance settings
+     */
+    public function togglePortalMaintenance(): ?Response
+    {
+        $this->request->allowMethod(['post']);
+
+        $maintenance = new PortalMaintenanceService();
+        $enable = !$maintenance->isEnabled();
+
+        if ($maintenance->setEnabled($enable)) {
+            if ($enable) {
+                $this->Flash->success(__('Portalul de programări a fost trecut în modul MENTENANȚĂ.'));
+            } else {
+                $this->Flash->success(__('Portalul de programări a revenit la modul normal de funcționare.'));
+            }
+        } else {
+            $this->Flash->error(__('Starea portalului nu a putut fi schimbată. Încercați din nou.'));
+        }
+
+        return $this->redirect(['action' => 'portalMaintenance']);
     }
 
     /**

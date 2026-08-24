@@ -6,6 +6,7 @@
 ?>
 <div class="settings index content">
     <div class="float-end mb-2">
+        <?= $this->Html->link(__('Mentenanță Portal'), ['action' => 'portalMaintenance'], ['class' => 'btn btn-warning me-2']) ?>
         <?= $this->Html->link(__('Setări Email'), ['action' => 'email'], ['class' => 'btn btn-success me-2']) ?>
         <?= $this->Html->link(__('Setare nouă'), ['action' => 'add'], ['class' => 'btn btn-primary']) ?>
     </div>
