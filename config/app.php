@@ -79,6 +79,20 @@ return [
     ],
 
     /*
+     * Admin panel configuration.
+     *
+     * - devPath - Alternative admin URL path (e.g. `/smupatest`) connected only
+     *   when `debug` is true, next to the regular `/smupa1881` path.
+     * - skip2fa - When true AND `debug` is true, the email 2FA step is skipped
+     *   on admin login. Development only - it is ignored in production because
+     *   it also requires `debug`.
+     */
+    'Admin' => [
+        'devPath' => env('ADMIN_DEV_PATH', null),
+        'skip2fa' => filter_var(env('ADMIN_SKIP_2FA', false), FILTER_VALIDATE_BOOLEAN),
+    ],
+
+    /*
      * Apply timestamps with the last modified time to static assets (js, css, images).
      * Will append a querystring parameter containing the time the file was modified.
      * This is useful for busting browser caches.

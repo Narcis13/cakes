@@ -225,16 +225,26 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
             'password' => 'password',
         ];
 
+        $loginUrl = Router::url([
+            'prefix' => 'Admin',
+            'plugin' => null,
+            'controller' => 'Users',
+            'action' => 'login',
+        ]);
+
+        // In development the admin panel is also reachable on the alternative
+        // path (Admin.devPath), so accept a login POST on either path.
+        $loginUrls = [$loginUrl];
+        $adminDevPath = Configure::read('Admin.devPath');
+        if (Configure::read('debug') && !empty($adminDevPath)) {
+            $loginUrls[] = str_replace($adminDevPath, '/smupa1881', $loginUrl);
+        }
+
         // Load authenticators
         $service->loadAuthenticator('Authentication.Session');
         $service->loadAuthenticator('Authentication.Form', [
             'fields' => $fields,
-            'loginUrl' => Router::url([
-                'prefix' => 'Admin',
-                'plugin' => null,
-                'controller' => 'Users',
-                'action' => 'login',
-            ]),
+            'loginUrl' => $loginUrls,
         ]);
 
         // Load identifiers

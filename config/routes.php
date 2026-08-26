@@ -4,6 +4,7 @@
  * File: config/routes.php
  */
 
+use Cake\Core\Configure;
 use Cake\Routing\Route\DashedRoute;
 use Cake\Routing\RouteBuilder;
 
@@ -137,7 +138,19 @@ return static function (RouteBuilder $routes) {
         /*
          * Admin routes (for hospital staff)
          * URL path obscured for security
+         *
+         * In development (debug = true) an alternative path can be enabled via
+         * the ADMIN_DEV_PATH env var (e.g. /smupatest). It is connected first so
+         * that generated admin URLs stay on the same path during the session.
          */
+        $adminDevPath = Configure::read('Admin.devPath');
+        if (Configure::read('debug') && !empty($adminDevPath)) {
+            $builder->prefix('Admin', ['path' => $adminDevPath], function (RouteBuilder $routes) {
+                $routes->connect('/', ['controller' => 'Dashboard', 'action' => 'index']);
+                $routes->fallbacks(DashedRoute::class);
+            });
+        }
+
         $builder->prefix('Admin', ['path' => '/smupa1881'], function (RouteBuilder $routes) {
             $routes->connect('/', ['controller' => 'Dashboard', 'action' => 'index']);
             $routes->fallbacks(DashedRoute::class);

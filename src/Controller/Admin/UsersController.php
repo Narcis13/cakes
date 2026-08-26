@@ -6,6 +6,7 @@ namespace App\Controller\Admin;
 use App\Mailer\AdminMailer;
 use App\Service\LoginSecurityService;
 use Cake\Controller\Controller;
+use Cake\Core\Configure;
 use Cake\Event\EventInterface;
 use Cake\Http\Response;
 
@@ -91,6 +92,13 @@ class UsersController extends AppController
                 $identity = $this->Authentication->getIdentity();
                 $user = $this->Users->get($identity->getIdentifier());
 
+                // Development bypass: skip the emailed 2FA code entirely
+                if (!empty($user->email2FA) && $this->is2faBypassed()) {
+                    $this->Flash->success(__('Autentificat fara 2FA (mod development).'));
+
+                    return $this->redirect($this->validateRedirectUrl($this->request->getQuery('redirect')));
+                }
+
                 // Check if 2FA is enabled for this user
                 if (!empty($user->email2FA)) {
                     // Generate 6-digit code
@@ -142,6 +150,19 @@ class UsersController extends AppController
         }
 
         return null;
+    }
+
+    /**
+     * Whether the email 2FA step should be skipped.
+     *
+     * Only ever true in development: requires both `debug` and `Admin.skip2fa`
+     * (env var ADMIN_SKIP_2FA) to be enabled.
+     *
+     * @return bool
+     */
+    private function is2faBypassed(): bool
+    {
+        return (bool)Configure::read('debug') && (bool)Configure::read('Admin.skip2fa');
     }
 
     /**
