@@ -52,3 +52,6 @@ nbproject/*
 # yarn
 yarn-debug.log
 yarn-error.log
+
+# Documentatie migrare cu credentiale de productie
+/MIGRARE_STS.md
