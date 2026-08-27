@@ -55,3 +55,6 @@ yarn-error.log
 
 # Documentatie migrare cu credentiale de productie
 /MIGRARE_STS.md
+
+# Folder sts (local)
+/sts/
