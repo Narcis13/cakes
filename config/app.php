@@ -93,6 +93,20 @@ return [
     ],
 
     /*
+     * HTTPS enforcement.
+     *
+     * - force - When true (default) HTTP requests are redirected to HTTPS, the
+     *   HSTS header is sent and the session cookie is marked `Secure`. Set
+     *   `FORCE_HTTPS=false` in `.env` only while the domain has no valid TLS
+     *   certificate - the site then serves plain HTTP. This is deliberately
+     *   independent of `debug`, so a server without a certificate can still run
+     *   with `debug=false`.
+     */
+    'Https' => [
+        'force' => filter_var(env('FORCE_HTTPS', true), FILTER_VALIDATE_BOOLEAN),
+    ],
+
+    /*
      * Apply timestamps with the last modified time to static assets (js, css, images).
      * Will append a querystring parameter containing the time the file was modified.
      * This is useful for busting browser caches.
@@ -428,7 +442,9 @@ return [
         'timeout' => 30,
         'cookie' => 'HOSPITAL_SESSION',
         'ini' => [
-            'session.cookie_secure' => true,
+            // Tied to FORCE_HTTPS: a `Secure` cookie is dropped by the browser
+            // on a plain-HTTP origin, which would kill every session.
+            'session.cookie_secure' => filter_var(env('FORCE_HTTPS', true), FILTER_VALIDATE_BOOLEAN),
             'session.cookie_httponly' => true,
             'session.cookie_samesite' => 'Strict',
             'session.use_strict_mode' => true,

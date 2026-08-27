@@ -44,8 +44,10 @@ class SecurityHeadersMiddleware implements MiddlewareInterface
         $csp = $this->getContentSecurityPolicy();
         $response = $response->withHeader('Content-Security-Policy', $csp);
 
-        // Strict-Transport-Security: Enforce HTTPS (production only)
-        if (!Configure::read('debug')) {
+        // Strict-Transport-Security: Enforce HTTPS (production only).
+        // Never sent without a certificate - a browser that receives it would
+        // refuse plain HTTP for this domain for a year.
+        if (!Configure::read('debug') && Configure::read('Https.force')) {
             $response = $response->withHeader(
                 'Strict-Transport-Security',
                 'max-age=31536000; includeSubDomains',

@@ -27,8 +27,9 @@ class HttpsEnforcementMiddleware implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        // Skip enforcement in debug mode (development)
-        if (Configure::read('debug')) {
+        // Skip enforcement in debug mode (development), or when the server has
+        // no TLS certificate yet (FORCE_HTTPS=false).
+        if (Configure::read('debug') || !Configure::read('Https.force')) {
             return $handler->handle($request);
         }
 
