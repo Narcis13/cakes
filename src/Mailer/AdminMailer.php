@@ -26,7 +26,7 @@ class AdminMailer
     public function sendTwoFactorCode(User $user, string $code): bool
     {
         $hospitalConfig = Configure::read('Hospital');
-        $fromEmail = 'noreply@smupitesti.online';
+        $fromEmail = 'programari@smupitesti.org';
         $fromName = $hospitalConfig['name'] ?? 'Spitalul Militar Pitesti';
 
         // Render email templates
